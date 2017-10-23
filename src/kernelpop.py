@@ -45,7 +45,19 @@ def kernelpop(exploit_db=None):
 	Runs the show
 	:return:
 	"""
-	get_kernel_version()
+	kv = get_kernel_version()
+	# running on mac
+	if "Darwin" in kv["normal"]:
+		print("Underlying OS identified as an OS X variant")
+	# running on linux
+	elif "Linux" in kv["normal"]:
+		print("Underlying OS identified as a Linux variant")
+	# running on windows
+	elif "win" in kv["normal"]:
+		print("Underlying OS identified as a Windows variant")
+	# don't know what we're on
+	else:
+		print("Could not identify underlying OS")
 
 
 if __name__ == "__main__":

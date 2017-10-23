@@ -1,10 +1,12 @@
-import MySQLdb
 from src.kernelpop import kernelpop
+from exploits.linux.CVE201710012 import exploit
 
-exploit_db = MySQLdb.connect(
-	host="localhost",
-	user="kernelpop",
-	passwd="kernelpop",
-	db="exploit_db")
 
-kernelpop(exploit_db)
+def practice_pop():
+	exploit()
+def main():
+	kernelpop()
+	practice_pop()
+
+if __name__ == "__main__":
+	main()
