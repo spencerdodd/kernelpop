@@ -6,10 +6,12 @@ import platform
 class Kernel():
 	def __init__(self, kernel_version):
 		self.type, self.name, self.major_version, self.minor_version, \
-			self.release, self.architecture, self.bitness, self.uname = self.process_kernel_version(kernel_version)
+			self.release, self.architecture, self.uname = self.process_kernel_version(kernel_version)
 
 	@staticmethod
 	def process_kernel_version(kernel_version):
+		# running on mac
+		# Darwin-16.7.0-x86_64-i386-64bit
 		if "Darwin" in kernel_version:
 			print("Underlying OS identified as an OS X variant")
 			k_type = 			"mac"
@@ -18,15 +20,23 @@ class Kernel():
 			k_minor = 			kernel_version.split("-")[1].split(".")[1]
 			k_release = 		kernel_version.split("-")[1].split(".")[2]
 			k_architecture = 	'-'.join(kernel_version.split("-")[2:4])
-			k_bitness = 		kernel_version.split("-")[4]
 
-			return k_type, k_name, k_major, k_minor, k_release, k_architecture, k_bitness, kernel_version
+			return k_type, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on linux
-		elif "Linux" in kernel_version["normal"]:
+		# Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial
+		elif "Linux" in kernel_version:
 			print("Underlying OS identified as a Linux variant")
+			k_type = 			"linux"
+			k_name = 			kernel_version.split("-")[-1]
+			k_major = 			kernel_version.split("-")[1].split(".")[0]
+			k_minor = 			kernel_version.split("-")[1].split(".")[1]
+			k_release = 		kernel_version.split("-")[2]
+			k_architecture = 	kernel_version.split("-")[4]
+			return k_type, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+
 		# running on windows
-		elif "win" in kernel_version["normal"]:
+		elif "win" in kernel_version:
 			print("Underlying OS identified as a Windows variant")
 		# don't know what we're on
 		else:
@@ -47,7 +57,8 @@ def get_kernel_version():
 		"aliased":	platform.platform(aliased=True),
 		"terse":	platform.platform(terse=True)
 	}
-	return Kernel(kernel_version["normal"])
+	#return Kernel(kernel_version["normal"])
+	return Kernel("Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial")
 
 
 def find_exploit_locally(kernel_version):
@@ -75,6 +86,7 @@ def kernelpop(exploit_db=None):
 	:return:
 	"""
 	kernel = get_kernel_version()
+	print(kernel)
 
 
 
