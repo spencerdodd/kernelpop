@@ -121,6 +121,19 @@ def find_exploit_remotely(kernel_version):
 	:param kernel_version: dictionary of the kernel version returned from `get_kernel_version()`
 	:return: array of unique exploit identifiers possible for this kernel
 	"""
+	pass
+
+def display_identified_exploits(identified_exploits):
+	print("IDENTIFIED EXPLOITS")
+	print("HIGH RELIABILITY")
+	for high_exploit in identified_exploits[HIGH_RELIABILITY]:
+		print("\t{}\t\t{}".format(high_exploit.name, high_exploit.brief_desc))
+	print("MEDIUM RELIABILITY")
+	for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
+		print("\t{}\t\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+	print("LOW RELIABILITY")
+	for low_exploit in identified_exploits[LOW_RELIABILITY]:
+		print("\t{}\t\t{}".format(low_exploit.name, low_exploit.brief_desc))
 
 
 def kernelpop(exploit_db=None):
@@ -131,7 +144,8 @@ def kernelpop(exploit_db=None):
 	:return:
 	"""
 	kernel_v = get_kernel_version()
-	find_exploit_locally(kernel_v)
+	identified_exploits = find_exploit_locally(kernel_v)
+	display_identified_exploits(identified_exploits)
 
 
 if __name__ == "__main__":
