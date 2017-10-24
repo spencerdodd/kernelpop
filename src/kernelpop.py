@@ -2,7 +2,7 @@ import os
 import sys
 import platform
 from pydoc import locate
-from constants import LINUX_EXPLOIT_PATH
+from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY
 
 class Kernel:
 	def __init__(self, kernel_version):
@@ -85,30 +85,34 @@ def potentially_vulnerable(kernel_version, exploit_module):
 
 def find_exploit_locally(kernel_version):
 	"""
+	find_exploit_locally(Kernel kernel_version)
+
+	Identifies potential exploits for the given kernel by dynamically loading exploit modules from the identified
+	operating system's `exploit` dir and checking the kernel vs the list of vulnerable kernels in that exploit.
 
 	:param kernel_version: Kernel() object containing kernel information
-	:returns:
+	:returns: array of arrays of exploit modules sorted in order of likelihood of success
+		i.e. [ [high] [medium] [low] ]
 	"""
-
-	"""
-	exploit_module = locate("exploits." + exploit_to_load.strip() + "." + exploit_to_load.strip())
-	exploit_instance = exploit_module()
-	self.active_session.set_exploit(exploit_instance)
-	"""
+	potential_exploits = {
+		HIGH_RELIABILITY: [],
+		MEDIUM_RELIABILITY: [],
+		LOW_RELIABILITY: []
+	}
 	if kernel_version.type == "linux":
 		all_exploits = os.listdir(LINUX_EXPLOIT_PATH)
 		for exploit_file in all_exploits:
 			if exploit_file[-3:] == ".py" and "__init__" not in exploit_file:
-				exploit_module_path = os.path.join(LINUX_EXPLOIT_PATH, exploit_file[:-3])
 				exploit_name = exploit_file.replace(".py", "")
 				exploit_module = locate("exploits.linux.{}.{}".format(exploit_name, exploit_name))
 				exploit_instance = exploit_module()
 				if potentially_vulnerable(kernel_version, exploit_instance):
 					print("[+] found potential kernel exploit: {}".format(exploit_file))
+					potential_exploits[exploit_instance.reliability].append(exploit_instance)
 				else:
 					del exploit_module
 
-
+	return potential_exploits
 
 
 def find_exploit_remotely(kernel_version):
