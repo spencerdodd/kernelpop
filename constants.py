@@ -7,7 +7,7 @@ MEDIUM_RELIABILITY = "medium"
 LOW_RELIABILITY = "low"
 HEADER = """
 ##########################
-# welcome to kernelpop   #
+#  welcome to kernelpop  #
 #                        #
 # let's pop some kernels #
 ##########################

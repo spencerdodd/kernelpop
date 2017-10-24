@@ -132,6 +132,7 @@ def find_exploit_locally(kernel_version):
 		MEDIUM_RELIABILITY: [],
 		LOW_RELIABILITY: []
 	}
+	print("[*] matching kernel to known exploits")
 	if kernel_version.type == "linux":
 		all_exploits = os.listdir(LINUX_EXPLOIT_PATH)
 		for exploit_file in all_exploits:
@@ -140,7 +141,7 @@ def find_exploit_locally(kernel_version):
 				exploit_module = locate("exploits.linux.{}.{}".format(exploit_name, exploit_name))
 				exploit_instance = exploit_module()
 				if potentially_vulnerable(kernel_version, exploit_instance):
-					print("[+] found potential kernel exploit: {}".format(exploit_file))
+					print("\t[+] found potential kernel exploit: {}".format(exploit_instance.name))
 					potential_exploits[exploit_instance.reliability].append(exploit_instance)
 				else:
 					del exploit_module
@@ -158,35 +159,58 @@ def find_exploit_remotely(kernel_version):
 
 def display_identified_exploits(identified_exploits):
 	print("[*] identified exploits")
-	print("\t[*] high reliability")
-	for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-		print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
-	print("\t[*] medium reliability")
-	for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-		print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
-	print("\t[*] low reliability")
-	for low_exploit in identified_exploits[LOW_RELIABILITY]:
-		print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
+		print("\t[[ high reliability ]]")
+		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
+			print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
+		print("\t[[ medium reliability ]]")
+		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
+			print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+	if len(identified_exploits[LOW_RELIABILITY]) > 0:
+		print("\t[[ low reliability ]]")
+		for low_exploit in identified_exploits[LOW_RELIABILITY]:
+			print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
+		and len(identified_exploits[LOW_RELIABILITY]) == 0:
+		print("\t[-] no exploits were discovered for this kernel")
 
 
 def brute_force_exploit(identified_exploits):
 	print("[*] attempting brute force of all discovered exploits from most to least probable")
-	print("HIGH")
-	for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-		high_exploit.exploit()
+	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
+		print("\t[[ high reliability ]]")
+		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
+			high_exploit.exploit()
+	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
+		print("\t[[ medium reliability ]]")
+		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
+			medium_exploit.exploit()
+	if len(identified_exploits[LOW_RELIABILITY]) > 0:
+		print("\t[[ low reliability ]]")
+		for low_exploit in identified_exploits[LOW_RELIABILITY]:
+			low_exploit.exploit()
+	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
+		and len(identified_exploits[LOW_RELIABILITY]) == 0:
+		print("\t[-] no exploits to verify for this kernel")
 
-
-def kernelpop(exploit_db=None):
+def kernelpop(exploit_db=None,mode="enumerate"):
 	"""
 	kernelpop()
 
 	Runs the show
 	:return:
 	"""
+
 	print(HEADER)
 	kernel_v = get_kernel_version()
 	identified_exploits = find_exploit_locally(kernel_v)
 	display_identified_exploits(identified_exploits)
+
+	if mode == "brute":
+		brute_force_exploit(identified_exploits)
+	elif mode == "selective":
+		pass
 
 
 if __name__ == "__main__":
