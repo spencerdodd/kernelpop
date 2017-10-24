@@ -2,47 +2,80 @@ import os
 import sys
 import platform
 from pydoc import locate
-from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY
+from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER
 
 class Kernel:
 	def __init__(self, kernel_version):
-		self.type, self.name, self.major_version, self.minor_version, \
+		self.type, self.distro, self.name, self.major_version, self.minor_version, \
 			self.release, self.architecture, self.uname = self.process_kernel_version(kernel_version)
 
-	@staticmethod
-	def process_kernel_version(kernel_version):
+		self.alert_kernel_discovery()
+
+	def parse_distro(self, kernel_version):
+		"""
+		grabs the distro name if it can from a distribution string (platform.platform() call result)
+
+		:param kernel_version: String from platform.platform()
+		:return: String of distro name if it exists
+		"""
+		if "linux" in kernel_version.lower():
+			distros = ["ubuntu", "debian", "enterprise"]
+			for distro in distros:
+				if distro in kernel_version.lower():
+					return distro
+
+		return "unknown"
+
+	def process_kernel_version(self, kernel_version):
 		# running on mac
 		# Darwin-16.7.0-x86_64-i386-64bit
 		if "Darwin" in kernel_version:
-			print("Underlying OS identified as an OS X variant")
+			print("[+] underlying os identified as a mac variant")
 			k_type = 			"mac"
+			k_distro = 			self.parse_distro(kernel_version)
 			k_name = 			kernel_version.split("-")[0]
 			k_major = 			kernel_version.split("-")[1].split(".")[0]
 			k_minor = 			kernel_version.split("-")[1].split(".")[1]
 			k_release = 		kernel_version.split("-")[1].split(".")[2]
 			k_architecture = 	kernel_version.split("-")[2]
 
-			return k_type, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+			return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on linux
 		# Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial
 		elif "Linux" in kernel_version:
-			print("Underlying OS identified as a Linux variant")
+			print("[+] underlying os identified as a linux variant")
 			k_type = 			"linux"
+			k_distro = 			self.parse_distro(kernel_version)
 			k_name = 			kernel_version.split("-")[-1]
 			k_major = 			kernel_version.split("-")[1].split(".")[0]
 			k_minor = 			kernel_version.split("-")[1].split(".")[1]
 			k_release = 		kernel_version.split("-")[2]
 			k_architecture = 	kernel_version.split("-")[4]
-			return k_type, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+			return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on windows
 		elif "win" in kernel_version:
-			print("Underlying OS identified as a Windows variant")
+			print("[+] underlying os identified as a windows variant")
 		# don't know what we're on
 		else:
-			print("Could not identify underlying OS")
+			print("[-] could not identify underlying os")
+			exit(1)
 
+	def alert_kernel_discovery(self):
+		if self.type == "linux":
+			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
+				"\n\tarchitecture:\t{}".format(
+				self.uname, self.type, self.distro, ".".join([self.major_version, self.minor_version]), self.release,
+				self.architecture))
+		elif self.type == "mac":
+			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t{}".format(
+				self.uname, self.type, ".".join([self.major_version, self.minor_version, self.release]),
+				self.architecture))
+		elif self.type == "windows":
+			pass
+		else:
+			exit(1)
 
 def get_kernel_version():
 	"""
@@ -124,16 +157,23 @@ def find_exploit_remotely(kernel_version):
 	pass
 
 def display_identified_exploits(identified_exploits):
-	print("IDENTIFIED EXPLOITS")
-	print("HIGH RELIABILITY")
+	print("[*] identified exploits")
+	print("\t[*] high reliability")
 	for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-		print("\t{}\t\t{}".format(high_exploit.name, high_exploit.brief_desc))
-	print("MEDIUM RELIABILITY")
+		print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+	print("\t[*] medium reliability")
 	for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-		print("\t{}\t\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
-	print("LOW RELIABILITY")
+		print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+	print("\t[*] low reliability")
 	for low_exploit in identified_exploits[LOW_RELIABILITY]:
-		print("\t{}\t\t{}".format(low_exploit.name, low_exploit.brief_desc))
+		print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+
+
+def brute_force_exploit(identified_exploits):
+	print("[*] attempting brute force of all discovered exploits from most to least probable")
+	print("HIGH")
+	for high_exploit in identified_exploits[HIGH_RELIABILITY]:
+		high_exploit.exploit()
 
 
 def kernelpop(exploit_db=None):
@@ -143,6 +183,7 @@ def kernelpop(exploit_db=None):
 	Runs the show
 	:return:
 	"""
+	print(HEADER)
 	kernel_v = get_kernel_version()
 	identified_exploits = find_exploit_locally(kernel_v)
 	display_identified_exploits(identified_exploits)

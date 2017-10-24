@@ -5,3 +5,10 @@ LINUX_EXPLOIT_PATH = os.path.join(ROOT_DIR, "exploits", "linux")
 HIGH_RELIABILITY = "high"
 MEDIUM_RELIABILITY = "medium"
 LOW_RELIABILITY = "low"
+HEADER = """
+##########################
+# welcome to kernelpop   #
+#                        #
+# let's pop some kernels #
+##########################
+"""
