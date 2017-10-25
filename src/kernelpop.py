@@ -85,11 +85,11 @@ class Kernel:
 	def alert_kernel_discovery(self):
 		if self.type == "linux":
 			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
-				"\n\tarchitecture:\t{}".format(
+				"\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, self.distro, ".".join([self.major_version, self.minor_version]), self.release,
 				self.architecture))
 		elif self.type == "mac":
-			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t{}".format(
+			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, ".".join([self.major_version, self.minor_version, self.release]),
 				self.architecture))
 		elif self.type == "windows":

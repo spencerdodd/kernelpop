@@ -13,7 +13,7 @@ At some point in the future, I would like to integrate it into my other project
 
 tested just on Ubuntu as of 10-24-2017
 
-### normal run
+### default enumeration mode
 
 ```
 ﻿exploit@ubuntuexploit:~/Desktop/kernelpop$ python3 kernelpop.py
@@ -37,7 +37,7 @@ tested just on Ubuntu as of 10-24-2017
 		CVE-2009-1185	udev before 1.4.1 NETLINK user space priv esc
 ```
 
-### input mode (output of `uname -a`)
+### input mode
 
 ```
 ﻿exploit@ubuntuexploit:~/Desktop/kernelpop$ uname -a
