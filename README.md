@@ -29,7 +29,7 @@ tested just on Ubuntu as of 10-24-2017
 	type:			linux
 	distro:			ubuntu
 	version:		4.10-28
-	architecture:	x86_64
+	architecture:	    x86_64
 [*] matching kernel to known exploits
 	[+] found potential kernel exploit: CVE-2009-1185
 [*] identified exploits
@@ -56,7 +56,7 @@ Please enter uname: Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP
 	type:			linux
 	distro:			ubuntu
 	version:		4.10-28
-	architecture:	x86_64
+	architecture:	    x86_64
 [*] matching kernel to known exploits
 	[+] found potential kernel exploit: CVE-2009-1185
 [*] identified exploits
@@ -79,7 +79,7 @@ Please enter uname: Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP
 	type:			linux
 	distro:			ubuntu
 	version:		4.10-28
-	architecture:	x86_64
+	architecture:	    x86_64
 [*] matching kernel to known exploits
 	[+] found potential kernel exploit: CVE-2009-1185
 [*] identified exploits
