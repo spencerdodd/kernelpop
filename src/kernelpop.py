@@ -5,9 +5,9 @@ from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER
 
 class Kernel:
-	def __init__(self, kernel_version):
+	def __init__(self, kernel_version, uname=False):
 		self.type, self.distro, self.name, self.major_version, self.minor_version, \
-			self.release, self.architecture, self.uname = self.process_kernel_version(kernel_version)
+			self.release, self.architecture, self.uname = self.process_kernel_version(kernel_version, uname=uname)
 
 		self.alert_kernel_discovery()
 
@@ -26,33 +26,53 @@ class Kernel:
 
 		return "unknown"
 
-	def process_kernel_version(self, kernel_version):
+	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
 		# Darwin-16.7.0-x86_64-i386-64bit
 		if "Darwin" in kernel_version:
 			print("[+] underlying os identified as a mac variant")
-			k_type = 			"mac"
-			k_distro = 			self.parse_distro(kernel_version)
-			k_name = 			kernel_version.split("-")[0]
-			k_major = 			kernel_version.split("-")[1].split(".")[0]
-			k_minor = 			kernel_version.split("-")[1].split(".")[1]
-			k_release = 		kernel_version.split("-")[1].split(".")[2]
-			k_architecture = 	kernel_version.split("-")[2]
+			if uname:
+				k_type = 			"mac"
+				k_distro = 			self.parse_distro(kernel_version)
+				k_name = 			kernel_version.split(" ")[0]
+				k_major =		 	kernel_version.split(" ")[2].split(".")[0]
+				k_minor = 			kernel_version.split(" ")[2].split(".")[1]
+				k_release = 		kernel_version.split(" ")[2].split(".")[2]
+				k_architecture = 	kernel_version.split(" ")[-1]
+				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+			else:
+				k_type = 			"mac"
+				k_distro = 			self.parse_distro(kernel_version)
+				k_name = 			kernel_version.split("-")[0]
+				k_major = 			kernel_version.split("-")[1].split(".")[0]
+				k_minor = 			kernel_version.split("-")[1].split(".")[1]
+				k_release = 		kernel_version.split("-")[1].split(".")[2]
+				k_architecture = 	kernel_version.split("-")[2]
 
-			return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on linux
 		# Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial
 		elif "Linux" in kernel_version:
 			print("[+] underlying os identified as a linux variant")
-			k_type = 			"linux"
-			k_distro = 			self.parse_distro(kernel_version)
-			k_name = 			kernel_version.split("-")[-1]
-			k_major = 			kernel_version.split("-")[1].split(".")[0]
-			k_minor = 			kernel_version.split("-")[1].split(".")[1]
-			k_release = 		kernel_version.split("-")[2]
-			k_architecture = 	kernel_version.split("-")[4]
-			return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+			if uname:
+				k_type = 			"linux"
+				k_distro = 			self.parse_distro(kernel_version)
+				k_name = 			kernel_version.split(" ")[0]
+				k_major = 			kernel_version.split(" ")[2].split(".")[0]
+				k_minor = 			kernel_version.split(" ")[2].split(".")[1]
+				k_release = 		kernel_version.split(" ")[2].split("-")[1]
+				k_architecture = 	kernel_version.split(" ")[-2]
+				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+			else:
+				k_type = 			"linux"
+				k_distro = 			self.parse_distro(kernel_version)
+				k_name = 			kernel_version.split("-")[-1]
+				k_major = 			kernel_version.split("-")[1].split(".")[0]
+				k_minor = 			kernel_version.split("-")[1].split(".")[1]
+				k_release = 		kernel_version.split("-")[2]
+				k_architecture = 	kernel_version.split("-")[4]
+				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on windows
 		elif "win" in kernel_version:
@@ -77,7 +97,7 @@ class Kernel:
 		else:
 			exit(1)
 
-def get_kernel_version():
+def get_kernel_version(uname=None):
 	"""
 	get_kernel_version()
 
@@ -86,13 +106,16 @@ def get_kernel_version():
 
 	:returns: Kernel object
 	"""
-	kernel_version = {
-		"normal": 	platform.platform(),
-		"aliased":	platform.platform(aliased=True),
-		"terse":	platform.platform(terse=True)
-	}
+	if not uname:
+		kernel_version = {
+			"normal": 	platform.platform(),
+			"aliased":	platform.platform(aliased=True),
+			"terse":	platform.platform(terse=True)
+		}
 
-	return Kernel(kernel_version["normal"])
+		return Kernel(kernel_version["normal"])
+	else:
+		return Kernel(uname, uname=True)
 
 
 def potentially_vulnerable(kernel_version, exploit_module):
@@ -194,7 +217,7 @@ def brute_force_exploit(identified_exploits):
 		and len(identified_exploits[LOW_RELIABILITY]) == 0:
 		print("\t[-] no exploits to verify for this kernel")
 
-def kernelpop(exploit_db=None,mode="enumerate"):
+def kernelpop(exploit_db=None,mode="enumerate",uname=None):
 	"""
 	kernelpop()
 
@@ -203,14 +226,15 @@ def kernelpop(exploit_db=None,mode="enumerate"):
 	"""
 
 	print(HEADER)
-	kernel_v = get_kernel_version()
+	if uname:
+		kernel_v = get_kernel_version(uname=uname)
+	else:
+		kernel_v = get_kernel_version()
 	identified_exploits = find_exploit_locally(kernel_v)
 	display_identified_exploits(identified_exploits)
 
 	if mode == "brute":
 		brute_force_exploit(identified_exploits)
-	elif mode == "selective":
-		pass
 
 
 if __name__ == "__main__":

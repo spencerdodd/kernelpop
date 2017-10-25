@@ -1,8 +1,17 @@
 # kernelpop
 
-kernelpop is a framework for performing automated kernel exploitation on Windows, Linux, and Mac hosts.
+kernelpop is a framework for performing automated kernel exploitation on Linux, Mac, and Windows hosts.
 
-example run:
+Currently the project only functions with `python3`. I am undecided as to whether I will make this backwards 
+compatible. As it stands, the `brute` mode is set to prepare, compile, and runs exploits in order to confirm an
+exploitable kernel. This functionality, at the moment, is only functional on the box the program is run on. As it
+is a fairly large project to bring on to someone else's computer and makes considerably noise when compiling and 
+checking exploit attempts, it would be poor OPSEC to use in an actual engagement. The `input` mode allows you to
+perform enumeration with just the output of a `uname` command which makes it useful as a host-side enumeration tool. 
+At some point in the future, I would like to integrate it into my other project 
+[pysploit](https://github.com/spencerdodd/pysploit) for enumeration and reckless, noisy, brute-forcing
+
+tested just on Ubuntu as of 10-24-2017
 
 ```
 $ python kernelpop.py
