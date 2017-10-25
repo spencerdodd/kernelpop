@@ -212,6 +212,17 @@ def brute_force_enumerate(identified_exploits):
 	return confirmed_vulnerable
 
 def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=None, color=None):
+	"""
+
+	:param ordered_exploits:
+	:param begin_message:
+	:param fail_message:
+	:param color:
+	:return:
+	"""
+
+	# TODO: show the 'confirmed' exploits ahead of the 'potential' exploits
+	# TODO:		also, show all potential as yellow
 	if begin_message:
 		if color:
 			color_print(begin_message, color=color)
