@@ -2,7 +2,8 @@ import os
 import sys
 import platform
 from pydoc import locate
-from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER
+from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
+	color_print
 
 class Kernel:
 	def __init__(self, kernel_version, uname=False):
@@ -30,8 +31,9 @@ class Kernel:
 		# running on mac
 		# Darwin-16.7.0-x86_64-i386-64bit
 		if "Darwin" in kernel_version:
-			print("[+] underlying os identified as a mac variant")
+
 			if uname:
+				color_print("[+] `uname -a` os identified as a mac variant")
 				k_type = 			"mac"
 				k_distro = 			self.parse_distro(kernel_version)
 				k_name = 			kernel_version.split(" ")[0]
@@ -41,6 +43,7 @@ class Kernel:
 				k_architecture = 	kernel_version.split(" ")[-1]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
+				color_print("[+] underlying os identified as a mac variant")
 				k_type = 			"mac"
 				k_distro = 			self.parse_distro(kernel_version)
 				k_name = 			kernel_version.split("-")[0]
@@ -54,8 +57,8 @@ class Kernel:
 		# running on linux
 		# Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial
 		elif "Linux" in kernel_version:
-			print("[+] underlying os identified as a linux variant")
 			if uname:
+				color_print("[+] `uname -a` os identified as a linux variant")
 				k_type = 			"linux"
 				k_distro = 			self.parse_distro(kernel_version)
 				k_name = 			kernel_version.split(" ")[0]
@@ -65,6 +68,7 @@ class Kernel:
 				k_architecture = 	kernel_version.split(" ")[-2]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
+				color_print("[+] underlying os identified as a linux variant")
 				k_type = 			"linux"
 				k_distro = 			self.parse_distro(kernel_version)
 				k_name = 			kernel_version.split("-")[-1]
@@ -76,22 +80,22 @@ class Kernel:
 
 		# running on windows
 		elif "win" in kernel_version:
-			print("[+] underlying os identified as a windows variant")
+			color_print("[+] underlying os identified as a windows variant")
 		# don't know what we're on
 		else:
-			print("[-] could not identify underlying os")
+			color_print("[-] could not identify underlying os", color="red")
 			exit(1)
 
 	def alert_kernel_discovery(self):
 		if self.type == "linux":
-			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
+			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 				"\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, self.distro, ".".join([self.major_version, self.minor_version]), self.release,
-				self.architecture))
+				self.architecture), color="green")
 		elif self.type == "mac":
-			print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
+			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, ".".join([self.major_version, self.minor_version, self.release]),
-				self.architecture))
+				self.architecture), color="green")
 		elif self.type == "windows":
 			pass
 		else:
@@ -155,7 +159,7 @@ def find_exploit_locally(kernel_version):
 		MEDIUM_RELIABILITY: [],
 		LOW_RELIABILITY: []
 	}
-	print("[*] matching kernel to known exploits")
+	color_print("[*] matching kernel to known exploits")
 	if kernel_version.type == "linux":
 		all_exploits = os.listdir(LINUX_EXPLOIT_PATH)
 		for exploit_file in all_exploits:
@@ -164,7 +168,7 @@ def find_exploit_locally(kernel_version):
 				exploit_module = locate("exploits.linux.{}.{}".format(exploit_name, exploit_name))
 				exploit_instance = exploit_module()
 				if potentially_vulnerable(kernel_version, exploit_instance):
-					print("\t[+] found potential kernel exploit: {}".format(exploit_instance.name))
+					color_print("\t[+] found potential kernel exploit: {}".format(exploit_instance.name), color="green")
 					potential_exploits[exploit_instance.reliability].append(exploit_instance)
 				else:
 					del exploit_module
@@ -181,43 +185,43 @@ def find_exploit_remotely(kernel_version):
 	pass
 
 def display_identified_exploits(identified_exploits):
-	print("[*] identified exploits")
+	color_print("[*] identified exploits")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
-		print("\t[[ high reliability ]]")
+		color_print("\t[[ high reliability ]]", color="green")
 		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc), color="green")
 	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
-		print("\t[[ medium reliability ]]")
+		color_print("\t[[ medium reliability ]]", color="yellow")
 		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc), color="yellow")
 	if len(identified_exploits[LOW_RELIABILITY]) > 0:
-		print("\t[[ low reliability ]]")
+		color_print("\t[[ low reliability ]]", color="red")
 		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc), color="red")
 	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
 		and len(identified_exploits[LOW_RELIABILITY]) == 0:
-		print("\t[-] no exploits were discovered for this kernel")
+		color_print("\t[-] no exploits were discovered for this kernel", color="red")
 
 
 def brute_force_exploit(identified_exploits):
-	print("[*] attempting brute force of all discovered exploits from most to least probable")
+	color_print("[*] attempting brute force of all discovered exploits from most to least probable")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
-		print("\t[[ high reliability ]]")
+		color_print("\t[[ high reliability ]]", color="green")
 		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
 			high_exploit.exploit()
 	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
-		print("\t[[ medium reliability ]]")
+		color_print("\t[[ medium reliability ]]", color="yellow")
 		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
 			medium_exploit.exploit()
 	if len(identified_exploits[LOW_RELIABILITY]) > 0:
-		print("\t[[ low reliability ]]")
+		color_print("\t[[ low reliability ]]", color="red")
 		for low_exploit in identified_exploits[LOW_RELIABILITY]:
 			low_exploit.exploit()
 	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
 		and len(identified_exploits[LOW_RELIABILITY]) == 0:
-		print("\t[-] no exploits to verify for this kernel")
+		color_print("\t[-] no exploits to verify for this kernel", color="green")
 
-def kernelpop(exploit_db=None,mode="enumerate",uname=None):
+def kernelpop(mode="enumerate",uname=None):
 	"""
 	kernelpop()
 
@@ -225,7 +229,7 @@ def kernelpop(exploit_db=None,mode="enumerate",uname=None):
 	:return:
 	"""
 
-	print(HEADER)
+	color_print(HEADER, color="blue", bold=True)
 	if uname:
 		kernel_v = get_kernel_version(uname=uname)
 	else:

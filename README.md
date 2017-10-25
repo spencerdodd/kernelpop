@@ -100,7 +100,7 @@ The typical flow from run to pop is as follows:
 * find exploit for discovered kernel
 * check for exploit prerequisite conditions
 * find any necessary values (paths, environmental conditions, etc.)
-* alter source code with dynamic values
+* alter source code with dynamic values as necessary
 * compile updated source to `playground` with necessary flags
 * run exploit with required command structure
 * ???
