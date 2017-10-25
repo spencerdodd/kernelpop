@@ -5,6 +5,7 @@ from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
 	color_print
 
+
 class Kernel:
 	def __init__(self, kernel_version, uname=False):
 		self.type, self.distro, self.name, self.major_version, self.minor_version, \
@@ -184,60 +185,54 @@ def find_exploit_remotely(kernel_version):
 	"""
 	pass
 
-def display_identified_exploits(identified_exploits):
-	color_print("[*] identified exploits")
-	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
-		color_print("\t[[ high reliability ]]", color="green")
-		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
-	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
-		color_print("\t[[ medium reliability ]]", color="yellow")
-		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
-	if len(identified_exploits[LOW_RELIABILITY]) > 0:
-		color_print("\t[[ low reliability ]]", color="red")
-		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
-	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
-		and len(identified_exploits[LOW_RELIABILITY]) == 0:
-		color_print("\t[-] no exploits were discovered for this kernel", color="red")
-
-
-def brute_force_exploit(identified_exploits):
-	color_print("[*] attempting brute force of all discovered exploits from most to least probable")
-	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
-		color_print("\t[[ high reliability ]]", color="green")
-		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			high_exploit.exploit()
-	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
-		color_print("\t[[ medium reliability ]]", color="yellow")
-		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			medium_exploit.exploit()
-	if len(identified_exploits[LOW_RELIABILITY]) > 0:
-		color_print("\t[[ low reliability ]]", color="red")
-		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			low_exploit.exploit()
-	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
-		and len(identified_exploits[LOW_RELIABILITY]) == 0:
-		color_print("\t[-] no exploits to verify for this kernel", color="green")
-
 def brute_force_enumerate(identified_exploits):
+	confirmed_vulnerable = {
+		"high":[],"medium":[],"low":[]
+	}
 	color_print("[*] attempting brute force of all discovered exploits from most to least probable")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
 		color_print("\t[[ high reliability ]]", color="green")
 		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			high_exploit.determine_vulnerability()
+			if high_exploit.determine_vulnerability():
+				confirmed_vulnerable["high"].append(high_exploit)
 	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
 		color_print("\t[[ medium reliability ]]", color="yellow")
 		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			medium_exploit.determine_vulnerability()
+			if medium_exploit.determine_vulnerability():
+				confirmed_vulnerable["medium"].append(medium_exploit)
 	if len(identified_exploits[LOW_RELIABILITY]) > 0:
 		color_print("\t[[ low reliability ]]", color="red")
 		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			low_exploit.determine_vulnerability()
+			if low_exploit.determine_vulnerability():
+				confirmed_vulnerable["low"].append(low_exploit)
 	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
 		and len(identified_exploits[LOW_RELIABILITY]) == 0:
 		color_print("\t[-] no exploits to verify for this kernel", color="green")
+
+	return confirmed_vulnerable
+
+def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=None, color=None):
+	if begin_message:
+		if color:
+			color_print(begin_message, color=color)
+		else:
+			color_print(begin_message)
+	if len(ordered_exploits[HIGH_RELIABILITY]) > 0:
+		color_print("\t[[ high reliability ]]", color="green")
+		for high_exploit in ordered_exploits[HIGH_RELIABILITY]:
+			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+	if len(ordered_exploits[MEDIUM_RELIABILITY]) > 0:
+		color_print("\t[[ medium reliability ]]", color="yellow")
+		for medium_exploit in ordered_exploits[MEDIUM_RELIABILITY]:
+			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+	if len(ordered_exploits[LOW_RELIABILITY]) > 0:
+		color_print("\t[[ low reliability ]]", color="red")
+		for low_exploit in ordered_exploits[LOW_RELIABILITY]:
+			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+	if len(ordered_exploits[HIGH_RELIABILITY]) == 0 and len(ordered_exploits[MEDIUM_RELIABILITY]) == 0 \
+			and len(ordered_exploits[LOW_RELIABILITY]) == 0:
+		if fail_message:
+			color_print(fail_message, color="red")
 
 def kernelpop(mode="enumerate",uname=None):
 	"""
@@ -253,10 +248,14 @@ def kernelpop(mode="enumerate",uname=None):
 	else:
 		kernel_v = get_kernel_version()
 	identified_exploits = find_exploit_locally(kernel_v)
-	display_identified_exploits(identified_exploits)
+	display_ordered_exploits(identified_exploits, begin_message="[*] identified exploits",
+		fail_message="[-] no exploits were discovered for this kernel")
 
 	if mode == "brute-enumerate":
-		brute_force_enumerate(identified_exploits)
+		confirmed_exploits = brute_force_enumerate(identified_exploits)
+
+		display_ordered_exploits(confirmed_exploits, begin_message="[+] confirmed exploits",
+			fail_message="[-] no exploits were discovered for this kernel")
 
 
 if __name__ == "__main__":
