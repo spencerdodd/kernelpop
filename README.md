@@ -7,34 +7,89 @@ compatible. As it stands, the `brute` mode is set to prepare, compile, and runs 
 exploitable kernel. This functionality, at the moment, is only functional on the box the program is run on. As it
 is a fairly large project to bring on to someone else's computer and makes considerably noise when compiling and 
 checking exploit attempts, it would be poor OPSEC to use in an actual engagement. The `input` mode allows you to
-perform enumeration with just the output of a `uname` command which makes it useful as a host-side enumeration tool. 
+perform enumeration with just the output of a `uname -a` command which makes it useful as a host-side enumeration tool. 
 At some point in the future, I would like to integrate it into my other project 
 [pysploit](https://github.com/spencerdodd/pysploit) for enumeration and reckless, noisy, brute-forcing
 
 tested just on Ubuntu as of 10-24-2017
 
+### normal run
+
 ```
-$ python kernelpop.py
+﻿exploit@ubuntuexploit:~/Desktop/kernelpop$ python3 kernelpop.py
 
 ##########################
-# welcome to kernelpop   #
+#  welcome to kernelpop  #
 #                        #
 # let's pop some kernels #
 ##########################
 
 [+] underlying os identified as a linux variant
-[+] kernel Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial identified as:
+[+] kernel Linux-4.10.0-28-generic-x86_64-with-Ubuntu-16.04-xenial identified as:
 	type:			linux
 	distro:			ubuntu
-	version:		4.10-37
+	version:		4.10-28
 	architecture:	x86_64
 [*] matching kernel to known exploits
 	[+] found potential kernel exploit: CVE-2009-1185
 [*] identified exploits
 	[[ high reliability ]]
-		CVE-2009-1185	udev before 1.4.1 does not verify whether a NETLINK message originates from kernel space, which allows local users to gain privileges by sending a NETLINK message from user space.
-	[[ medium reliability ]]
-	[[ low reliability ]]
+		CVE-2009-1185	udev before 1.4.1 NETLINK user space priv esc
+```
+
+### input mode (output of `uname -a`)
+
+```
+﻿exploit@ubuntuexploit:~/Desktop/kernelpop$ uname -a
+Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+exploit@ubuntuexploit:~/Desktop/kernelpop$ python3 kernelpop.py -i
+Please enter uname: Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+
+##########################
+#  welcome to kernelpop  #
+#                        #
+# let's pop some kernels #
+##########################
+
+[+] underlying os identified as a linux variant
+[+] kernel Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux identified as:
+	type:			linux
+	distro:			ubuntu
+	version:		4.10-28
+	architecture:	x86_64
+[*] matching kernel to known exploits
+	[+] found potential kernel exploit: CVE-2009-1185
+[*] identified exploits
+	[[ high reliability ]]
+		CVE-2009-1185	udev before 1.4.1 NETLINK user space priv esc
+```
+
+### brute-force mode
+```
+﻿exploit@ubuntuexploit:~/Desktop/kernelpop$ python3 kernelpop.py -b
+
+##########################
+#  welcome to kernelpop  #
+#                        #
+# let's pop some kernels #
+##########################
+
+[+] underlying os identified as a linux variant
+[+] kernel Linux-4.10.0-28-generic-x86_64-with-Ubuntu-16.04-xenial identified as:
+	type:			linux
+	distro:			ubuntu
+	version:		4.10-28
+	architecture:	x86_64
+[*] matching kernel to known exploits
+	[+] found potential kernel exploit: CVE-2009-1185
+[*] identified exploits
+	[[ high reliability ]]
+		CVE-2009-1185	udev before 1.4.1 NETLINK user space priv esc
+[*] attempting brute force of all discovered exploits from most to least probable
+	[[ high reliability ]]
+	[*] attempting to exploit CVE-2009-1185
+	[-] exploitation failed: not vulnerable: (1: udevd: not found)
+	[-] exploitation failed: not vulnerable to CVE20091185
 ```
 
 ### workflow
