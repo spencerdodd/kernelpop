@@ -91,11 +91,11 @@ class Kernel:
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 				"\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, self.distro, ".".join([self.major_version, self.minor_version]), self.release,
-				self.architecture), color="green")
+				self.architecture), bold=True)
 		elif self.type == "mac":
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
 				self.uname, self.type, ".".join([self.major_version, self.minor_version, self.release]),
-				self.architecture), color="green")
+				self.architecture), bold=True)
 		elif self.type == "windows":
 			pass
 		else:
@@ -189,15 +189,15 @@ def display_identified_exploits(identified_exploits):
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
 		color_print("\t[[ high reliability ]]", color="green")
 		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc), color="green")
+			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
 	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
 		color_print("\t[[ medium reliability ]]", color="yellow")
 		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc), color="yellow")
+			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
 	if len(identified_exploits[LOW_RELIABILITY]) > 0:
 		color_print("\t[[ low reliability ]]", color="red")
 		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc), color="red")
+			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
 	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and len(identified_exploits[MEDIUM_RELIABILITY]) == 0 \
 		and len(identified_exploits[LOW_RELIABILITY]) == 0:
 		color_print("\t[-] no exploits were discovered for this kernel", color="red")
