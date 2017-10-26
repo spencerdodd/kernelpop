@@ -129,6 +129,19 @@ def potentially_vulnerable(kernel_version, exploit_module):
 	minor_v = kernel_version.minor_version
 	release_v = kernel_version.release
 
+	lowest_major_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[0]
+	lowest_minor_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[1]
+	lowest_release_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[2]
+	highest_major_v = 	exploit_module.highest_vulnerable_kernel.split(".")[0]
+	highest_minor_v = 	exploit_module.highest_vulnerable_kernel.split(".")[1]
+	highest_release_v = exploit_module.highest_vulnerable_kernel.split(".")[2]
+	if major_v <= highest_major_v and minor_v <= highest_minor_v and release_v <= highest_release_v \
+		and major_v >= lowest_major_v and minor_v >= lowest_minor_v and minor_v >= lowest_release_v:
+			if exploit_module.window_type == "confirmed":
+				return "confirmed"
+			elif exploit_module.window_type == "potential":
+				return "potential"
+
 	for vulnerable_version in exploit_module.vulnerable_kernels["confirmed"]:
 		if vulnerable_version.split(".")[0] == major_v and vulnerable_version.split(".")[1] == minor_v \
 				and vulnerable_version.split(".")[2] == release_v:
@@ -307,7 +320,7 @@ def kernelpop(mode="enumerate", uname=None):
 		confirmed_vulnerable = brute_force_enumerate(merged_exploits)
 
 		display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
-								 fail_message="[-] no exploits were discovered for this kernel")
+								 fail_message="[-] no exploits were confirmed for this kernel")
 
 
 if __name__ == "__main__":
