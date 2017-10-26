@@ -200,9 +200,7 @@ def find_exploit_remotely(kernel_version):
 
 
 def brute_force_enumerate(identified_exploits):
-	confirmed_vulnerable = {
-		"high": [], "medium": [], "low": []
-	}
+	confirmed_vulnerable = {"high":[], "medium":[], "low":[]}
 	color_print("[*] attempting brute force of all discovered exploits from most to least probable")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
 		color_print("\t[[ high reliability ]]", color="green")
@@ -222,7 +220,7 @@ def brute_force_enumerate(identified_exploits):
 	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and \
 					len(identified_exploits[MEDIUM_RELIABILITY]) == 0 and \
 					len(identified_exploits[LOW_RELIABILITY]) == 0:
-		color_print("\t[-] no exploits to verify for this kernel", color="red")
+		color_print("[-] no exploits to verify for this kernel", color="red")
 
 	return confirmed_vulnerable
 
@@ -301,10 +299,14 @@ def kernelpop(mode="enumerate", uname=None):
 		begin_message="[*] matched kernel to the following potential exploits:",
 		fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
 
-	if mode == "brute-enumerate":
-		confirmed_exploits = brute_force_enumerate(identified_exploits)
+	merged_exploits = {}
+	for key_val in identified_exploits["confirmed"]:
+		merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
-		display_ordered_exploits(confirmed_exploits, begin_message="[+] confirmed exploits",
+	if mode == "brute-enumerate":
+		confirmed_vulnerable = brute_force_enumerate(merged_exploits)
+
+		display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
 								 fail_message="[-] no exploits were discovered for this kernel")
 
 
