@@ -1,9 +1,11 @@
 import os
-import sys
+import subprocess
 import platform
 from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
-	color_print
+	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
+	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
+	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS
 
 
 class Kernel:
@@ -15,16 +17,65 @@ class Kernel:
 
 	def parse_distro(self, kernel_version):
 		"""
-		grabs the distro name if it can from a distribution string (platform.platform() call result)
+		grabs the distro name if it can from /etc/*release
 
 		:param kernel_version: String from platform.platform()
 		:return: String of distro name if it exists
 		"""
 		if "linux" in kernel_version.lower():
-			distros = ["ubuntu", "debian", "enterprise"]
-			for distro in distros:
-				if distro in kernel_version.lower():
-					return distro
+			release_command = "cat /etc/*release"
+			p = subprocess.Popen(
+				release_command,
+				stdin=subprocess.PIPE,
+				stdout=subprocess.PIPE,
+				stderr=subprocess.PIPE,
+				shell=True
+			)
+			release_result = p.communicate()[0].decode('utf-8')
+			distro_id = release_result.split("\n")[0]
+			if "Ubuntu" in distro_id:
+				distro_desc = release_result.split("\n")[3]
+				version_num = distro_desc.split(" ")[1].split(".")[0]
+				if "7" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_7_LTS
+					else:
+						return UBUNTU_7
+				elif "8" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_8_LTS
+					else:
+						return UBUNTU_8
+				elif "9" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_9_LTS
+					else:
+						return UBUNTU_9
+				elif "12" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_12_LTS
+					else:
+						return UBUNTU_12
+				elif "14" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_14_LTS
+					else:
+						return UBUNTU_14
+				elif "16" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_16
+					else:
+						return UBUNTU_16_LTS
+				elif "17" in version_num:
+					if "LTS" in distro_desc:
+						return UBUNTU_17_LTS
+					else:
+						return UBUNTU_17
+
+				else:
+					return UBUNTU_GENERIC
+			else:
+				return GENERIC_LINUX
 
 		return "unknown"
 
@@ -125,37 +176,14 @@ def get_kernel_version(uname=None):
 
 
 def potentially_vulnerable(kernel_version, exploit_module):
-	major_v = kernel_version.major_version
-	minor_v = kernel_version.minor_version
-	release_v = kernel_version.release
 
-	lowest_major_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[0]
-	lowest_minor_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[1]
-	lowest_release_v = 	exploit_module.lowest_vulnerable_kernel.split(".")[2]
-	highest_major_v = 	exploit_module.highest_vulnerable_kernel.split(".")[0]
-	highest_minor_v = 	exploit_module.highest_vulnerable_kernel.split(".")[1]
-	highest_release_v = exploit_module.highest_vulnerable_kernel.split(".")[2]
-	if major_v <= highest_major_v and minor_v <= highest_minor_v and release_v <= highest_release_v \
-		and major_v >= lowest_major_v and minor_v >= lowest_minor_v and minor_v >= lowest_release_v:
-			if exploit_module.window_type == "confirmed":
-				return "confirmed"
-			elif exploit_module.window_type == "potential":
-				return "potential"
-
-	for vulnerable_version in exploit_module.vulnerable_kernels["confirmed"]:
-		if vulnerable_version.split(".")[0] == major_v and vulnerable_version.split(".")[1] == minor_v \
-				and vulnerable_version.split(".")[2] == release_v:
-			return "confirmed"
-
-	for vulnerable_version in exploit_module.vulnerable_kernels["potential"]:
-		if vulnerable_version.split(".")[0] == major_v and vulnerable_version.split(".")[1] == minor_v \
-				and vulnerable_version.split(".")[2] == release_v:
-			"potential"
-
-	if "all" in exploit_module.vulnerable_kernels["potential"]:
-		return "potential"
-
-	return "not vulnerable"
+	for kernel_window in exploit_module.vulnerable_kernels:
+		if kernel_window.kernel_in_window(kernel_version) == CONFIRMED_VULNERABLE:
+			return CONFIRMED_VULNERABLE
+		elif kernel_window.kernel_in_window(kernel_version) == POTENTIALLY_VULNERABLE:
+			return POTENTIALLY_VULNERABLE
+		else:
+			return NOT_VULNERABLE
 
 
 def find_exploit_locally(kernel_version):
@@ -189,11 +217,11 @@ def find_exploit_locally(kernel_version):
 				exploit_name = exploit_file.replace(".py", "")
 				exploit_module = locate("exploits.linux.{}.{}".format(exploit_name, exploit_name))
 				exploit_instance = exploit_module()
-				if potentially_vulnerable(kernel_version, exploit_instance) == "confirmed":
+				if potentially_vulnerable(kernel_version, exploit_instance) == CONFIRMED_VULNERABLE:
 					color_print("\t[+] found `confirmed` kernel exploit: {}".format(exploit_instance.name),
 								color="green")
 					found_exploits["confirmed"][exploit_instance.reliability].append(exploit_instance)
-				elif potentially_vulnerable(kernel_version, exploit_instance) == "potential":
+				elif potentially_vulnerable(kernel_version, exploit_instance) == POTENTIALLY_VULNERABLE:
 					color_print("\t[+] found potential kernel exploit: {}".format(exploit_instance.name),
 								color="yellow")
 					found_exploits["potential"][exploit_instance.reliability].append(exploit_instance)
@@ -254,15 +282,15 @@ def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=
 		if len(ordered_exploits[HIGH_RELIABILITY]) > 0:
 			color_print("\t[[ high reliability ]]", color=color)
 			for high_exploit in ordered_exploits[HIGH_RELIABILITY]:
-				color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+				color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc), color=color)
 		if len(ordered_exploits[MEDIUM_RELIABILITY]) > 0:
 			color_print("\t[[ medium reliability ]]", color=color)
 			for medium_exploit in ordered_exploits[MEDIUM_RELIABILITY]:
-				color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+				color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc), color=color)
 		if len(ordered_exploits[LOW_RELIABILITY]) > 0:
 			color_print("\t[[ low reliability ]]", color=color)
 			for low_exploit in ordered_exploits[LOW_RELIABILITY]:
-				color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+				color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc), color=color)
 		if len(ordered_exploits[HIGH_RELIABILITY]) == 0 and \
 						len(ordered_exploits[MEDIUM_RELIABILITY]) == 0 and \
 						len(ordered_exploits[LOW_RELIABILITY]) == 0:
