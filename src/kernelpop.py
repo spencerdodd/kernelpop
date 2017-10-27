@@ -89,9 +89,9 @@ class Kernel:
 				k_type = "mac"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split(" ")[0]
-				k_major = kernel_version.split(" ")[2].split(".")[0]
-				k_minor = kernel_version.split(" ")[2].split(".")[1]
-				k_release = kernel_version.split(" ")[2].split(".")[2]
+				k_major = int(kernel_version.split(" ")[2].split(".")[0])
+				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
+				k_release = int(kernel_version.split(" ")[2].split(".")[2])
 				k_architecture = kernel_version.split(" ")[-1]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
@@ -99,9 +99,9 @@ class Kernel:
 				k_type = "mac"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split("-")[0]
-				k_major = kernel_version.split("-")[1].split(".")[0]
-				k_minor = kernel_version.split("-")[1].split(".")[1]
-				k_release = kernel_version.split("-")[1].split(".")[2]
+				k_major = int(kernel_version.split("-")[1].split(".")[0])
+				k_minor = int(kernel_version.split("-")[1].split(".")[1])
+				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[2]
 
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
@@ -114,9 +114,9 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split(" ")[0]
-				k_major = kernel_version.split(" ")[2].split(".")[0]
-				k_minor = kernel_version.split(" ")[2].split(".")[1]
-				k_release = kernel_version.split(" ")[2].split("-")[1]
+				k_major = int(kernel_version.split(" ")[2].split(".")[0])
+				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
+				k_release = int(kernel_version.split(" ")[2].split("-")[1])
 				k_architecture = kernel_version.split(" ")[-2]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
@@ -124,9 +124,9 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split("-")[-1]
-				k_major = kernel_version.split("-")[1].split(".")[0]
-				k_minor = kernel_version.split("-")[1].split(".")[1]
-				k_release = kernel_version.split("-")[2]
+				k_major = int(kernel_version.split("-")[1].split(".")[0])
+				k_minor = int(kernel_version.split("-")[1].split(".")[1])
+				k_release = int(kernel_version.split("-")[2])
 				k_architecture = kernel_version.split("-")[4]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
@@ -142,11 +142,11 @@ class Kernel:
 		if self.type == "linux":
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 						"\n\tarchitecture:\t\t{}".format(
-				self.uname, self.type, self.distro, ".".join([self.major_version, self.minor_version]), self.release,
+				self.uname, self.type, self.distro, ".".join([str(self.major_version), str(self.minor_version)]), self.release,
 				self.architecture), bold=True)
 		elif self.type == "mac":
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
-				self.uname, self.type, ".".join([self.major_version, self.minor_version, self.release]),
+				self.uname, self.type, ".".join([str(self.major_version), str(self.minor_version), str(self.release)]),
 				self.architecture), bold=True)
 		elif self.type == "windows":
 			pass
