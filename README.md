@@ -13,7 +13,17 @@ point in the future, I would like to integrate it into my other project
 [pysploit](https://github.com/spencerdodd/pysploit) for enumeration and the reckless, noisy, exploity `brute-exploit`
 mode.
 
-tested just on Ubuntu as of 10-24-2017
+### Currently supported CVE's:
+
+*`CVE-2017-1000367`
+*`CVE-2017-1000112`
+*`CVE-2017-7308`
+*`CVE-2017-6074`
+*`CVE-2017-5123`
+*`CVE-2016-5195`
+*`CVE-2016-2384`
+*`CVE-2015-7547`
+*`CVE-2009-1185`
 
 ### default mode
 

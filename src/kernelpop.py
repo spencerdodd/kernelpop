@@ -5,7 +5,8 @@ from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
 	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
-	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC
+	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC, UBUNTU_15, UBUNTU_15_LTS, \
+	UBUNTU_6
 
 
 class Kernel:
@@ -63,6 +64,11 @@ class Kernel:
 							return UBUNTU_14_LTS
 						else:
 							return UBUNTU_14
+					elif "15" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_15_LTS
+						else:
+							return UBUNTU_15
 					elif "16" in version_num:
 						if "LTS" in distro_desc:
 							return UBUNTU_16
@@ -82,10 +88,20 @@ class Kernel:
 
 			elif "ubuntu-16" in kernel_version.lower():
 				return UBUNTU_16
+			elif "ubuntu-15" in kernel_version.lower():
+				return UBUNTU_15
 			elif "ubuntu-14" in kernel_version.lower():
 				return UBUNTU_14
 			elif "ubuntu-12" in kernel_version.lower():
 				return UBUNTU_12
+			elif "ubuntu-9" in kernel_version.lower():
+				return UBUNTU_9
+			elif "ubuntu-8" in kernel_version.lower():
+				return UBUNTU_8
+			elif "ubuntu-7" in kernel_version.lower():
+				return UBUNTU_7
+			elif "ubuntu-6" in kernel_version.lower():
+				return UBUNTU_6
 			elif "ubuntu" in kernel_version.lower():
 				return UBUNTU_GENERIC
 			# now debian...
