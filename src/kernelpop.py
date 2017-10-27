@@ -5,7 +5,7 @@ from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
 	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
-	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS
+	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC
 
 
 class Kernel:
@@ -32,48 +32,66 @@ class Kernel:
 				shell=True
 			)
 			release_result = p.communicate()[0].decode('utf-8')
-			distro_id = release_result.split("\n")[0]
-			if "Ubuntu" in distro_id:
-				distro_desc = release_result.split("\n")[3]
-				version_num = distro_desc.split(" ")[1].split(".")[0]
-				if "7" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_7_LTS
-					else:
-						return UBUNTU_7
-				elif "8" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_8_LTS
-					else:
-						return UBUNTU_8
-				elif "9" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_9_LTS
-					else:
-						return UBUNTU_9
-				elif "12" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_12_LTS
-					else:
-						return UBUNTU_12
-				elif "14" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_14_LTS
-					else:
-						return UBUNTU_14
-				elif "16" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_16
-					else:
-						return UBUNTU_16_LTS
-				elif "17" in version_num:
-					if "LTS" in distro_desc:
-						return UBUNTU_17_LTS
-					else:
-						return UBUNTU_17
+			# if there is a /etc/*release file
+			if len(release_result) > 0:
+				distro_id = release_result.split("\n")[0]
+				if "Ubuntu" in distro_id:
+					distro_desc = release_result.split("\n")[3]
+					version_num = distro_desc.split(" ")[1].split(".")[0]
+					if "7" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_7_LTS
+						else:
+							return UBUNTU_7
+					elif "8" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_8_LTS
+						else:
+							return UBUNTU_8
+					elif "9" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_9_LTS
+						else:
+							return UBUNTU_9
+					elif "12" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_12_LTS
+						else:
+							return UBUNTU_12
+					elif "14" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_14_LTS
+						else:
+							return UBUNTU_14
+					elif "16" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_16
+						else:
+							return UBUNTU_16_LTS
+					elif "17" in version_num:
+						if "LTS" in distro_desc:
+							return UBUNTU_17_LTS
+						else:
+							return UBUNTU_17
 
-				else:
-					return UBUNTU_GENERIC
+					else:
+						return UBUNTU_GENERIC
+				# now debian
+				if "Debian" in distro_id:
+					return DEBIAN_GENERIC
+
+			elif "ubuntu-16" in kernel_version.lower():
+				return UBUNTU_16
+			elif "ubuntu-14" in kernel_version.lower():
+				return UBUNTU_14
+			elif "ubuntu-12" in kernel_version.lower():
+				return UBUNTU_12
+			elif "ubuntu" in kernel_version.lower():
+				return UBUNTU_GENERIC
+			# now debian...
+			elif "debian" in kernel_version.lower():
+				return DEBIAN_GENERIC
+			# etc ...
 			else:
 				return GENERIC_LINUX
 
