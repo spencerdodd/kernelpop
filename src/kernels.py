@@ -33,6 +33,6 @@ class KernelWindow:
 			window_high = "{}.{}.{}".format(self.highest_major, self.highest_minor, self.highest_release)
 			kernel_v = "{}.{}.{}".format(kernel.major_version, kernel.minor_version, kernel.release)
 			if StrictVersion(window_low) <= kernel_v <= StrictVersion(window_high):
-				return CONFIRMED_VULNERABLE
+				return self.confirmation
 			else:
 				return NOT_VULNERABLE
