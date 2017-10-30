@@ -4,10 +4,11 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 
 ![old-kernel](https://github.com/spencerdodd/kernelpop/blob/master/img/old_kernel.png "old kernel img")
 
-# requirements
+### requirements
 
 `python3`
 
+---
 
 ### currently supported CVE's:
 
@@ -25,11 +26,25 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 
 *`CVE-2016-2384`
 
+*`CVE-2016-0728`
+
 *`CVE-2015-7547`
 
 *`CVE-2015-1328`
 
+*`CVE-2014-4699`
+
+*`CVE-2014-4014`
+
+*`CVE-2014-3153`
+
+*`CVE-2014-0196`
+
 *`CVE-2009-1185`
+
+---
+
+# run modes
 
 ### default mode
 
