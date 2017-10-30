@@ -212,13 +212,7 @@ def get_kernel_version(uname=None):
 def potentially_vulnerable(kernel_version, exploit_module):
 
 	for kernel_window in exploit_module.vulnerable_kernels:
-		if kernel_window.kernel_in_window(kernel_version) == CONFIRMED_VULNERABLE:
-			return CONFIRMED_VULNERABLE
-		elif kernel_window.kernel_in_window(kernel_version) == POTENTIALLY_VULNERABLE:
-			return POTENTIALLY_VULNERABLE
-		else:
-			return NOT_VULNERABLE
-
+		return kernel_window.kernel_in_window(kernel_version)
 
 def find_exploit_locally(kernel_version):
 	"""

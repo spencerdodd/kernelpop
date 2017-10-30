@@ -1,6 +1,7 @@
 """
 Class for holding kernel windows for vulnerabilities
 """
+from distutils.version import StrictVersion
 from src.kernelpop import Kernel
 from constants import CONFIRMED_VULNERABLE, NOT_VULNERABLE
 
@@ -26,38 +27,12 @@ class KernelWindow:
 		# 	i.e. "debian" will be in "debian7" and "debian8" etc...
 		# TODO: this logic is fucked
 		if not self.distro in kernel.distro:
-			return "no"
+			return NOT_VULNERABLE
 		else:
-			if self.lowest_major < kernel.major_version < self.highest_major:
-				return self.confirmation
-			elif self.lowest_major <= kernel.major_version <= self.highest_major:
-				if self.highest_major == kernel.major_version:
-					if self.highest_minor == kernel.minor_version:
-						if self.highest_release >= kernel.release:
-							return self.confirmation
-						else:
-							return "no"
-					elif self.highest_minor > kernel.minor_version:
-						if self.highest_release >= kernel.release:
-							return self.confirmation
-						else:
-							return "no"
-					else:
-						return "no"
-				elif self.lowest_major == kernel.major_version:
-					if self.lowest_minor == kernel.minor_version:
-						if self.lowest_release <= kernel.release:
-							return self.confirmation
-						else:
-							return "no"
-					elif self.lowest_minor < kernel.minor_version:
-						if self.lowest_release <= kernel.release:
-							return self.confirmation
-						else:
-							return "no"
-					else:
-						return "no"
-				else:
-					return "no"
+			window_low = "{}.{}.{}".format(self.lowest_major, self.lowest_minor, self.lowest_release)
+			window_high = "{}.{}.{}".format(self.highest_major, self.highest_minor, self.highest_release)
+			kernel_v = "{}.{}.{}".format(kernel.major_version, kernel.minor_version, kernel.release)
+			if StrictVersion(window_low) <= kernel_v <= StrictVersion(window_high):
+				return CONFIRMED_VULNERABLE
 			else:
-				return "no"
+				return NOT_VULNERABLE
