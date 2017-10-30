@@ -250,7 +250,7 @@ def find_exploit_locally(kernel_version):
 								color="green")
 					found_exploits["confirmed"][exploit_instance.reliability].append(exploit_instance)
 				elif potentially_vulnerable(kernel_version, exploit_instance) == POTENTIALLY_VULNERABLE:
-					color_print("\t[+] found potential kernel exploit: {}".format(exploit_instance.name),
+					color_print("\t[+] found `potential` kernel exploit: {}".format(exploit_instance.name),
 								color="yellow")
 					found_exploits["potential"][exploit_instance.reliability].append(exploit_instance)
 				else:
