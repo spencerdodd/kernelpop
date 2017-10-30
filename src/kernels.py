@@ -28,7 +28,9 @@ class KernelWindow:
 		if not self.distro in kernel.distro:
 			return "no"
 		else:
-			if self.lowest_major <= kernel.major_version <= self.highest_major:
+			if self.lowest_major < kernel.major_version < self.highest_major:
+				return self.confirmation
+			elif self.lowest_major <= kernel.major_version <= self.highest_major:
 				if self.highest_major == kernel.major_version:
 					if self.highest_minor == kernel.minor_version:
 						if self.highest_release >= kernel.release:
@@ -36,11 +38,12 @@ class KernelWindow:
 						else:
 							return "no"
 					elif self.highest_minor > kernel.minor_version:
-						return self.confirmation
+						if self.highest_release >= kernel.release:
+							return self.confirmation
+						else:
+							return "no"
 					else:
 						return "no"
-				elif self.highest_major > kernel.major_version:
-					return self.confirmation
 				elif self.lowest_major == kernel.major_version:
 					if self.lowest_minor == kernel.minor_version:
 						if self.lowest_release <= kernel.release:
@@ -48,10 +51,13 @@ class KernelWindow:
 						else:
 							return "no"
 					elif self.lowest_minor < kernel.minor_version:
-						return self.confirmation
+						if self.lowest_release <= kernel.release:
+							return self.confirmation
+						else:
+							return "no"
 					else:
 						return "no"
-				elif self.lowest_major < kernel.major_version:
-					return self.confirmation
+				else:
+					return "no"
 			else:
 				return "no"
