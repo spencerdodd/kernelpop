@@ -10,7 +10,7 @@ CONFIRMED_VULNERABLE = "confirmed_vulnerable"
 POTENTIALLY_VULNERABLE = "potentially_vulnerable"
 NOT_VULNERABLE = "not_vulnerable"
 
-GENERIC_LINUX = "generic-linux"
+GENERIC_LINUX = "linux"
 
 UBUNTU_GENERIC = "ubuntu"
 UBUNTU_17 = "ubuntu17"
