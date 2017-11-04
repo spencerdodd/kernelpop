@@ -12,6 +12,11 @@ The next steps in order of priority are:
 
 * add mac functionality
 
+I'm taking class and working fulltime so getting programming time is sporadic, but I will try to get
+as many contribs in as I can. Thanks!
+
+---
+
 kernelpop is a framework for performing automated kernel exploit enumeration on Linux, Mac, and Windows hosts.
 
 ![old-kernel](https://github.com/spencerdodd/kernelpop/blob/master/img/old_kernel.png "old kernel img")
