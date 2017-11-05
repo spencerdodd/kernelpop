@@ -150,9 +150,18 @@ class Kernel:
 				k_name = kernel_version.split(" ")[0]
 				k_major = int(kernel_version.split(" ")[2].split(".")[0])
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
-				k_release = int(kernel_version.split(" ")[2].split("-")[1])
 				k_architecture = kernel_version.split(" ")[-2]
+
+				# kali kernel parsing is a little different to get accurate release # on kernel
+				# Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux
+				if "kali" in kernel_version.lower():
+					k_release = int(kernel_version.split(" ")[-4].split("-")[0].split(".")[2])
+					pass
+				else:
+					k_release = int(kernel_version.split(" ")[2].split("-")[1])
+
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
+
 			else:
 				color_print("[+] underlying os identified as a linux variant")
 				k_type = "linux"
@@ -160,13 +169,18 @@ class Kernel:
 				k_name = kernel_version.split("-")[-1]
 				k_major = int(kernel_version.split("-")[1].split(".")[0])
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[2])
+				k_release = int(kernel_version.split("-")[2].replace("kali", ""))
 				k_architecture = kernel_version.split("-")[4]
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on windows
 		elif "win" in kernel_version:
 			color_print("[+] underlying os identified as a windows variant")
+			if uname:
+				color_print("[-] no uname support yet", color="red")
+				exit(0)
+			else:
+				pass
 		# don't know what we're on
 		else:
 			color_print("[-] could not identify underlying os", color="red")

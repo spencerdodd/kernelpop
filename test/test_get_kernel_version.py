@@ -43,5 +43,11 @@ class TestGetKernelVersion(unittest.TestCase):
 		self.assertEqual(test_linux_platform_kernel, test_linux_uname_kernel)
 		self.assertEqual(test_mac_platform_kernel, test_mac_uname_kernel)
 
+	def test_kali(self):
+		test_kali_uname_1 = "Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux"
+		test_kali_uname_2 = "Linux kali 4.9.0-kali4-amd64 #1 SMP Debian 4.9.25-1kali1 (2017-10-16) x86_64 GNU/Linux"
+		test_kali_kernel_1 = Kernel(test_kali_uname_1, uname=True)
+		test_kali_kernel_2 = Kernel(test_kali_uname_2, uname=True)
+
 if __name__ ==  "__main__":
 	unittest.main()
