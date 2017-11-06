@@ -50,6 +50,10 @@ CENTOS = "linuxcentos"
 FEDORA = "linuxfedora"
 GENTOO = "linuxgentoo"
 
+ARCHITECTURE_GENERIC =  "archgeneric"
+ARCHITECTURE_x86_64 =   "archx8664"
+ARCHITECTURE_i386 =     "archi386"
+
 HEADER = """
 ##########################
 #  welcome to kernelpop  #
