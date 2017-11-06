@@ -50,9 +50,9 @@ CENTOS = "linuxcentos"
 FEDORA = "linuxfedora"
 GENTOO = "linuxgentoo"
 
-ARCHITECTURE_GENERIC =  "archgeneric"
-ARCHITECTURE_x86_64 =   "archx8664"
-ARCHITECTURE_i386 =     "archi386"
+ARCHITECTURE_GENERIC =  "generic"
+ARCHITECTURE_x86_64 =   "x86_64"
+ARCHITECTURE_i386 =     "i386"
 
 HEADER = """
 ##########################
