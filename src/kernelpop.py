@@ -6,7 +6,7 @@ from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, 
 	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
 	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC, UBUNTU_15, UBUNTU_15_LTS, \
-	UBUNTU_6
+	UBUNTU_6, ARCHITECTURE_GENERIC
 
 
 class Kernel:
@@ -224,9 +224,26 @@ def get_kernel_version(uname=None):
 
 
 def potentially_vulnerable(kernel_version, exploit_module):
+	"""
+	potentially_vulnerable(kernel_version, exploit_module)
 
-	for kernel_window in exploit_module.vulnerable_kernels:
-		return kernel_window.kernel_in_window(kernel_version)
+	Identifies if a given kernel is vulnerable to a given exploit and in what capacity (i.e. Confirmed or Potential).
+	Checks architecture requirements as well
+
+	:param kernel_version: Kernel object
+	:param exploit_module: Exploit object
+	:return: string expressing the vulnerability state of the given Kernel object to the given Exploit object
+	"""
+	if kernel_version.architecture == exploit_module.architecture or \
+					exploit_module.architecture == ARCHITECTURE_GENERIC:
+		vuln_results = []
+		for kernel_window in exploit_module.vulnerable_kernels:
+			vuln_results.append(kernel_window.kernel_in_window(kernel_version))
+		for vuln_cat in [CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE]:
+			if vuln_cat in vuln_results:
+				return vuln_cat
+	else:
+		return NOT_VULNERABLE
 
 def find_exploit_locally(kernel_version):
 	"""

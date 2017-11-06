@@ -36,6 +36,8 @@ UBUNTU_6 = "linuxubuntu6"
 UBUNTU_6_LTS = "linuxubuntu6lts"
 
 DEBIAN_GENERIC = "linuxdebian"
+DEBIAN_10 = "linuxdebian10"
+DEBIAN_9 = "linuxdebian9"
 DEBIAN_8 = "linuxdebian8"
 DEBIAN_7 = "linuxdebian7"
 DEBIAN_UNSTABLE = "linuxdebian-unstable"
@@ -45,7 +47,12 @@ ARCH_LTS = "linuxarchlts"
 
 RHEL = "linuxrhel"
 CENTOS = "linuxcentos"
+FEDORA = "linuxfedora"
 GENTOO = "linuxgentoo"
+
+ARCHITECTURE_GENERIC =  "generic"
+ARCHITECTURE_x86_64 =   "x86_64"
+ARCHITECTURE_i386 =     "i386"
 
 HEADER = """
 ##########################
