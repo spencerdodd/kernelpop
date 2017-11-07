@@ -2,18 +2,11 @@
 
 ### NOTE:
 
-Since it seems like this project is getting some clones / views, I should say this is a work in progress.
-While the linux enumeration is functional, I haven't fully implemented the Windows and Mac functionality.
-The next steps in order of priority are:
+Since it seems like this project is getting some clones / views, I should say this is a work in progress. I'm taking 
+class and working fulltime so getting programming time is sporadic. That said, I am actively maintaining and adding
+features. Please let me know if you find any issues with the program!
 
-* add windows functionality
-
-* add more exploits
-
-* add mac functionality
-
-I'm taking class and working fulltime so getting programming time is sporadic, but I will try to get
-as many contribs in as I can. Thanks!
+Thanks
 
 ---
 
@@ -28,6 +21,16 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 ---
 
 ### currently supported CVE's:
+
+* `CVE-2017-1000379`
+
+* `CVE-2017-1000373`
+
+* `CVE-2017-1000372`
+
+* `CVE-2017-1000371`
+
+* `CVE-2017-1000370`
 
 *`CVE-2017-1000367`
 
@@ -44,8 +47,6 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 *`CVE-2016-2384`
 
 *`CVE-2016-0728`
-
-*`CVE-2015-7547`
 
 *`CVE-2015-1328`
 
@@ -84,7 +85,7 @@ required vulnerable state for successful exploitation.
 The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
 which makes it useful as a host-side enumeration tool.
 
-![input-mode](https://github.com/spencerdodd/kernelpop/blob/master/img/input_mode.png "input img")
+![input-mode](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2 "input asciinema")
 
 One feature currently only partially implemented is `brute-exploit` mode. This is set to prepare, compile, and run
 exploits in order to confirm an exploitable kernel. However, as of now it would only run on the box the program is 
