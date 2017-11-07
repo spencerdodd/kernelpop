@@ -394,6 +394,16 @@ def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=
 				color_print(fail_message, color="red")
 
 
+def total_exploits(exploits):
+	total = 0
+	vulnerable_levels = [CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE]
+	levels = [HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY]
+	for level in levels:
+		if len(exploits[level]) > 0:
+			total += len(exploits[level])
+
+	return total
+
 def kernelpop(mode="enumerate", uname=None):
 	"""
 	kernelpop()
@@ -419,7 +429,7 @@ def kernelpop(mode="enumerate", uname=None):
 	for key_val in identified_exploits["confirmed"]:
 		merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
-	if len(merged_exploits) > 0:
+	if total_exploits(merged_exploits) > 0:
 		if "brute" in mode:
 			confirmed_vulnerable = brute_force_enumerate(merged_exploits)
 
@@ -428,6 +438,7 @@ def kernelpop(mode="enumerate", uname=None):
 
 			if "exploit" in mode:
 				brute_force_exploit(confirmed_vulnerable)
+
 
 if __name__ == "__main__":
 	kernelpop()
