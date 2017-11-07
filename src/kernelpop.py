@@ -407,10 +407,8 @@ def exploit_individually(exploit_name):
 		color_print("[-] exploit {} was not found".format(exploit_name), color="red")
 
 
-
 def total_exploits(exploits):
 	total = 0
-	vulnerable_levels = [CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE]
 	levels = [HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY]
 	for level in levels:
 		if len(exploits[level]) > 0:
