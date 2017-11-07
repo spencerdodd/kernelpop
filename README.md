@@ -31,7 +31,7 @@ potentially useful vulnerabilities and attached exploits.
 [![default-mode](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ.png "default asciinema")](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ)
 
 
-### exploit mode ~NEW~ (active)
+### exploit mode *NEW* (active)
 
 The `exploit` mode is run with the `-e` flag. This dynamically compiles and runs the exploit source code with stdio
 interactions inside the program! It can catch interrupts from short-stopped attempts as well
