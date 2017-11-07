@@ -70,7 +70,15 @@ The `default` mode runs with the command `python3 kernelpop.py`. This processes 
 host kernel and compares it to the known kernel exploits available to the program. It then outputs a list of
 potentially useful vulnerabilities and attached exploits.
 
-![default-mode](https://github.com/spencerdodd/kernelpop/blob/master/img/default_mode.png "default img")
+[![default-mode](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ.png "default asciinema")](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ)
+
+
+### exploit mode (new!)
+
+The `exploit` mode is run with the `-e` flag. This dynamically compiles and runs the exploit source code with stdio
+interactions inside the program! It can catch interrupts from short-stopped attempts as well
+
+[![exploit-mode](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW.png)](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW)
 
 ### brute-enumeration mode
 
@@ -78,7 +86,7 @@ The `brute-enumeration` mode performs the same checks, but then
 goes beyond and checks the computer for exploit prerequisites to see if the operating system is set up in the
 required vulnerable state for successful exploitation. 
 
-![brute-mode](https://github.com/spencerdodd/kernelpop/blob/master/img/brute_mode.png "brute img")
+[![brute-mode](https://asciinema.org/a/7X4fKZN9R2pJKUrqmFZsK33fd.png "brute asciinema")](https://asciinema.org/a/7X4fKZN9R2pJKUrqmFZsK33fd)
 
 ### input mode
 
@@ -87,18 +95,11 @@ which makes it useful as a host-side enumeration tool.
 
 [![input-mode](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2.png "input asciinema")](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2)
 
-
-One feature currently only partially implemented is `brute-exploit` mode. This is set to prepare, compile, and run
-exploits in order to confirm an exploitable kernel. However, as of now it would only run on the box the program is 
-executed on. Given that this is a fairly large project to bring on to someone else's computer, and makes considerable 
-noise when compiling and checking exploit attempts, it would be poor OPSEC to use in an actual engagement. At some 
-point in the future, I would like to integrate it into my other project 
-[pysploit](https://github.com/spencerdodd/pysploit) for enumeration and the reckless, noisy, exploity `brute-exploit`
-mode.
-
 ### exploit sources
 
 `https://github.com/SecWiki/linux-kernel-exploits`
+
+`http://exploit-db.com/`
 
 `https://www.exploit-db.com/local/`
 
