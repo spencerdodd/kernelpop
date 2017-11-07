@@ -448,10 +448,8 @@ def kernelpop(mode="enumerate", uname=None, exploit=None):
 		if total_exploits(merged_exploits) > 0:
 			if "brute" in mode:
 				confirmed_vulnerable = brute_force_enumerate(merged_exploits)
-
 				display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
 										 fail_message="[-] no exploits were confirmed for this kernel")
-
 				if "exploit" in mode:
 					brute_force_exploit(confirmed_vulnerable)
 
