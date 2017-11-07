@@ -12,6 +12,7 @@ Thanks!
 
 kernelpop is a framework for performing automated kernel exploit enumeration on Linux, Mac, and Windows hosts.
 
+---
 
 ### requirements
 
