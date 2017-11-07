@@ -128,7 +128,7 @@ class Kernel:
 				k_release = int(kernel_version.split(" ")[2].split(".")[2])
 				k_architecture = kernel_version.split(" ")[-1]
 				# replace any bad architecture parses
-				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
 					if architecture in kernel_version:
 						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
@@ -142,7 +142,7 @@ class Kernel:
 				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[2]
 				# replace any bad architecture parses
-				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
 					if architecture in kernel_version:
 						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
@@ -159,7 +159,7 @@ class Kernel:
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
 				k_architecture = kernel_version.split(" ")[-2]
 				# replace any bad architecture parses
-				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
 					if architecture in kernel_version:
 						k_architecture = architecture
 				# kali kernel parsing is a little different to get accurate release # on kernel
@@ -182,7 +182,7 @@ class Kernel:
 				k_release = int(kernel_version.split("-")[2].replace("kali", ""))
 				k_architecture = kernel_version.split("-")[4]
 				# replace any bad architecture parses
-				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
 					if architecture in kernel_version:
 						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
