@@ -85,7 +85,8 @@ required vulnerable state for successful exploitation.
 The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
 which makes it useful as a host-side enumeration tool.
 
-![input-mode](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2 "input asciinema")
+[![input-mode](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2.png "input asciinema")](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2)
+
 
 One feature currently only partially implemented is `brute-exploit` mode. This is set to prepare, compile, and run
 exploits in order to confirm an exploitable kernel. However, as of now it would only run on the box the program is 
