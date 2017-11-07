@@ -2,6 +2,7 @@ import os
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLAYGROUND_PATH = os.path.join(ROOT_DIR, "playground")
 LINUX_EXPLOIT_PATH = os.path.join(ROOT_DIR, "exploits", "linux")
+LINUX_EXPLOIT_SOURCE_PATH = os.path.join(ROOT_DIR, "exploits", "linux", "source")
 HIGH_RELIABILITY = "high"
 MEDIUM_RELIABILITY = "medium"
 LOW_RELIABILITY = "low"
@@ -56,7 +57,7 @@ NETBSD = "linuxnetbsd"
 ARCHITECTURE_GENERIC =  "generic"
 ARCHITECTURE_x86_64 =   "x86_64"
 ARCHITECTURE_amd64 =    "amd64"
-ARCHITECTURE_i386 =     "i386"
+ARCHITECTURE_i686 =     "i686"
 
 HEADER = """
 ##########################

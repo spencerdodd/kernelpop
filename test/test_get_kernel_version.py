@@ -16,7 +16,7 @@ class TestGetKernelVersion(unittest.TestCase):
 		self.assertEqual(test_linux_kernel.architecture, "x86_64")
 		self.assertEqual(test_linux_kernel.uname, test_linux_platform)
 
-		test_mac_platform = "Darwin-16.7.0-x86_64-i386-64bit"
+		test_mac_platform = "Darwin-16.7.0-x86_64-i686-64bit"
 		test_mac_kernel = Kernel(test_mac_platform)
 		self.assertEqual(test_mac_kernel.name, "Darwin")
 		self.assertEqual(test_mac_kernel.type, "mac")
@@ -28,11 +28,12 @@ class TestGetKernelVersion(unittest.TestCase):
 
 	def test_uname_input(self):
 		test_linux_platform = "Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial"
-		test_mac_platform = "Darwin-16.7.0-x86_64-i386-64bit"
+		test_mac_platform = "Darwin-16.7.0-x86_64-i686-64bit"
 		test_linux_uname = "Linux ubuntuexploit 4.10.0-28-generic #32~16.04.2-Ubuntu SMP Thu Jul 20 10:19:48 " \
 			"UTC 2017 x86_64 x86_64 x86_64 GNU/Linux"
 		test_mac_uname = "Darwin coastals-MacBook-Pro.local 16.7.0 Darwin Kernel Version 16.7.0: Thu Jun 15 " \
 			"17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64 x86_64"
+		test_rpi_uname = "Linux-3.16.0-4-686-pae-i686-with-debian-8.9"
 
 		# have to set the unames to None because input for platform and uname kernels is different
 		test_linux_platform_kernel = Kernel(test_linux_platform).uname = None

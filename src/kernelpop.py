@@ -115,7 +115,7 @@ class Kernel:
 
 	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
-		# Darwin-16.7.0-x86_64-i386-64bit
+		# Darwin-16.7.0-x86_64-i686-64bit
 		if "Darwin" in kernel_version:
 
 			if uname:
@@ -127,6 +127,10 @@ class Kernel:
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
 				k_release = int(kernel_version.split(" ")[2].split(".")[2])
 				k_architecture = kernel_version.split(" ")[-1]
+				# replace any bad architecture parses
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
 				color_print("[+] underlying os identified as a mac variant")
@@ -137,7 +141,10 @@ class Kernel:
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
 				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[2]
-
+				# replace any bad architecture parses
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on linux
@@ -151,7 +158,10 @@ class Kernel:
 				k_major = int(kernel_version.split(" ")[2].split(".")[0])
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
 				k_architecture = kernel_version.split(" ")[-2]
-
+				# replace any bad architecture parses
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				# kali kernel parsing is a little different to get accurate release # on kernel
 				# Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux
 				if "kali" in kernel_version.lower():
@@ -171,6 +181,10 @@ class Kernel:
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
 				k_release = int(kernel_version.split("-")[2].replace("kali", ""))
 				k_architecture = kernel_version.split("-")[4]
+				# replace any bad architecture parses
+				for architecture in ["x86", "i686", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on windows
@@ -301,7 +315,7 @@ def find_exploit_remotely(kernel_version):
 
 def brute_force_enumerate(identified_exploits):
 	confirmed_vulnerable = {"high":[], "medium":[], "low":[]}
-	color_print("[*] attempting brute force of all discovered exploits from most to least probable")
+	color_print("[*] attempting to confirm all discovered exploits from most to least probable")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
 		color_print("\t[[ high reliability ]]", color="green")
 		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
@@ -323,6 +337,22 @@ def brute_force_enumerate(identified_exploits):
 		color_print("[-] no exploits to verify for this kernel", color="red")
 
 	return confirmed_vulnerable
+
+
+def brute_force_exploit(confirmed_exploits):
+	color_print("\t[*] attempting to exploit confirmed exploits", color="blue")
+	if len(confirmed_exploits[HIGH_RELIABILITY]) > 0:
+		color_print("\t[[ high reliability ]]", color="green")
+		for high_exploit in confirmed_exploits[HIGH_RELIABILITY]:
+			high_exploit.exploit()
+	if len(confirmed_exploits[MEDIUM_RELIABILITY]) > 0:
+		color_print("\t[[ medium reliability ]]", color="yellow")
+		for medium_exploit in confirmed_exploits[MEDIUM_RELIABILITY]:
+			medium_exploit.exploit()
+	if len(confirmed_exploits[LOW_RELIABILITY]) > 0:
+		color_print("\t[[ low reliability ]]", color="red")
+		for low_exploit in confirmed_exploits[LOW_RELIABILITY]:
+			low_exploit.exploit()
 
 
 def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=None, color=None):
@@ -377,8 +407,30 @@ def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=
 			if fail_message:
 				color_print(fail_message, color="red")
 
+def exploit_individually(exploit_name):
+	color_print("[*] attempting to perform exploitation with exploit {}".format(exploit_name))
+	exploit_os = ["linux", "windows", "mac"]
+	found_exploit = False
+	for os_type in exploit_os:
+		exploit_path_string = "exploits.{}.{}.{}".format(os_type, exploit_name, exploit_name)
+		exploit_module = locate(exploit_path_string)
+		if exploit_module:
+			found_exploit = True
+			exploit_module().exploit()
+	if not found_exploit:
+		color_print("[-] exploit {} was not found".format(exploit_name), color="red")
 
-def kernelpop(mode="enumerate", uname=None):
+
+def total_exploits(exploits):
+	total = 0
+	levels = [HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY]
+	for level in levels:
+		if len(exploits[level]) > 0:
+			total += len(exploits[level])
+
+	return total
+
+def kernelpop(mode="enumerate", uname=None, exploit=None):
 	"""
 	kernelpop()
 
@@ -387,27 +439,33 @@ def kernelpop(mode="enumerate", uname=None):
 	"""
 
 	color_print(HEADER, color="blue", bold=True)
-	if uname:
-		kernel_v = get_kernel_version(uname=uname)
+	if exploit:
+		exploit_individually(str(exploit))
 	else:
-		kernel_v = get_kernel_version()
-	identified_exploits = find_exploit_locally(kernel_v)
-	display_ordered_exploits(identified_exploits["confirmed"],
-		begin_message="[*] matched kernel to the following confirmed exploits",
-		fail_message="[-] no confirmed exploits were discovered for this kernel")
-	display_ordered_exploits(identified_exploits["potential"],
-		begin_message="[*] matched kernel to the following potential exploits:",
-		fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
+		if uname:
+			kernel_v = get_kernel_version(uname=uname)
+		else:
+			kernel_v = get_kernel_version()
 
-	merged_exploits = {}
-	for key_val in identified_exploits["confirmed"]:
-		merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
+		identified_exploits = find_exploit_locally(kernel_v)
+		display_ordered_exploits(identified_exploits["confirmed"],
+			begin_message="[*] matched kernel to the following confirmed exploits",
+			fail_message="[-] no confirmed exploits were discovered for this kernel")
+		display_ordered_exploits(identified_exploits["potential"],
+			begin_message="[*] matched kernel to the following potential exploits:",
+			fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
 
-	if mode == "brute-enumerate":
-		confirmed_vulnerable = brute_force_enumerate(merged_exploits)
+		merged_exploits = {}
+		for key_val in identified_exploits["confirmed"]:
+			merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
-		display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
-								 fail_message="[-] no exploits were confirmed for this kernel")
+		if total_exploits(merged_exploits) > 0:
+			if "brute" in mode:
+				confirmed_vulnerable = brute_force_enumerate(merged_exploits)
+				display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
+										 fail_message="[-] no exploits were confirmed for this kernel")
+				if "exploit" in mode:
+					brute_force_exploit(confirmed_vulnerable)
 
 
 if __name__ == "__main__":
