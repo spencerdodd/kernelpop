@@ -57,7 +57,7 @@ NETBSD = "linuxnetbsd"
 ARCHITECTURE_GENERIC =  "generic"
 ARCHITECTURE_x86_64 =   "x86_64"
 ARCHITECTURE_amd64 =    "amd64"
-ARCHITECTURE_i386 =     "i386"
+ARCHITECTURE_i686 =     "i686"
 
 HEADER = """
 ##########################

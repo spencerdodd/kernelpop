@@ -115,7 +115,7 @@ class Kernel:
 
 	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
-		# Darwin-16.7.0-x86_64-i386-64bit
+		# Darwin-16.7.0-x86_64-i686-64bit
 		if "Darwin" in kernel_version:
 
 			if uname:
