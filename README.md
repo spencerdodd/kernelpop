@@ -22,7 +22,7 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 
 # run modes
 
-### default mode
+### default mode (passive)
 
 The `default` mode runs with the command `python3 kernelpop.py`. This processes information about the
 host kernel and compares it to the known kernel exploits available to the program. It then outputs a list of
@@ -31,25 +31,25 @@ potentially useful vulnerabilities and attached exploits.
 [![default-mode](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ.png "default asciinema")](https://asciinema.org/a/JIi7d52Le8YoBPpw06jeoHvSJ)
 
 
-### exploit mode (new!)
+### exploit mode ~NEW~ (active)
 
 The `exploit` mode is run with the `-e` flag. This dynamically compiles and runs the exploit source code with stdio
 interactions inside the program! It can catch interrupts from short-stopped attempts as well
 
 [![exploit-mode](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW.png)](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW)
 
-### brute-enumeration mode
+### brute-enumeration mode (active)
 
-The `brute-enumeration` mode performs the same checks, but then
+The `brute-enumeration` mode performs the same checks as the default mode, but then
 goes beyond and checks the computer for exploit prerequisites to see if the operating system is set up in the
 required vulnerable state for successful exploitation. 
 
 [![brute-mode](https://asciinema.org/a/7X4fKZN9R2pJKUrqmFZsK33fd.png "brute asciinema")](https://asciinema.org/a/7X4fKZN9R2pJKUrqmFZsK33fd)
 
-### input mode
+### input mode (passive)
 
 The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
-which makes it useful as a host-side enumeration tool.
+which makes it useful as a host-side only enumeration tool.
 
 [![input-mode](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2.png "input asciinema")](https://asciinema.org/a/8gBOYZi5vVcHJmxKqRdyLizy2)
 
