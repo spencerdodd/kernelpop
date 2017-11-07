@@ -33,6 +33,7 @@ class TestGetKernelVersion(unittest.TestCase):
 			"UTC 2017 x86_64 x86_64 x86_64 GNU/Linux"
 		test_mac_uname = "Darwin coastals-MacBook-Pro.local 16.7.0 Darwin Kernel Version 16.7.0: Thu Jun 15 " \
 			"17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64 x86_64"
+		test_rpi_uname = "Linux-3.16.0-4-686-pae-i686-with-debian-8.9"
 
 		# have to set the unames to None because input for platform and uname kernels is different
 		test_linux_platform_kernel = Kernel(test_linux_platform).uname = None

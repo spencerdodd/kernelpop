@@ -127,6 +127,10 @@ class Kernel:
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
 				k_release = int(kernel_version.split(" ")[2].split(".")[2])
 				k_architecture = kernel_version.split(" ")[-1]
+				# replace any bad architecture parses
+				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 			else:
 				color_print("[+] underlying os identified as a mac variant")
@@ -137,7 +141,10 @@ class Kernel:
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
 				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[2]
-
+				# replace any bad architecture parses
+				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on linux
@@ -151,7 +158,10 @@ class Kernel:
 				k_major = int(kernel_version.split(" ")[2].split(".")[0])
 				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
 				k_architecture = kernel_version.split(" ")[-2]
-
+				# replace any bad architecture parses
+				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				# kali kernel parsing is a little different to get accurate release # on kernel
 				# Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux
 				if "kali" in kernel_version.lower():
@@ -171,6 +181,10 @@ class Kernel:
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
 				k_release = int(kernel_version.split("-")[2].replace("kali", ""))
 				k_architecture = kernel_version.split("-")[4]
+				# replace any bad architecture parses
+				for architecture in ["x86", "i386", "amd64", "x86_64"]:
+					if architecture in kernel_version:
+						k_architecture = architecture
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
 		# running on windows
