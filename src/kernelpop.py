@@ -393,6 +393,20 @@ def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=
 			if fail_message:
 				color_print(fail_message, color="red")
 
+def exploit_individually(exploit_name):
+	color_print("[*] attempting to perform exploitation with exploit {}".format(exploit_name))
+	exploit_os = ["linux", "windows", "mac"]
+	found_exploit = False
+	for os_type in exploit_os:
+		exploit_path_string = "exploits.{}.{}.{}".format(os_type, exploit_name, exploit_name)
+		exploit_module = locate(exploit_path_string)
+		if exploit_module:
+			found_exploit = True
+			exploit_module().exploit()
+	if not found_exploit:
+		color_print("[-] exploit {} was not found".format(exploit_name), color="red")
+
+
 
 def total_exploits(exploits):
 	total = 0
@@ -404,7 +418,7 @@ def total_exploits(exploits):
 
 	return total
 
-def kernelpop(mode="enumerate", uname=None):
+def kernelpop(mode="enumerate", uname=None, exploit=None):
 	"""
 	kernelpop()
 
@@ -413,31 +427,35 @@ def kernelpop(mode="enumerate", uname=None):
 	"""
 
 	color_print(HEADER, color="blue", bold=True)
-	if uname:
-		kernel_v = get_kernel_version(uname=uname)
+	if exploit:
+		exploit_individually(str(exploit))
 	else:
-		kernel_v = get_kernel_version()
-	identified_exploits = find_exploit_locally(kernel_v)
-	display_ordered_exploits(identified_exploits["confirmed"],
-		begin_message="[*] matched kernel to the following confirmed exploits",
-		fail_message="[-] no confirmed exploits were discovered for this kernel")
-	display_ordered_exploits(identified_exploits["potential"],
-		begin_message="[*] matched kernel to the following potential exploits:",
-		fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
+		if uname:
+			kernel_v = get_kernel_version(uname=uname)
+		else:
+			kernel_v = get_kernel_version()
 
-	merged_exploits = {}
-	for key_val in identified_exploits["confirmed"]:
-		merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
+		identified_exploits = find_exploit_locally(kernel_v)
+		display_ordered_exploits(identified_exploits["confirmed"],
+			begin_message="[*] matched kernel to the following confirmed exploits",
+			fail_message="[-] no confirmed exploits were discovered for this kernel")
+		display_ordered_exploits(identified_exploits["potential"],
+			begin_message="[*] matched kernel to the following potential exploits:",
+			fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
 
-	if total_exploits(merged_exploits) > 0:
-		if "brute" in mode:
-			confirmed_vulnerable = brute_force_enumerate(merged_exploits)
+		merged_exploits = {}
+		for key_val in identified_exploits["confirmed"]:
+			merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
-			display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
-									 fail_message="[-] no exploits were confirmed for this kernel")
+		if total_exploits(merged_exploits) > 0:
+			if "brute" in mode:
+				confirmed_vulnerable = brute_force_enumerate(merged_exploits)
 
-			if "exploit" in mode:
-				brute_force_exploit(confirmed_vulnerable)
+				display_ordered_exploits(confirmed_vulnerable, begin_message="[+] confirmed exploits",
+										 fail_message="[-] no exploits were confirmed for this kernel")
+
+				if "exploit" in mode:
+					brute_force_exploit(confirmed_vulnerable)
 
 
 if __name__ == "__main__":
