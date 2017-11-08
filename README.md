@@ -4,7 +4,7 @@ kernelpop is a framework for performing automated kernel exploit enumeration on 
 
 ### example of enumeration to root
 
-[![got-root](https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U.png "got-root")](https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U.png)
+[![got-root](https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U.png "got-root")](https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U)
 
 ---
 
