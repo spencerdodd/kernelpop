@@ -17,7 +17,6 @@ features. Please let me know if you find any issues with the project.
 Thanks!
 
 ---
->>>>>>> exploit-mode
 
 ### requirements
 
