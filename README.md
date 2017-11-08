@@ -40,7 +40,7 @@ potentially useful vulnerabilities and attached exploits.
 The `exploit` mode is run with the `-e` flag. This dynamically compiles and runs the exploit source code with stdio
 interactions inside the program! It can catch interrupts from short-stopped attempts as well
 
-[![exploit-mode](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW.png)](https://asciinema.org/a/a8z5dCqOmemSPznuZPDxp7aAW)
+[![exploit-mode](https://asciinema.org/a/zKdFkktFJyWiqvrwDLK9avQ9E.png)](https://asciinema.org/a/zKdFkktFJyWiqvrwDLK9avQ9E)
 
 ### brute-enumeration mode (active)
 
