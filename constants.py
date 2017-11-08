@@ -1,8 +1,12 @@
 import os
+import subprocess
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLAYGROUND_PATH = os.path.join(ROOT_DIR, "playground")
 LINUX_EXPLOIT_PATH = os.path.join(ROOT_DIR, "exploits", "linux")
 LINUX_EXPLOIT_SOURCE_PATH = os.path.join(ROOT_DIR, "exploits", "linux", "source")
+MAC_EXPLOIT_PATH = os.path.join(ROOT_DIR, "exploits", "mac")
+MAC_EXPLOIT_SOURCE_PATH = os.path.join(ROOT_DIR, "exploits", "mac", "source")
+
 HIGH_RELIABILITY = "high"
 MEDIUM_RELIABILITY = "medium"
 LOW_RELIABILITY = "low"
@@ -59,6 +63,10 @@ ARCHITECTURE_x86_64 =   "x86_64"
 ARCHITECTURE_amd64 =    "amd64"
 ARCHITECTURE_i686 =     "i686"
 
+GENERIC_MAC = "mac"
+
+DARWIN_16 = "macdarwin16"
+
 HEADER = """
 ##########################
 #  welcome to kernelpop  #
@@ -96,3 +104,14 @@ def color_print(print_string, color=None, bold=False, underline=False, header=Fa
         print(color_string)
     else:
         print(print_string)
+
+
+def shell_results(self, shell_command):
+	p = subprocess.Popen(
+		shell_command,
+		stdin=subprocess.PIPE,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE,
+		shell=True
+	)
+	return p.communicate()

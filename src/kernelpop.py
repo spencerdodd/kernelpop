@@ -6,7 +6,7 @@ from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, 
 	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
 	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC, UBUNTU_15, UBUNTU_15_LTS, \
-	UBUNTU_6, ARCHITECTURE_GENERIC
+	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results
 
 
 class Kernel:
@@ -112,6 +112,19 @@ class Kernel:
 				return GENERIC_LINUX
 
 		return "unknown"
+
+	def get_mac_version(self):
+		"""
+		Gets the mac operating system version vs. the kernel version
+		:return:
+		"""
+		v_command = "sw_vers"
+		mac_v = shell_results(v_command)
+		v_major = int(mac_v.split("\n")[1].split(".")[0])
+		v_minor = int(mac_v.split("\n")[1].split(".")[1])
+		v_release = int(mac_v.split("\n")[1].split(".")[2])
+
+		return v_major, v_minor, v_release
 
 	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
