@@ -1,5 +1,13 @@
 # kernelpop
 
+kernelpop is a framework for performing automated kernel exploit enumeration on Linux, Mac, and Windows hosts.
+
+### example of enumeration to root
+
+[![got-root]https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U.png](https://asciinema.org/a/I5xL9u0eR4eVU8gwwjOYBd24U.png)
+
+---
+
 ### NOTE:
 
 Since it seems like this project is getting some clones / views, I should say this is a work in progress. I'm taking 
@@ -7,10 +15,6 @@ class and working fulltime so getting programming time is sporadic. That said, I
 features. Please let me know if you find any issues with the project.
 
 Thanks!
-
----
-
-kernelpop is a framework for performing automated kernel exploit enumeration on Linux, Mac, and Windows hosts.
 
 ---
 
@@ -106,3 +110,10 @@ which makes it useful as a host-side enumeration tool.
 `https://www.exploit-db.com/local/`
 
 `https://github.com/SecWiki/windows-kernel-exploits`
+
+### historical distro sources
+
+Debian
+
+* [debian releases](http://cdimage.debian.org/cdimage/archive/)
+
