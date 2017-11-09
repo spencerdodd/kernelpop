@@ -113,22 +113,6 @@ class Kernel:
 
 		return "unknown"
 
-<<<<<<< HEAD
-=======
-	def get_mac_version(self):
-		"""
-		Gets the mac operating system version vs. the kernel version
-		:return:
-		"""
-		v_command = "sw_vers"
-		mac_v = shell_results(v_command)[0].decode('utf-8')
-		v_major = int(mac_v.split("\n")[1].split("\t")[1].split(".")[0])
-		v_minor = int(mac_v.split("\n")[1].split("\t")[1].split(".")[1])
-		v_release = int(mac_v.split("\n")[1].split("\t")[1].split(".")[2])
-
-		return v_major, v_minor, v_release
-
->>>>>>> 2f654d055de5fde802d4b39c9c9430a4e6876247
 	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
 		# Darwin-16.7.0-x86_64-i686-64bit
@@ -139,9 +123,9 @@ class Kernel:
 				k_type = "mac"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split(" ")[0]
-				k_major = int(kernel_version.split("-")[1].split(".")[0])
-				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[1].split(".")[2])
+				k_major = int(kernel_version.split(" ")[2].split(".")[0])
+				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
+				k_release = int(kernel_version.split(" ")[2].split(".")[2])
 				k_architecture = kernel_version.split(" ")[-1]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
@@ -153,7 +137,9 @@ class Kernel:
 				k_type = "mac"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split("-")[0]
-				k_major, k_minor, k_release = self.get_mac_version()
+				k_major = int(kernel_version.split("-")[1].split(".")[0])
+				k_minor = int(kernel_version.split("-")[1].split(".")[1])
+				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[2]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
