@@ -1,6 +1,7 @@
 # kernelpop
 
-kernelpop is a framework for performing automated kernel exploit enumeration on the following OSs:
+kernelpop is a framework for performing automated kernel vulnerability enumeration and exploitation 
+on the following OSs:
 
 - [x] Linux
 
