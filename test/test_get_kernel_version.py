@@ -12,7 +12,7 @@ class TestGetKernelVersion(unittest.TestCase):
 		self.assertEqual(test_linux_kernel.type, "linux")
 		self.assertEqual(test_linux_kernel.major_version, 4)
 		self.assertEqual(test_linux_kernel.minor_version, 10)
-		self.assertEqual(test_linux_kernel.release, 37)
+		self.assertEqual(test_linux_kernel.release, 0)
 		self.assertEqual(test_linux_kernel.architecture, "x86_64")
 		self.assertEqual(test_linux_kernel.uname, test_linux_platform)
 
@@ -55,7 +55,7 @@ class TestGetKernelVersion(unittest.TestCase):
 	def test_diff_uname(self):
 		test_uname = "Linux amd64 4.14.0-rc7+ #18 SMP PREEMPT Sun Nov 5 05:52:33 MSK 2017 x86_64 GNU/Linux"
 		test_uname_kernel = Kernel(test_uname, uname=True)
-		self.assertEqual(test_uname_kernel.release, 7)
+		self.assertEqual(test_uname_kernel.release, 0)
 
 if __name__ ==  "__main__":
 	unittest.main()

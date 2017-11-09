@@ -170,8 +170,7 @@ class Kernel:
 				if "kali" in kernel_version.lower():
 					k_release = int(kernel_version.split(" ")[-4].split("-")[0].split(".")[2])
 				else:
-					k_release = int(''.join(c for c in kernel_version.split(" ")[2].split("-")[1] if c.isdigit()))
-					print("")
+					k_release = int(kernel_version.split(" ")[2].split(".")[2].split("-")[0])
 
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
@@ -182,7 +181,7 @@ class Kernel:
 				k_name = kernel_version.split("-")[-1]
 				k_major = int(kernel_version.split("-")[1].split(".")[0])
 				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[2].replace("kali", ""))
+				k_release = int(kernel_version.split("-")[1].split(".")[2])
 				k_architecture = kernel_version.split("-")[4]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
