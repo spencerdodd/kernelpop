@@ -52,5 +52,10 @@ class TestGetKernelVersion(unittest.TestCase):
 		self.assertEqual(test_kali_kernel_1.release, 4)
 		self.assertEqual(test_kali_kernel_2.release, 25)
 
+	def test_diff_uname(self):
+		test_uname = "Linux amd64 4.14.0-rc7+ #18 SMP PREEMPT Sun Nov 5 05:52:33 MSK 2017 x86_64 GNU/Linux"
+		test_uname_kernel = Kernel(test_uname, uname=True)
+		self.assertEqual(test_uname_kernel.release, 7)
+
 if __name__ ==  "__main__":
 	unittest.main()
