@@ -1,6 +1,12 @@
 # kernelpop
 
-kernelpop is a framework for performing automated kernel exploit enumeration on Linux, Mac, and Windows hosts.
+kernelpop is a framework for performing automated kernel exploit enumeration on the following OSs:
+
+- [x] Linux
+
+- [x] Mac
+
+- [ ] Windows (coming soon)
 
 ### example of enumeration to root
 
