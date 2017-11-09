@@ -106,7 +106,7 @@ def color_print(print_string, color=None, bold=False, underline=False, header=Fa
         print(print_string)
 
 
-def shell_results(self, shell_command):
+def shell_results(shell_command):
 	p = subprocess.Popen(
 		shell_command,
 		stdin=subprocess.PIPE,

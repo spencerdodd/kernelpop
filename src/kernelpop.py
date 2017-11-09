@@ -113,19 +113,6 @@ class Kernel:
 
 		return "unknown"
 
-	def get_mac_version(self):
-		"""
-		Gets the mac operating system version vs. the kernel version
-		:return:
-		"""
-		v_command = "sw_vers"
-		mac_v = shell_results(v_command)
-		v_major = int(mac_v.split("\n")[1].split(".")[0])
-		v_minor = int(mac_v.split("\n")[1].split(".")[1])
-		v_release = int(mac_v.split("\n")[1].split(".")[2])
-
-		return v_major, v_minor, v_release
-
 	def process_kernel_version(self, kernel_version, uname=False):
 		# running on mac
 		# Darwin-16.7.0-x86_64-i686-64bit
@@ -228,8 +215,21 @@ class Kernel:
 		else:
 			exit(1)
 
+def get_mac_version():
+	"""
+	Gets the mac operating system version vs. the kernel version
+	:return:
+	"""
+	v_command = "sw_vers"
+	mac_v = shell_results(v_command)[0].decode("utf-8")
+	v_major = int(mac_v.split("\n")[1].split(":")[1].split(".")[0])
+	v_minor = int(mac_v.split("\n")[1].split(":")[1].split(".")[1])
+	v_release = int(mac_v.split("\n")[1].split(":")[1].split(".")[2])
 
-def get_kernel_version(uname=None):
+	return v_major, v_minor, v_release
+
+
+def get_kernel_version(uname=None, osx_ver=False):
 	"""
 	get_kernel_version()
 
@@ -244,10 +244,24 @@ def get_kernel_version(uname=None):
 			"aliased": platform.platform(aliased=True),
 			"terse": platform.platform(terse=True)
 		}
+		if "darwin" in kernel_version["normal"].lower():
+			os_major, os_minor, os_release = get_mac_version()
+			version_string = "{}.{}.{}".format(os_major, os_minor, os_release)
+			template_os_version_start = kernel_version["normal"].split("-")[0]
+			template_os_version_end = "-".join(kernel_version["normal"].split("-")[2:])
+			os_version_replaced_kv = "{}-{}-{}".format(template_os_version_start, version_string, template_os_version_end)
 
-		return Kernel(kernel_version["normal"])
+			return Kernel(os_version_replaced_kv)
+
+		else:
+			return Kernel(kernel_version["normal"])
 	else:
-		return Kernel(uname, uname=True)
+		if osx_ver:
+			color_print("[-] need to implement version replacing in uname input (FIX SPENCER)", color="red")
+			exit(1)
+
+		else:
+			return Kernel(uname, uname=True)
 
 
 def potentially_vulnerable(kernel_version, exploit_module):
@@ -443,7 +457,7 @@ def total_exploits(exploits):
 
 	return total
 
-def kernelpop(mode="enumerate", uname=None, exploit=None):
+def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None):
 	"""
 	kernelpop()
 
@@ -456,7 +470,10 @@ def kernelpop(mode="enumerate", uname=None, exploit=None):
 		exploit_individually(str(exploit))
 	else:
 		if uname:
-			kernel_v = get_kernel_version(uname=uname)
+			if osx_ver:
+				kernel_v = get_kernel_version(uname=uname, osx_ver=True)
+			else:
+				kernel_v = get_kernel_version(uname=uname)
 		else:
 			kernel_v = get_kernel_version()
 
