@@ -6,7 +6,7 @@ from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, 
 	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
 	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC, UBUNTU_15, UBUNTU_15_LTS, \
-	UBUNTU_6, ARCHITECTURE_GENERIC
+	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC
 
 
 class Kernel:
@@ -110,6 +110,9 @@ class Kernel:
 			# etc ...
 			else:
 				return GENERIC_LINUX
+
+		elif "darwin" in kernel_version.lower():
+			return GENERIC_MAC
 
 		return "unknown"
 
@@ -215,8 +218,21 @@ class Kernel:
 		else:
 			exit(1)
 
+def get_mac_version():
+	"""
+	Gets the mac operating system version vs. the kernel version
+	:return:
+	"""
+	v_command = "sw_vers"
+	mac_v = shell_results(v_command)[0].decode("utf-8")
+	v_major = int(mac_v.split("\n")[1].split(":")[1].split(".")[0])
+	v_minor = int(mac_v.split("\n")[1].split(":")[1].split(".")[1])
+	v_release = int(mac_v.split("\n")[1].split(":")[1].split(".")[2])
 
-def get_kernel_version(uname=None):
+	return v_major, v_minor, v_release
+
+
+def get_kernel_version(uname=None, osx_ver=None):
 	"""
 	get_kernel_version()
 
@@ -231,11 +247,27 @@ def get_kernel_version(uname=None):
 			"aliased": platform.platform(aliased=True),
 			"terse": platform.platform(terse=True)
 		}
+		if "darwin" in kernel_version["normal"].lower():
+			os_major, os_minor, os_release = get_mac_version()
+			version_string = "{}.{}.{}".format(os_major, os_minor, os_release)
+			template_os_version_start = kernel_version["normal"].split("-")[0]
+			template_os_version_end = "-".join(kernel_version["normal"].split("-")[2:])
+			os_version_replaced_kv = "{}-{}-{}".format(template_os_version_start, version_string, template_os_version_end)
 
-		return Kernel(kernel_version["normal"])
+			return Kernel(os_version_replaced_kv)
+
+		else:
+			return Kernel(kernel_version["normal"])
 	else:
-		return Kernel(uname, uname=True)
+		if osx_ver:
+			uname_pre = " ".join(uname.split(" ")[:2])
+			uname_post = " ".join(uname.split(" ")[3:])
+			uname_os_version = "{} {} {}".format(uname_pre, osx_ver, uname_post)
+			return Kernel(uname_os_version, uname=True)
 
+
+		else:
+			return Kernel(uname, uname=True)
 
 def potentially_vulnerable(kernel_version, exploit_module):
 	"""
@@ -282,24 +314,30 @@ def find_exploit_locally(kernel_version):
 	}
 	found_exploits = {"confirmed": confirmed, "potential": potential}
 
+	kernel_exploits_and_paths = [
+		["linux", LINUX_EXPLOIT_PATH],
+		["mac", MAC_EXPLOIT_PATH]
+	]
+
 	color_print("[*] matching kernel to known exploits")
-	if kernel_version.type == "linux":
-		all_exploits = os.listdir(LINUX_EXPLOIT_PATH)
-		for exploit_file in all_exploits:
-			if exploit_file[-3:] == ".py" and "__init__" not in exploit_file:
-				exploit_name = exploit_file.replace(".py", "")
-				exploit_module = locate("exploits.linux.{}.{}".format(exploit_name, exploit_name))
-				exploit_instance = exploit_module()
-				if potentially_vulnerable(kernel_version, exploit_instance) == CONFIRMED_VULNERABLE:
-					color_print("\t[+] found `confirmed` kernel exploit: {}".format(exploit_instance.name),
-								color="green")
-					found_exploits["confirmed"][exploit_instance.reliability].append(exploit_instance)
-				elif potentially_vulnerable(kernel_version, exploit_instance) == POTENTIALLY_VULNERABLE:
-					color_print("\t[+] found `potential` kernel exploit: {}".format(exploit_instance.name),
-								color="yellow")
-					found_exploits["potential"][exploit_instance.reliability].append(exploit_instance)
-				else:
-					del exploit_module
+	for idx,k_ex_path in enumerate(kernel_exploits_and_paths):
+		if kernel_version.type == kernel_exploits_and_paths[idx][0]:
+			all_exploits = os.listdir(kernel_exploits_and_paths[idx][1])
+			for exploit_file in all_exploits:
+				if exploit_file[-3:] == ".py" and "__init__" not in exploit_file:
+					exploit_name = exploit_file.replace(".py", "")
+					exploit_module = locate("exploits.{}.{}.{}".format(kernel_exploits_and_paths[idx][0],exploit_name, exploit_name))
+					exploit_instance = exploit_module()
+					if potentially_vulnerable(kernel_version, exploit_instance) == CONFIRMED_VULNERABLE:
+						color_print("\t[+] found `confirmed` kernel exploit: {}".format(exploit_instance.name),
+									color="green")
+						found_exploits["confirmed"][exploit_instance.reliability].append(exploit_instance)
+					elif potentially_vulnerable(kernel_version, exploit_instance) == POTENTIALLY_VULNERABLE:
+						color_print("\t[+] found `potential` kernel exploit: {}".format(exploit_instance.name),
+									color="yellow")
+						found_exploits["potential"][exploit_instance.reliability].append(exploit_instance)
+					else:
+						del exploit_module
 
 	return found_exploits
 
@@ -430,7 +468,7 @@ def total_exploits(exploits):
 
 	return total
 
-def kernelpop(mode="enumerate", uname=None, exploit=None):
+def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None):
 	"""
 	kernelpop()
 
@@ -443,7 +481,10 @@ def kernelpop(mode="enumerate", uname=None, exploit=None):
 		exploit_individually(str(exploit))
 	else:
 		if uname:
-			kernel_v = get_kernel_version(uname=uname)
+			if osx_ver:
+				kernel_v = get_kernel_version(uname=uname, osx_ver=osx_ver)
+			else:
+				kernel_v = get_kernel_version(uname=uname)
 		else:
 			kernel_v = get_kernel_version()
 
