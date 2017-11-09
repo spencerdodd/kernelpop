@@ -57,6 +57,10 @@ which makes it useful as a host-side only enumeration tool.
 
 [![input-mode](https://asciinema.org/a/hrHaVdsJAv1iBorFknR3QaHmc.png "input asciinema")](https://asciinema.org/a/hrHaVdsJAv1iBorFknR3QaHmc)
 
+### mac enumeration example
+
+[![input-mode](https://asciinema.org/a/NhNPRcmidnvpW5zujW5tFmTDy.png "mac asciinema")](https://asciinema.org/a/NhNPRcmidnvpW5zujW5tFmTDy)
+
 ---
 
 ### currently supported CVE's:
