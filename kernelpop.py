@@ -1,6 +1,6 @@
 import sys
 from src.kernelpop import kernelpop
-from constants import color_print
+from constants import color_print, USAGE_STRING
 
 
 def main():
@@ -22,6 +22,10 @@ def main():
 			kernelpop(mode="input", uname=uname, osx_ver=osx_ver)
 		else:
 			kernelpop(mode="input", uname=uname)
+	else:
+		color_print("[!] please format your arguments properly", color="yellow")
+		color_print(USAGE_STRING)
+		color_print("[-] closing ...", color="red")
 
 
 if __name__ == "__main__":

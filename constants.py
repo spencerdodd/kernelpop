@@ -67,6 +67,13 @@ GENERIC_MAC = "mac"
 
 DARWIN_16 = "macdarwin16"
 
+USAGE_STRING = \
+"""usage:
+\t(default)\t\tpython3 kernelpop.py
+\t(brute-mode)\tpython3 kernelpop.py -b
+\t(exploit-mode)\tpython3 kernelpop.py -e {exploit name}
+\t(input-mode)\tpython3 kernelpop.py -i"""
+
 HEADER = """
 ##########################
 #  welcome to kernelpop  #
