@@ -352,6 +352,14 @@ def find_exploit_remotely(kernel_version):
 
 
 def brute_force_enumerate(identified_exploits):
+	"""
+	change enumeration to only cover potentials and move them to confirmed if they come back confirmed, otherwise
+	drop them
+
+	:param identified_exploits:
+	:return:
+	"""
+	# TODO: read function description
 	confirmed_vulnerable = {"high":[], "medium":[], "low":[]}
 	color_print("[*] attempting to confirm all discovered exploits from most to least probable")
 	if len(identified_exploits[HIGH_RELIABILITY]) > 0:

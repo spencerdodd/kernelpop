@@ -118,7 +118,7 @@ which makes it useful as a host-side only enumeration tool.
 
 `http://exploit-db.com/`
 
-`https://www.exploit-db.com/local/`
+`https://github.com/lucyoa/kernel-exploits`
 
 `https://github.com/SecWiki/windows-kernel-exploits`
 
