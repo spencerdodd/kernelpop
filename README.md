@@ -108,6 +108,14 @@ which makes it useful as a host-side only enumeration tool.
 
 * `CVE-2014-0196`
 
+* `CVE-2014-0038`
+
+* `CVE-2013-2094`
+
+* `CVE-2010-4347`
+
+* `CVE-2010-2959`
+
 * `CVE-2009-1185`
 
 ---
