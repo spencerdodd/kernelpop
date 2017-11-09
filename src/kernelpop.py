@@ -169,9 +169,9 @@ class Kernel:
 				# Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux
 				if "kali" in kernel_version.lower():
 					k_release = int(kernel_version.split(" ")[-4].split("-")[0].split(".")[2])
-					pass
 				else:
-					k_release = int(kernel_version.split(" ")[2].split("-")[1])
+					k_release = int(''.join(c for c in kernel_version.split(" ")[2].split("-")[1] if c.isdigit()))
+					print("")
 
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
