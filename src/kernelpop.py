@@ -158,19 +158,29 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split(" ")[0]
-				k_major = int(kernel_version.split(" ")[2].split(".")[0])
-				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
+
+				k_full_version = kernel_version.split(" ")[2].split(".")
+				# the uname's first version string is in the format Major.Minor-distro-architecture instead of
+				# 	the expected Major.Minor.Release-distro-architecture...try to parse from the end
+				#
+				if len(k_full_version) < 3:
+					k_full_version = kernel_version.split(" ")[-4].split(".")
+				# if we couldn't parse out 3 again..
+				if len(k_full_version) < 3:
+					k_full_version = kernel_version.split(" ")[-4].split(".")
+					# minor will have garbage after a '-'
+					k_full_version[1] = k_full_version[1].split("-")[0]
+					k_full_version.append("0")
+				k_full_version = clean_parsed_version(k_full_version)
+
+				k_major = int(k_full_version[0])
+				k_minor = int(k_full_version[1])
+				k_release = int(k_full_version[2])
 				k_architecture = kernel_version.split(" ")[-2]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
 					if architecture in kernel_version:
 						k_architecture = architecture
-				# kali kernel parsing is a little different to get accurate release # on kernel
-				# Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux
-				if "kali" in kernel_version.lower():
-					k_release = int(kernel_version.split(" ")[-4].split("-")[0].split(".")[2])
-				else:
-					k_release = int(kernel_version.split(" ")[2].split(".")[2].split("-")[0])
 
 				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
 
@@ -179,9 +189,14 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split("-")[-1]
-				k_major = int(kernel_version.split("-")[1].split(".")[0])
-				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[1].split(".")[2])
+				k_full_version = kernel_version.split("-")[1].split(".")
+				if len(k_full_version) < 3:
+					k_full_version.append("0") 	# we just assume base kernel
+				k_full_version = clean_parsed_version(k_full_version)
+
+				k_major = int(k_full_version[0])
+				k_minor = int(k_full_version[1])
+				k_release = int(k_full_version[2])
 				k_architecture = kernel_version.split("-")[4]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
@@ -267,6 +282,25 @@ def get_kernel_version(uname=None, osx_ver=None):
 
 		else:
 			return Kernel(uname, uname=True)
+
+def clean_parsed_version(parsed_version):
+	"""
+	Takes in a parsed version in the form Major.Minor.Release and cleans it of any appended garbage
+	Appended garbage takes the form of stuff added on that wasn't split out on the '-' character
+
+	:param parsed_version:
+	:return:
+	"""
+	print("")
+	for idx, version_n in enumerate(parsed_version):
+		parsed_version[idx] = version_n.split("-")[0]
+
+	# check to make sure we got everything
+	for version_n in parsed_version:
+		if not version_n.isdigit():
+			Exception("DIDN'T CLEAN VERSION PROPERLY")
+
+	return parsed_version
 
 def potentially_vulnerable(kernel_version, exploit_module):
 	"""
