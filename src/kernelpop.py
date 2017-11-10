@@ -158,8 +158,16 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split(" ")[0]
-				k_major = int(kernel_version.split(" ")[2].split(".")[0])
-				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
+
+				k_full_version = kernel_version.split(" ")[2].split(".")
+				if len(k_full_version) < 3:
+					# the uname's first version string is in the format Major.Minor-distro-architecture instead of
+					#	the expected Major.Minor.Release-distro-architecture...try to parse from the end
+					#
+					k_full_version = kernel_version.split(" ")[-4].split(".")
+
+				k_major = int(k_full_version[0])
+				k_minor = int(k_full_version[1])
 				k_architecture = kernel_version.split(" ")[-2]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:
@@ -179,9 +187,12 @@ class Kernel:
 				k_type = "linux"
 				k_distro = self.parse_distro(kernel_version)
 				k_name = kernel_version.split("-")[-1]
-				k_major = int(kernel_version.split("-")[1].split(".")[0])
-				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[1].split(".")[2])
+				k_full_version = kernel_version.split("-")[1].split(".")
+				if len(k_full_version) < 3:
+					k_full_version.append(0) 	# we just assume base kernel
+				k_major = int(k_full_version[0])
+				k_minor = int(k_full_version[1])
+				k_release = int(k_full_version[2])
 				k_architecture = kernel_version.split("-")[4]
 				# replace any bad architecture parses
 				for architecture in ["x86", "i686", "amd64", "x86_64"]:

@@ -47,15 +47,24 @@ class TestGetKernelVersion(unittest.TestCase):
 	def test_kali(self):
 		test_kali_uname_1 = "Linux kali 4.13.0-kali1-amd64 #1 SMP Debian 4.13.4-2kali1 (2017-10-16) x86_64 GNU/Linux"
 		test_kali_uname_2 = "Linux kali 4.9.0-kali4-amd64 #1 SMP Debian 4.9.25-1kali1 (2017-10-16) x86_64 GNU/Linux"
+		test_kali_uname_3 = "Linux external4 3.14-kali1-amd64 #1 SMP Debian 3.14.5-1kali1 (2014-06-07) x86_64 GNU/Linux"
 		test_kali_kernel_1 = Kernel(test_kali_uname_1, uname=True)
 		test_kali_kernel_2 = Kernel(test_kali_uname_2, uname=True)
+		test_kali_kernel_3 = Kernel(test_kali_uname_3, uname=True)
 		self.assertEqual(test_kali_kernel_1.release, 4)
 		self.assertEqual(test_kali_kernel_2.release, 25)
+		self.assertEqual(test_kali_kernel_3.release, 5)
 
 	def test_diff_uname(self):
 		test_uname = "Linux amd64 4.14.0-rc7+ #18 SMP PREEMPT Sun Nov 5 05:52:33 MSK 2017 x86_64 GNU/Linux"
 		test_uname_kernel = Kernel(test_uname, uname=True)
 		self.assertEqual(test_uname_kernel.release, 0)
+
+	def test_underlying_diff(self):
+		test_platform_diff = 'Linux-4.10-28-generic-x86_64-with-Ubuntu-16.04-xenial'
+		k_test_platform_diff = Kernel(test_platform_diff)
+		self.assertEqual(k_test_platform_diff.release, 0)
+
 
 if __name__ ==  "__main__":
 	unittest.main()
