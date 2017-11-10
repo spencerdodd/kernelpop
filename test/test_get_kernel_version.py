@@ -69,7 +69,7 @@ class TestGetKernelVersion(unittest.TestCase):
 	def test_underlying_diff(self):
 		test_platform_diff = 'Linux-4.10-28-generic-x86_64-with-Ubuntu-16.04-xenial'
 		test_platform_diff_2 = 'Linux-3.14.5-kali1-amd64-with-Debian-8.0'
-		test_platform_diff_3 = 'Linux-3.14-kali1-amd64-with-Debian-8.0'
+		test_platform_diff_3 = 'Linux-3.14-kali1-amd64-x86_64-with-Kali-1.1.0-moto'
 		k_test_platform_diff = Kernel(test_platform_diff)
 		k_test_platform_diff_2 = Kernel(test_platform_diff_2)
 		k_test_platform_diff_3 = Kernel(test_platform_diff_3)

@@ -11,7 +11,7 @@ on the following operating systems:
 
 ### example of enumeration to root
 
-[![got-root](https://asciinema.org/a/sIGLnYcIW3Rsrf3KkZ3JfDgl2.png "got-root")](https://asciinema.org/a/sIGLnYcIW3Rsrf3KkZ3JfDgl2)
+[![got-root](https://asciinema.org/a/hDG3EpVHM12jC0JFeZaZoOImB.png "got-root")](https://asciinema.org/a/hDG3EpVHM12jC0JFeZaZoOImB)
 
 ---
 
