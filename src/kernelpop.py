@@ -241,7 +241,10 @@ def get_mac_version():
 	mac_v = shell_results(v_command)[0].decode("utf-8")
 	v_major = int(mac_v.split("\n")[1].split(":")[1].split(".")[0])
 	v_minor = int(mac_v.split("\n")[1].split(":")[1].split(".")[1])
-	v_release = int(mac_v.split("\n")[1].split(":")[1].split(".")[2])
+	try:
+		v_release = int(mac_v.split("\n")[1].split(":")[1].split(".")[2])
+	except:
+		v_release = 0
 
 	return v_major, v_minor, v_release
 
