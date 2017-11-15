@@ -3,10 +3,11 @@ import subprocess
 import platform
 from pydoc import locate
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
-	color_print, UBUNTU_12, UBUNTU_12_LTS, UBUNTU_14, UBUNTU_14_LTS, UBUNTU_16, UBUNTU_16_LTS, UBUNTU_GENERIC, \
-	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_7_LTS, UBUNTU_8, \
-	UBUNTU_8_LTS, UBUNTU_9, UBUNTU_9_LTS, UBUNTU_17, UBUNTU_17_LTS, DEBIAN_GENERIC, UBUNTU_15, UBUNTU_15_LTS, \
-	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC
+	color_print, UBUNTU_12, UBUNTU_14, UBUNTU_16, UBUNTU_GENERIC, \
+	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_8, \
+	UBUNTU_9,UBUNTU_17, DEBIAN_GENERIC, UBUNTU_15,  \
+	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC, ubuntu_distro_versions, \
+	debian_distro_versions
 
 
 class Kernel:
@@ -37,79 +38,23 @@ class Kernel:
 			if len(release_result) > 0:
 				distro_id = release_result.split("\n")[0]
 				if "Ubuntu" in distro_id:
-					distro_desc = release_result.split("\n")[3]
-					version_num = distro_desc.split(" ")[1].split(".")[0]
-					if "7" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_7_LTS
-						else:
-							return UBUNTU_7
-					elif "8" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_8_LTS
-						else:
-							return UBUNTU_8
-					elif "9" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_9_LTS
-						else:
-							return UBUNTU_9
-					elif "12" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_12_LTS
-						else:
-							return UBUNTU_12
-					elif "14" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_14_LTS
-						else:
-							return UBUNTU_14
-					elif "15" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_15_LTS
-						else:
-							return UBUNTU_15
-					elif "16" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_16
-						else:
-							return UBUNTU_16_LTS
-					elif "17" in version_num:
-						if "LTS" in distro_desc:
-							return UBUNTU_17_LTS
-						else:
-							return UBUNTU_17
-
-					else:
-						return UBUNTU_GENERIC
-				# now debian
-				if "Debian" in distro_id:
+					# check if the parsed version number matches known versions
+					for distro in ubuntu_distro_versions:
+						distro_desc = release_result.split("\n")[3]
+						version_num = distro_desc.split(" ")[1].split(".")[0]
+						for v_num in distro:
+							if v_num[0].replace("ubuntu-","") in version_num:
+								return v_num[1]
+				elif "Debian" in distro_id:
 					return DEBIAN_GENERIC
 
-			elif "ubuntu-16" in kernel_version.lower():
-				return UBUNTU_16
-			elif "ubuntu-15" in kernel_version.lower():
-				return UBUNTU_15
-			elif "ubuntu-14" in kernel_version.lower():
-				return UBUNTU_14
-			elif "ubuntu-12" in kernel_version.lower():
-				return UBUNTU_12
-			elif "ubuntu-9" in kernel_version.lower():
-				return UBUNTU_9
-			elif "ubuntu-8" in kernel_version.lower():
-				return UBUNTU_8
-			elif "ubuntu-7" in kernel_version.lower():
-				return UBUNTU_7
-			elif "ubuntu-6" in kernel_version.lower():
-				return UBUNTU_6
-			elif "ubuntu" in kernel_version.lower():
-				return UBUNTU_GENERIC
-			# now debian...
-			elif "debian" in kernel_version.lower():
-				return DEBIAN_GENERIC
-			# etc ...
-			else:
-				return GENERIC_LINUX
+			# if there isn't a /etc/*release file, check if the known version string is in the kernel_version
+			for distro_string in ubuntu_distro_versions:
+				if distro_string[0] in kernel_version.lower():
+					return distro_string[1]
+
+			# return generic
+			return UBUNTU_GENERIC
 
 		elif "darwin" in kernel_version.lower():
 			return GENERIC_MAC
@@ -294,7 +239,6 @@ def clean_parsed_version(parsed_version):
 	:param parsed_version:
 	:return:
 	"""
-	print("")
 	for idx, version_n in enumerate(parsed_version):
 		parsed_version[idx] = version_n.split("-")[0]
 

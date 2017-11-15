@@ -18,27 +18,19 @@ NOT_VULNERABLE = "not_vulnerable"
 GENERIC_LINUX = "linux"
 
 UBUNTU_GENERIC = "linuxubuntu"
+UBUNTU_18 = "linuxubuntu18"
 UBUNTU_17 = "linuxubuntu17"
-UBUNTU_17_LTS = "linuxubuntu17lts"
 UBUNTU_16 = "linuxubuntu16"
-UBUNTU_16_LTS = "linuxubuntu16lts"
 UBUNTU_15 = "linuxubuntu15"
-UBUNTU_15_LTS = "linuxubuntu15lts"
 UBUNTU_14 = "linuxubuntu14"
-UBUNTU_14_LTS = "linuxubuntu14lts"
 UBUNTU_13 = "linuxubuntu13"
 UBUNTU_12 = "linuxubuntu12"
-UBUNTU_12_LTS = "linuxubuntu12lts"
+UBUNTU_11 = "linuxubuntu11"
 UBUNTU_10 = "linuxubuntu10"
-UBUNTU_10_LTS = "linuxubuntu10lts"
 UBUNTU_9 = "linuxubuntu9"
-UBUNTU_9_LTS = "linuxubuntu9lts"
 UBUNTU_8 = "linuxubuntu8"
-UBUNTU_8_LTS = "linuxubuntu8lts"
 UBUNTU_7 = "linuxubuntu7"
-UBUNTU_7_LTS = "linuxubuntu7lts"
 UBUNTU_6 = "linuxubuntu6"
-UBUNTU_6_LTS = "linuxubuntu6lts"
 
 DEBIAN_GENERIC = "linuxdebian"
 DEBIAN_10 = "linuxdebian10"
@@ -66,6 +58,29 @@ ARCHITECTURE_i686 =     "i686"
 GENERIC_MAC = "mac"
 
 DARWIN_16 = "macdarwin16"
+
+ubuntu_distro_versions = [
+	["ubuntu-6", UBUNTU_6],
+	["ubuntu-7", UBUNTU_7],
+	["ubuntu-8", UBUNTU_8],
+	["ubuntu-9", UBUNTU_9],
+	["ubuntu-10", UBUNTU_10],
+	["ubuntu-11", UBUNTU_11],
+	["ubuntu-12", UBUNTU_12],
+	["ubuntu-13", UBUNTU_13],
+	["ubuntu-14", UBUNTU_14],
+	["ubuntu-15", UBUNTU_15],
+	["ubuntu-16", UBUNTU_16],
+	["ubuntu-17", UBUNTU_17],
+	["ubuntu-18", UBUNTU_18]
+]
+
+debian_distro_versions = [
+	["10", DEBIAN_10],
+	["9", DEBIAN_9],
+	["8", DEBIAN_8],
+	["7", DEBIAN_7],
+]
 
 USAGE_STRING = \
 """usage:
