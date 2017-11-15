@@ -7,7 +7,7 @@ from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, 
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_8, \
 	UBUNTU_9,UBUNTU_17, DEBIAN_GENERIC, UBUNTU_15,  \
 	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC, ubuntu_distro_versions, \
-	debian_distro_versions
+	debian_distro_versions, RHEL
 
 
 class Kernel:
@@ -35,9 +35,9 @@ class Kernel:
 			)
 			release_result = p.communicate()[0].decode('utf-8')
 			# if there is a /etc/*release file
-			if len(release_result) > 0:
-				distro_id = release_result.split("\n")[0]
-				if "Ubuntu" in distro_id:
+			if "ubuntu" in kernel_version.lower():
+				if len(release_result) > 0:
+					distro_id = release_result.split("\n")[0]
 					# check if the parsed version number matches known versions
 					for distro in ubuntu_distro_versions:
 						distro_desc = release_result.split("\n")[3]
@@ -45,16 +45,22 @@ class Kernel:
 						for v_num in distro:
 							if v_num[0].replace("ubuntu-","") in version_num:
 								return v_num[1]
-				elif "Debian" in distro_id:
-					return DEBIAN_GENERIC
 
-			# if there isn't a /etc/*release file, check if the known version string is in the kernel_version
-			for distro_string in ubuntu_distro_versions:
-				if distro_string[0] in kernel_version.lower():
-					return distro_string[1]
+				# if there isn't a /etc/*release file, check if the known version string is in the kernel_version
+				for distro_string in ubuntu_distro_versions:
+					if distro_string[0] in kernel_version.lower():
+						return distro_string[1]
+
+				return UBUNTU_GENERIC
+
+			elif "debian" in kernel_version.lower():
+				return DEBIAN_GENERIC
+
+			elif "EL" in kernel_version:
+				return RHEL
 
 			# return generic
-			return UBUNTU_GENERIC
+			return GENERIC_LINUX
 
 		elif "darwin" in kernel_version.lower():
 			return GENERIC_MAC
