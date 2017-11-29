@@ -9,9 +9,13 @@ on the following operating systems:
 
 - [ ] Windows (coming soon)
 
-### example of enumeration to root
+### example of enumeration to root (Linux)
 
 [![got-root](https://asciinema.org/a/hDG3EpVHM12jC0JFeZaZoOImB.png "got-root")](https://asciinema.org/a/hDG3EpVHM12jC0JFeZaZoOImB)
+
+### mac exploitation example
+
+[![input-mode](https://asciinema.org/a/TzZMZDwHqy5hSPwngJoyLhDMJ.png "mac asciinema")](https://asciinema.org/a/TzZMZDwHqy5hSPwngJoyLhDMJ)
 
 ---
 
@@ -63,10 +67,6 @@ The `input` mode allows you to perform enumeration with just the output of a `un
 which makes it useful as a host-side only enumeration tool.
 
 [![input-mode](https://asciinema.org/a/hrHaVdsJAv1iBorFknR3QaHmc.png "input asciinema")](https://asciinema.org/a/hrHaVdsJAv1iBorFknR3QaHmc)
-
-### mac exploitation example
-
-[![input-mode](https://asciinema.org/a/TzZMZDwHqy5hSPwngJoyLhDMJ.png "mac asciinema")](https://asciinema.org/a/TzZMZDwHqy5hSPwngJoyLhDMJ)
 
 ---
 
