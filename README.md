@@ -60,6 +60,11 @@ i.e. if an exploit requires a specific kernel version, but also a specific `sudo
 The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
 which makes it useful as a host-side only enumeration tool.
 
+### digestible ouput (json)
+
+This option allows you to dump the results of a kernelpop run to a digestible json file for later processing. So
+far, I have just implemented the `json` dump, but I will work on an XML version if it is requested.
+
 ---
 
 ### currently supported CVE's:
