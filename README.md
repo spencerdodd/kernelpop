@@ -22,8 +22,8 @@ on the following operating systems:
 # usage
 
 ```
-usage:
-	(default)		python3 kernelpop.py
+run modes:
+	(default)	python3 kernelpop.py
 	(brute-mode)	python3 kernelpop.py -b
 	(exploit-mode)	python3 kernelpop.py -e {exploit name}
 	(input-mode)	python3 kernelpop.py -i
@@ -34,20 +34,19 @@ other:
 
 ### default mode (passive)
 
-```
-#python3 kernelpop.py
-```
-
 The `default` mode processes information about the host kernel and compares it to the known kernel exploits available
 to the program. It then outputs a list of potentially useful vulnerabilities and attached exploits.
-
 
 ### exploit mode (active)
 
 The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
 It can catch interrupts from short-stopped attempts as well
 
-### brute-enumeration mode (active)
+### brute-enumeration mode (semi-active)
+
+```
+-b
+```
 
 The `brute-enumeration` mode performs the same checks as the default mode, but then
 goes beyond and checks the computer for exploit prerequisites to see if the operating system is set up in the
@@ -57,10 +56,18 @@ i.e. if an exploit requires a specific kernel version, but also a specific `sudo
 
 ### input mode (passive)
 
+```
+-i <uname -a output>
+```
+
 The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
 which makes it useful as a host-side only enumeration tool.
 
-### digestible ouput (json)
+### digestible ouput
+
+```
+--digest json
+```
 
 This option allows you to dump the results of a kernelpop run to a digestible json file for later processing. So
 far, I have just implemented the `json` dump, but I will work on an XML version if it is requested.
