@@ -11,7 +11,7 @@ from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, 
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_8, \
 	UBUNTU_9,UBUNTU_17, DEBIAN_GENERIC, UBUNTU_15,  \
 	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC, ubuntu_distro_versions, \
-	debian_distro_versions, RHEL
+	debian_distro_versions, RHEL, ROOT_DIR
 
 
 class Kernel:
@@ -512,7 +512,16 @@ def convert_to_digestible(exploit_list, digest="json"):
 		return json.dumps(exploit_list, default=ts_linux_exploit)
 
 
-def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None):
+def write_digestible_to_file(file_to_write, contents):
+	try:
+		with open(file_to_write, "w") as digestfile:
+			digestfile.write(contents)
+	except Exception as e:
+		color_print("[!] error writing results to file", color="red")
+		color_print(f"\t{e}", color="red")
+
+
+def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=None):
 	"""
 	kernelpop()
 
@@ -551,6 +560,12 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None):
 										 fail_message="[-] no exploits were confirmed for this kernel")
 				if "exploit" in mode:
 					brute_force_exploit(confirmed_vulnerable)
+
+		if digest:
+			digest_filepath = os.path.join(ROOT_DIR, f"output.{digest}")
+			print(f"[*] dumping results to {digest} file ({digest_filepath}")
+			digestible_results = convert_to_digestible(merged_exploits) 	# do we want 'confirmed vulnerable' instead?
+			write_digestible_to_file(digest_filepath, digestible_results)
 
 
 if __name__ == "__main__":

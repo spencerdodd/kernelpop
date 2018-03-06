@@ -87,7 +87,10 @@ USAGE_STRING = \
 \t(default)\t\tpython3 kernelpop.py
 \t(brute-mode)\tpython3 kernelpop.py -b
 \t(exploit-mode)\tpython3 kernelpop.py -e {exploit name}
-\t(input-mode)\tpython3 kernelpop.py -i"""
+\t(input-mode)\tpython3 kernelpop.py -i
+other:
+\t(json output file) --dump json
+\t(xml output file) --dump xml"""
 
 HEADER = """
 ##########################
