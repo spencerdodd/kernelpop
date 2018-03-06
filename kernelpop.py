@@ -12,6 +12,8 @@ def main():
 	elif sys.argv[1] == "-e" and len(sys.argv) > 2:
 		kernelpop(mode="exploit", exploit=sys.argv[2])
 	elif sys.argv[1] == "-i":
+		color_print("[*] please note, vulnerability detection is not as accurate by uname alone", color="yellow")
+		color_print("\tconsider running locally on the machine to be tested to get a more accurate reading", color="yellow")
 		uname = input("Please enter uname: ")
 		if "darwin" in str(uname).lower():
 			color_print("[!] macs require additional input", color="yellow")

@@ -2,7 +2,7 @@
 Class for holding kernel windows for vulnerabilities
 """
 from distutils.version import StrictVersion
-from src.kernelpop import Kernel
+#from src.kernelpop import Kernel
 from constants import CONFIRMED_VULNERABLE, NOT_VULNERABLE
 
 class KernelWindow:

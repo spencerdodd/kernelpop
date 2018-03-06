@@ -1,7 +1,11 @@
 import os
+import json
 import subprocess
 import platform
 from pydoc import locate
+from exploits.exploit import LinuxExploit, MacExploit
+from src.kernels import KernelWindow
+from functools import singledispatch
 from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
 	color_print, UBUNTU_12, UBUNTU_14, UBUNTU_16, UBUNTU_GENERIC, \
 	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_8, \
@@ -439,6 +443,7 @@ def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=
 			if fail_message:
 				color_print(fail_message, color="red")
 
+
 def exploit_individually(exploit_name):
 	color_print("[*] attempting to perform exploitation with exploit {}".format(exploit_name))
 	exploit_os = ["linux", "windows", "mac"]
@@ -461,6 +466,51 @@ def total_exploits(exploits):
 			total += len(exploits[level])
 
 	return total
+
+@singledispatch
+def to_serializable(val):
+	"""Used by default."""
+	return str(val)
+
+@to_serializable.register(KernelWindow)
+def ts_kw_exploit(val):
+	"""Used if *val* is an instance of KernelWindow."""
+	json_kw = {
+		"distro": val.distro,
+		"confirmation": val.confirmation,
+		"lowest_major": val.lowest_major,
+		"lowest_minor": val.lowest_minor,
+		"lowest_release": val.lowest_release,
+		"highest_major": val.highest_major,
+		"highest_minor": val.highest_minor,
+		"highest_release": val.highest_release
+	}
+
+	return json_kw
+
+@to_serializable.register(LinuxExploit)
+def ts_linux_exploit(val):
+	"""Used if *val* is an instance of LinuxExploit."""
+
+	json_exploit = {
+		"name": val.name,
+		"type": val.type,
+		"brief_desc": val.brief_desc,
+		"reliability": val.reliability,
+		"vulnerable_kernels": json.dumps(val.vulnerable_kernels, default=ts_kw_exploit),
+		"architecture": val.architecture,
+		"source_c_path": val.source_c_path,
+		"compilation_path": val.compilation_path,
+		"compilation_command": val.compilation_command,
+		"exploit_command": val.exploit_command
+	}
+	return json_exploit
+
+
+def convert_to_digestible(exploit_list, digest="json"):
+	if digest == "json":
+		return json.dumps(exploit_list, default=ts_linux_exploit)
+
 
 def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None):
 	"""
