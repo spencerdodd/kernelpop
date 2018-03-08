@@ -237,12 +237,13 @@ def get_kernel_version_from_uname(uname_value):
 	# this regex: \d+.\d+.\d+-\w+
 	with_patch = re.compile("\d+.\d+.\d+-\w+")
 	possible_kernel_strings = with_patch.findall(uname_value)
-	possible_kernels = possible_kernels_from_strings(possible_kernel_strings)
+	parsed_kernels = possible_kernels_from_strings(possible_kernel_strings)
 
 	# now we find the kernel versions that don't have a major version
 	# higher than KERNEL_MAJOR_VERSION_CAP. This allows us to easily parse out the linux versions like
 	# Ubuntu16.04.1 from actual kernel values.
-	for kernel in possible_kernels:
+	possible_kernels = []
+	for kernel in parsed_kernels:
 		if not kernel["major"] > KERNEL_MAJOR_VERSION_CAP:
 			possible_kernels.append(kernel)
 
