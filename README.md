@@ -7,7 +7,13 @@ on the following operating systems:
 
 - [x] Mac
 
-- [ ] Windows (coming soon)
+# TODO:
+
+- [ ] KernelWindow needs to include patch level
+
+- [ ] vulnerable window comparison needs to include patch levels
+
+- [ ] add way to override detected settings in case of incorrect parsing or adversarial settings
 
 ### example of enumeration to root (Linux)
 

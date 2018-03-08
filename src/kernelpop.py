@@ -6,171 +6,21 @@ from pydoc import locate
 from exploits.exploit import LinuxExploit, MacExploit
 from src.kernels import KernelWindow
 from functools import singledispatch
-from constants import LINUX_EXPLOIT_PATH, HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY, HEADER, bcolors, \
-	color_print, UBUNTU_12, UBUNTU_14, UBUNTU_16, UBUNTU_GENERIC, \
-	GENERIC_LINUX, CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE, UBUNTU_7, UBUNTU_8, \
-	UBUNTU_9,UBUNTU_17, DEBIAN_GENERIC, UBUNTU_15,  \
-	UBUNTU_6, ARCHITECTURE_GENERIC, shell_results, MAC_EXPLOIT_PATH, GENERIC_MAC, ubuntu_distro_versions, \
-	debian_distro_versions, RHEL, ROOT_DIR
+from constants import *
 
 
 class Kernel:
-	def __init__(self, kernel_version, uname=False):
-		self.type, self.distro, self.name, self.major_version, self.minor_version, \
-		self.release, self.architecture, self.uname = self.process_kernel_version(kernel_version, uname=uname)
+	def __init__(self, type, distro, name, major_version, minor_version, release, architecture, uname=False):
+		self.type = type,
+		self.distro = distro,
+		self.name = name,
+		self.major_version = major_version,
+		self.minor_version = minor_version,
+		self.release = release,
+		self.architecture = architecture,
+		self.uname = uname
 
 		self.alert_kernel_discovery()
-
-	def parse_distro(self, kernel_version):
-		"""
-		grabs the distro name if it can from /etc/*release
-
-		:param kernel_version: String from platform.platform()
-		:return: String of distro name if it exists
-		"""
-		if "linux" in kernel_version.lower():
-			release_command = "cat /etc/*release"
-			p = subprocess.Popen(
-				release_command,
-				stdin=subprocess.PIPE,
-				stdout=subprocess.PIPE,
-				stderr=subprocess.PIPE,
-				shell=True
-			)
-			release_result = p.communicate()[0].decode('utf-8')
-			# if there is a /etc/*release file
-			if "ubuntu" in kernel_version.lower():
-				if len(release_result) > 0:
-					distro_id = release_result.split("\n")[0]
-					# check if the parsed version number matches known versions
-					for distro in ubuntu_distro_versions:
-						distro_desc = release_result.split("\n")[3]
-						version_num = distro_desc.split(" ")[1].split(".")[0]
-						for v_num in distro:
-							if v_num[0].replace("ubuntu-","") in version_num:
-								return v_num[1]
-
-				# if there isn't a /etc/*release file, check if the known version string is in the kernel_version
-				for distro_string in ubuntu_distro_versions:
-					if distro_string[0] in kernel_version.lower():
-						return distro_string[1]
-
-				return UBUNTU_GENERIC
-
-			elif "debian" in kernel_version.lower():
-				return DEBIAN_GENERIC
-
-			elif "EL" in kernel_version:
-				return RHEL
-
-			# return generic
-			return GENERIC_LINUX
-
-		elif "darwin" in kernel_version.lower():
-			return GENERIC_MAC
-
-		return "unknown"
-
-	def process_kernel_version(self, kernel_version, uname=False):
-		# running on mac
-		# Darwin-16.7.0-x86_64-i686-64bit
-		if "Darwin" in kernel_version:
-
-			if uname:
-				color_print("[+] `uname -a` os identified as a mac variant")
-				k_type = "mac"
-				k_distro = self.parse_distro(kernel_version)
-				k_name = kernel_version.split(" ")[0]
-				k_major = int(kernel_version.split(" ")[2].split(".")[0])
-				k_minor = int(kernel_version.split(" ")[2].split(".")[1])
-				k_release = int(kernel_version.split(" ")[2].split(".")[2])
-				k_architecture = kernel_version.split(" ")[-1]
-				# replace any bad architecture parses
-				for architecture in ["x86", "i686", "amd64", "x86_64"]:
-					if architecture in kernel_version:
-						k_architecture = architecture
-				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
-			else:
-				color_print("[+] underlying os identified as a mac variant")
-				k_type = "mac"
-				k_distro = self.parse_distro(kernel_version)
-				k_name = kernel_version.split("-")[0]
-				k_major = int(kernel_version.split("-")[1].split(".")[0])
-				k_minor = int(kernel_version.split("-")[1].split(".")[1])
-				k_release = int(kernel_version.split("-")[1].split(".")[2])
-				k_architecture = kernel_version.split("-")[2]
-				# replace any bad architecture parses
-				for architecture in ["x86", "i686", "amd64", "x86_64"]:
-					if architecture in kernel_version:
-						k_architecture = architecture
-				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
-
-		# running on linux
-		# Linux-4.10.0-37-generic-x86_64-with-Ubuntu-16.04-xenial
-		elif "Linux" in kernel_version:
-			if uname:
-				color_print("[+] `uname -a` os identified as a linux variant")
-				k_type = "linux"
-				k_distro = self.parse_distro(kernel_version)
-				k_name = kernel_version.split(" ")[0]
-
-				k_full_version = kernel_version.split(" ")[2].split(".")
-				# the uname's first version string is in the format Major.Minor-distro-architecture instead of
-				# 	the expected Major.Minor.Release-distro-architecture...try to parse from the end
-				#
-				if len(k_full_version) < 3:
-					k_full_version = kernel_version.split(" ")[-4].split(".")
-				# if we couldn't parse out 3 again..
-				if len(k_full_version) < 3:
-					k_full_version = kernel_version.split(" ")[-4].split(".")
-					# minor will have garbage after a '-'
-					k_full_version[1] = k_full_version[1].split("-")[0]
-					k_full_version.append("0")
-				k_full_version = clean_parsed_version(k_full_version)
-
-				k_major = int(k_full_version[0])
-				k_minor = int(k_full_version[1])
-				k_release = int(k_full_version[2])
-				k_architecture = kernel_version.split(" ")[-2]
-				# replace any bad architecture parses
-				for architecture in ["x86", "i686", "amd64", "x86_64"]:
-					if architecture in kernel_version:
-						k_architecture = architecture
-
-				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
-
-			else:
-				color_print("[+] underlying os identified as a linux variant")
-				k_type = "linux"
-				k_distro = self.parse_distro(kernel_version)
-				k_name = kernel_version.split("-")[-1]
-				k_full_version = kernel_version.split("-")[1].split(".")
-				if len(k_full_version) < 3:
-					k_full_version.append("0") 	# we just assume base kernel
-				k_full_version = clean_parsed_version(k_full_version)
-
-				k_major = int(k_full_version[0])
-				k_minor = int(k_full_version[1])
-				k_release = int(k_full_version[2])
-				k_architecture = kernel_version.split("-")[4]
-				# replace any bad architecture parses
-				for architecture in ["x86", "i686", "amd64", "x86_64"]:
-					if architecture in kernel_version:
-						k_architecture = architecture
-				return k_type, k_distro, k_name, k_major, k_minor, k_release, k_architecture, kernel_version
-
-		# running on windows
-		elif "win" in kernel_version:
-			color_print("[+] underlying os identified as a windows variant")
-			if uname:
-				color_print("[-] no uname support yet", color="red")
-				exit(0)
-			else:
-				pass
-		# don't know what we're on
-		else:
-			color_print("[-] could not identify underlying os", color="red")
-			exit(1)
 
 	def alert_kernel_discovery(self):
 		if self.type == "linux":
@@ -186,6 +36,7 @@ class Kernel:
 			pass
 		else:
 			exit(1)
+
 
 def get_mac_version():
 	"""
@@ -213,33 +64,169 @@ def get_kernel_version(uname=None, osx_ver=None):
 
 	:returns: Kernel object
 	"""
-	if not uname:
-		kernel_version = {
-			"normal": platform.platform(),
-			"aliased": platform.platform(aliased=True),
-			"terse": platform.platform(terse=True)
-		}
-		if "darwin" in kernel_version["normal"].lower():
-			os_major, os_minor, os_release = get_mac_version()
-			version_string = "{}.{}.{}".format(os_major, os_minor, os_release)
-			template_os_version_start = kernel_version["normal"].split("-")[0]
-			template_os_version_end = "-".join(kernel_version["normal"].split("-")[2:])
-			os_version_replaced_kv = "{}-{}-{}".format(template_os_version_start, version_string, template_os_version_end)
-
-			return Kernel(os_version_replaced_kv)
-
-		else:
-			return Kernel(kernel_version["normal"])
-	else:
+	if uname:
 		if osx_ver:
+			"""
 			uname_pre = " ".join(uname.split(" ")[:2])
 			uname_post = " ".join(uname.split(" ")[3:])
 			uname_os_version = "{} {} {}".format(uname_pre, osx_ver, uname_post)
 			return Kernel(uname_os_version, uname=True)
-
-
+			"""
+			color_print("[!] I broke the mac stuff...sorry", color="red")
+			exit(0)
 		else:
-			return Kernel(uname, uname=True)
+			color_print("[!] I broke the linux uname stuff...sorry", color="red")
+			exit(0)
+
+	else:
+		"""
+		otherwise, if we have to parse from the system itself
+		----------------------------------------------------------------------
+		so our OS version info is coming from release, our kernel version should come from 'v' if available.
+		if we don't have any data from 'v', we will fall back to 'r', but it will give us false positives so
+		we should warn the user.
+		"""
+		os_info = 			shell_results("cat /etc/*release")[0].decode('utf-8')
+		full_uname = 		shell_results("uname -a")[0].decode('utf-8')
+		kernel_release = 	shell_results("uname -r")[0].decode('utf-8')
+		kernel_version = 	shell_results("uname -v")[0].decode('utf-8')
+
+		os_type = os_type_from_full_uname(full_uname)
+		if os_type == "mac":
+			color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+		elif os_type == "linux":
+			distro = distro_from_os_info(os_info)
+			print("[*] parsing kernel version from underlying OS ({})".format(distro))
+			print("[*[ grabbing kernel version from 'uname -v'")
+			parsed_kernel_v = get_kernel_version_from_uname(kernel_version)
+			if parsed_kernel_v is None:
+				color_print("[!] we couldn't get the legit kernel version from ({})".format(kernel_version), color="yellow")
+				color_print("[!] we're going to have to approximate with kernel release 'uname r'", color="yellow")
+				color_print("[!] this has a high chance of leading to false positives")
+				print("[*] attempting to approximate kernel version with kernel release")
+				parsed_kernel_v = get_kernel_version_from_uname(kernel_release)
+
+			if parsed_kernel_v is None:
+				color_print("[!] could not parse kernel release from ({})".format(kernel_release), color="yellow")
+				color_print("[*] attempting final kernel release/version grab from 'uname -a'")
+				parsed_kernel_v = get_kernel_version_from_uname(full_uname)
+
+			if parsed_kernel_v is None:
+				color_print("[!] could not grab a semblance of kernel version from ({})".format(full_uname), color="yellow")
+				color_print("[!] kernel version could not be parsed from underlying OS", color="red")
+				color_print("[!] aborting...", color="red")
+				exit(0)
+		else:
+			color_print("[!] could not determine operating system type...sorry", color="red")
+			exit(0)
+
+
+def distro_from_os_info(os_info):
+	"""
+	This needs to return the unique distro+version string from 'constants.py'
+
+	$ cat /etc/*release
+		PRETTY_NAME="Debian GNU/Linux 9 (stretch)"
+		NAME="Debian GNU/Linux"
+		VERSION_ID="9"
+		VERSION="9 (stretch)"
+		ID=debian
+		HOME_URL="https://www.debian.org/"
+		SUPPORT_URL="https://www.debian.org/support"
+		BUG_REPORT_URL="https://bugs.debian.org/"
+
+	:param os_info: output of 'cat /etc/*release'
+	:return: unique distro + version string
+	"""
+	# implement decision tree
+	for os_type in os_decision_tree.keys():
+		if os_type in os_info.lower():
+			# now that we have an os, we parse out the version number
+			# first we try to split on
+			if "VERSION_ID" in os_info:
+				version_string = os_info.split("VERSION_ID")[1].split("\n")[0]
+			elif "VERSION" in os_info:
+				version_string = os_info.split("VERSION")[1].split("\n")[0]
+			else:
+				version_string = os_info
+
+			# try to find the version number in the version string
+			for os_version in os_decision_tree[os_type].keys():
+				if os_version in version_string:
+					return os_decision_tree[os_type][os_version]
+
+			# we know the distro, but not the version, so return the generic version
+			# of the distro
+			return os_decision_tree[os_type][OS_DEFAULT_VAL_KEY]
+
+	# we didn't find anything
+	return GENERIC_LINUX
+
+
+def get_kernel_version_from_uname(uname_value):
+	"""
+	More complex, needs to return the kernel version for a given 'uname -v' output:
+
+		$ uname -v
+		#1 SMP Debian 4.9.65-3+deb9u1 (2017-12-23)
+
+	:param uname_v: output of 'uname -v'
+	:return: dictionary of kernel version, or None if we couldn't parse the value
+	"""
+	# dynamically locate the kernel version by searching for the member of the " " split array that has more than
+	# one '.' character in it
+	kernel_args = uname_value.split(" ")
+	kernel_idx = 0
+	for idx, arg in enumerate(kernel_args):
+		if arg.count(".") > 1:
+			kernel_idx = idx
+
+	if kernel_idx == 0 and not kernel_args[kernel_idx].count(".") > 1:
+		return None
+
+	kernel_v = kernel_args[kernel_idx]
+	just_kernel_v = kernel_v.split("-")[0].split(".")
+	major = 	just_kernel_v[0]
+	minor = 	just_kernel_v[1]
+	release = 	just_kernel_v[2]
+
+	kernel_version = {
+		"major": 	major,
+		"minor": 	minor,
+		"release": 	release,
+	}
+
+	patch_level_included = len(kernel_v.split("-")) > 1
+	if patch_level_included:
+		patch_level = kernel_v.split("-")[1]
+
+		kernel_version["patch-level"] = patch_level
+
+	return kernel_version
+
+
+def os_type_from_full_uname(full_uname):
+	"""
+	This should return one of "linux" or "mac". We use the full uname because it might have tidbits of info that
+	are not found in separate commands.
+	:param kernel_version: "uname -v" output
+	:return: string
+	"""
+	if "darwin" in full_uname.lower():
+		return "mac"
+	elif "linux" in full_uname.lower():
+		return "linux"
+	else:
+		return "unknown"
+
+
+def pull_distro_version_from_uname(uname_output):
+	for spaced in uname_output.split(" "):
+		if "+" in spaced:
+			return spaced
+
+	return "not parsed"
+
 
 def clean_parsed_version(parsed_version):
 	"""

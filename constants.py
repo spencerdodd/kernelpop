@@ -50,37 +50,65 @@ SOLARIS = "linuxsolaris"
 OPENBSD = "linuxopenbsd"
 NETBSD = "linuxnetbsd"
 
+GENERIC_MAC = "mac"
+DARWIN_16 = "macdarwin16"
+
 ARCHITECTURE_GENERIC =  "generic"
 ARCHITECTURE_x86_64 =   "x86_64"
 ARCHITECTURE_amd64 =    "amd64"
 ARCHITECTURE_i686 =     "i686"
 
-GENERIC_MAC = "mac"
+OS_DEFAULT_VAL_KEY = "OS_DEFAULT_VAL_KEY"
 
-DARWIN_16 = "macdarwin16"
-
-ubuntu_distro_versions = [
-	["ubuntu-6", UBUNTU_6],
-	["ubuntu-7", UBUNTU_7],
-	["ubuntu-8", UBUNTU_8],
-	["ubuntu-9", UBUNTU_9],
-	["ubuntu-10", UBUNTU_10],
-	["ubuntu-11", UBUNTU_11],
-	["ubuntu-12", UBUNTU_12],
-	["ubuntu-13", UBUNTU_13],
-	["ubuntu-14", UBUNTU_14],
-	["ubuntu-15", UBUNTU_15],
-	["ubuntu-16", UBUNTU_16],
-	["ubuntu-17", UBUNTU_17],
-	["ubuntu-18", UBUNTU_18]
-]
-
-debian_distro_versions = [
-	["10", DEBIAN_10],
-	["9", DEBIAN_9],
-	["8", DEBIAN_8],
-	["7", DEBIAN_7],
-]
+os_decision_tree = {
+	"ubuntu": {
+		"18": UBUNTU_18,
+		"17": UBUNTU_17,
+		"16": UBUNTU_16,
+		"15": UBUNTU_15,
+		"14": UBUNTU_14,
+		"13": UBUNTU_13,
+		"12": UBUNTU_12,
+		"11": UBUNTU_11,
+		"10": UBUNTU_10,
+		"9": UBUNTU_9,
+		"8": UBUNTU_8,
+		"7": UBUNTU_7,
+		"6": UBUNTU_6,
+		OS_DEFAULT_VAL_KEY: UBUNTU_GENERIC
+	},
+	"debian": {
+		"10": DEBIAN_10,
+		"9": DEBIAN_9,
+		"8": DEBIAN_8,
+		"7": DEBIAN_7,
+		OS_DEFAULT_VAL_KEY: DEBIAN_GENERIC
+	},
+	"arch": {
+		OS_DEFAULT_VAL_KEY: ARCH
+	},
+	"redhat": {
+		OS_DEFAULT_VAL_KEY: RHEL
+	},
+	"gentoo": {
+		OS_DEFAULT_VAL_KEY: GENTOO
+	},
+	"centos": {
+		OS_DEFAULT_VAL_KEY: CENTOS
+	},
+	"fedora": {
+		OS_DEFAULT_VAL_KEY: FEDORA
+	},
+	"solaris": {
+		OS_DEFAULT_VAL_KEY: SOLARIS
+	},
+	"openbsd": {
+		OS_DEFAULT_VAL_KEY: OPENBSD
+	},
+	"netbsd": {
+		OS_DEFAULT_VAL_KEY: NETBSD
+	},
+}
 
 USAGE_STRING = \
 """usage:
@@ -139,4 +167,5 @@ def shell_results(shell_command):
 		stderr=subprocess.PIPE,
 		shell=True
 	)
-	return p.communicate()
+	result = p.communicate()
+	return result
