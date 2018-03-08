@@ -27,7 +27,7 @@ BUG_REPORT_URL = "https://bugs.debian.org/"
 			"major": 		"4",
 			"minor": 		"9",
 			"release": 		"65",
-			"patch_level":	"3+deb9u1"
+			"patch_level":	"3"
 		}
 		actual_kernel_version = get_kernel_version_from_uname(test_uname_v)
 		self.assertEqual(expected_kernel_version, actual_kernel_version)

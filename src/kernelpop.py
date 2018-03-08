@@ -235,7 +235,8 @@ def get_kernel_version_from_uname(uname_value):
 	# one '.' character in it
 
 	# this regex: \d+.\d+.\d+-\w+
-	with_patch = re.compile("\d+.\d+.\d+-\w+")
+	# NOTE: will cut off patch level details like '+deb9u1' from a full patch value (3+deb9u1)
+	with_patch = re.compile("\d+\.\d+\.\d+\-\w+")
 	possible_kernel_strings = with_patch.findall(uname_value)
 	parsed_kernels = possible_kernels_from_strings(possible_kernel_strings)
 
@@ -257,6 +258,10 @@ def get_kernel_version_from_uname(uname_value):
 		current_formatted_val = "{}.{}.{}".format(kernel["major"], kernel["minor"], kernel["release"])
 		if StrictVersion(current_formatted_val) > StrictVersion(highest_formatted_val):
 			highest_kernel = kernel
+
+	# if we didn't find a kernel, return None
+	if highest_kernel == fake_kernel:
+		highest_kernel = None
 
 	return highest_kernel
 
