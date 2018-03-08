@@ -9,10 +9,10 @@ def main():
 	digest_type = None
 	if "--digest" in sys.argv:
 		if "json" in sys.argv:
-			print(f"[*] outputting results in json digestible format")
+			print("[*] outputting results in json digestible format")
 			digest_type = "json"
 		elif "xml" in sys.argv:
-			print(f"[*] sorry, only json digestible output is supported at the moment (--digest json)")
+			print("[*] sorry, only json digestible output is supported at the moment (--digest json)")
 			exit(0)
 
 	if len(sys.argv) < 2:

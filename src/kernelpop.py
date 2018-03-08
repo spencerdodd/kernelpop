@@ -467,10 +467,12 @@ def total_exploits(exploits):
 
 	return total
 
+
 @singledispatch
 def to_serializable(val):
 	"""Used by default."""
 	return str(val)
+
 
 @to_serializable.register(KernelWindow)
 def ts_kw_exploit(val):
@@ -487,6 +489,7 @@ def ts_kw_exploit(val):
 	}
 
 	return json_kw
+
 
 @to_serializable.register(LinuxExploit)
 def ts_linux_exploit(val):
@@ -518,7 +521,7 @@ def write_digestible_to_file(file_to_write, contents):
 			digestfile.write(contents)
 	except Exception as e:
 		color_print("[!] error writing results to file", color="red")
-		color_print(f"\t{e}", color="red")
+		color_print("\t{}".format(e), color="red")
 
 
 def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=None):
@@ -562,8 +565,8 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 					brute_force_exploit(confirmed_vulnerable)
 
 		if digest:
-			digest_filepath = os.path.join(ROOT_DIR, f"output.{digest}")
-			print(f"[*] dumping results to {digest} file ({digest_filepath}")
+			digest_filepath = os.path.join(ROOT_DIR, "output.{}".format(digest))
+			print("[*] dumping results to {} file ({}".format(digest, digest_filepath))
 			digestible_results = convert_to_digestible(merged_exploits) 	# do we want 'confirmed vulnerable' instead?
 			write_digestible_to_file(digest_filepath, digestible_results)
 
