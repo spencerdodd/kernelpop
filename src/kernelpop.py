@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import subprocess
 import platform
@@ -7,7 +8,7 @@ from exploits.exploit import LinuxExploit, MacExploit
 from src.kernels import KernelWindow
 from functools import singledispatch
 from constants import *
-
+from distutils.version import StrictVersion
 
 class Kernel:
 	def __init__(self, type, distro, name, major_version, minor_version, release, patch_level, architecture, uname=False):
@@ -76,8 +77,10 @@ def get_kernel_version(uname=None, osx_ver=None):
 			color_print("[!] I broke the mac stuff...sorry", color="red")
 			exit(0)
 		else:
-			color_print("[!] I broke the linux uname stuff...sorry", color="red")
-			exit(0)
+			# so we can do everything except use OS commands. no worries, we'll just use the same methodology as
+			# below, but just with the full uname. If we can't parse something that we have to have, we can decide
+			# to either error out, or fill it with a default value and a warning
+			distro = distro_from_uname(uname)
 
 	else:
 		"""
@@ -122,7 +125,27 @@ def get_kernel_version(uname=None, osx_ver=None):
 			# so we have the distro and the kernel version now, just need architecture
 			arch = architecture_from_uname(full_uname)
 
+			# we're going to set the kernel name to the os_type, because I forgot if we even need that field
+			kernel_name = os_type
 
+			# now we can make and return our kernel!
+			"""
+			def __init__(self, type, distro, name, major_version, minor_version, release, patch_level, architecture,
+						uname=False):
+			"""
+			new_kernel = Kernel(os_type,
+				distro,
+				kernel_name,
+				parsed_kernel_v["major"],
+				parsed_kernel_v["minor"],
+				parsed_kernel_v["release"],
+				None, 						# patch level, we'll set after
+				arch
+			)
+			if "patch_level" in parsed_kernel_v.keys():
+				new_kernel.patch_level = parsed_kernel_v["patch_level"]
+
+			return new_kernel
 
 		else:
 			color_print("[!] could not determine operating system type...sorry", color="red")
@@ -144,6 +167,16 @@ def architecture_from_uname(uname_value):
 			return architecture_needles["secondary"][arch]
 
 	return architecture_needles[ARCHITECTURE_DEFAULT]
+
+
+def distro_from_uname(uname):
+	"""
+	Similar to distro_from_os_info. We can't rely on the VERSION string splitting though, so we need to find
+	another way to parse out the versions from
+	:param uname:
+	:return:
+	"""
+	return None
 
 
 def distro_from_os_info(os_info):
@@ -198,36 +231,60 @@ def get_kernel_version_from_uname(uname_value):
 	:param uname_v: output of 'uname -v'
 	:return: dictionary of kernel version, or None if we couldn't parse the value
 	"""
-	# dynamically locate the kernel version by searching for the member of the " " split array that has more than
+	# dynamically locate possible kernel versions by searching for the member of the " " split array that has more than
 	# one '.' character in it
-	kernel_args = uname_value.split(" ")
-	kernel_idx = 0
-	for idx, arg in enumerate(kernel_args):
-		if arg.count(".") > 1:
-			kernel_idx = idx
 
-	if kernel_idx == 0 and not kernel_args[kernel_idx].count(".") > 1:
-		return None
+	# this regex: \d+.\d+.\d+-\w+
+	with_patch = re.compile("\d+.\d+.\d+-\w+")
+	possible_kernel_strings = with_patch.findall(uname_value)
+	possible_kernels = possible_kernels_from_strings(possible_kernel_strings)
 
-	kernel_v = kernel_args[kernel_idx]
-	just_kernel_v = kernel_v.split("-")[0].split(".")
-	major = 	just_kernel_v[0]
-	minor = 	just_kernel_v[1]
-	release = 	just_kernel_v[2]
+	# now we find the kernel versions that don't have a major version
+	# higher than KERNEL_MAJOR_VERSION_CAP. This allows us to easily parse out the linux versions like
+	# Ubuntu16.04.1 from actual kernel values.
+	for kernel in possible_kernels:
+		if not kernel["major"] > KERNEL_MAJOR_VERSION_CAP:
+			possible_kernels.append(kernel)
 
-	kernel_version = {
-		"major": 	major,
-		"minor": 	minor,
-		"release": 	release,
-	}
+	# now we find the highest remaining kernel value. The kernel version will always be higher than the release
+	# value
+	# weird hacky comparison we take from KernelWindow comparisons that works lol
+	fake_kernel = {"major": "0", "minor": "0", "release": "0"}
+	highest_kernel = fake_kernel
+	for kernel in possible_kernels:
+		highest_formatted_val = "{}.{}.{}".format(highest_kernel["major"], highest_kernel["minor"], highest_kernel["release"])
+		current_formatted_val = "{}.{}.{}".format(kernel["major"], kernel["minor"], kernel["release"])
+		if StrictVersion(current_formatted_val) > StrictVersion(highest_formatted_val):
+			highest_kernel = kernel
 
-	patch_level_included = len(kernel_v.split("-")) > 1
-	if patch_level_included:
-		patch_level = kernel_v.split("-")[1]
+	return highest_kernel
 
-		kernel_version["patch-level"] = patch_level
 
-	return kernel_version
+def possible_kernels_from_strings(kernel_strings):
+	# iterate through all the possible kernel indexes and convert them into kernel dictionaries
+	parsed_kernels = []
+	for kernel_string in kernel_strings:
+		split_kernel = kernel_string.split(".")
+
+		major = split_kernel[0]
+		minor = split_kernel[1]
+		release = split_kernel[2].split("-")[0] # because our patch will be on the end of that
+
+		kernel_version = {
+			"major": major,
+			"minor": minor,
+			"release": release,
+		}
+
+		patch_level_included = len(kernel_string.split("-")) > 1
+		if patch_level_included:
+			patch_level = kernel_string.split("-")[1]
+
+			kernel_version["patch_level"] = patch_level
+
+		parsed_kernels.append(kernel_version)
+
+	return parsed_kernels
 
 
 def os_type_from_full_uname(full_uname):
