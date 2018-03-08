@@ -80,7 +80,36 @@ def get_kernel_version(uname=None, osx_ver=None):
 			# so we can do everything except use OS commands. no worries, we'll just use the same methodology as
 			# below, but just with the full uname. If we can't parse something that we have to have, we can decide
 			# to either error out, or fill it with a default value and a warning
-			distro = distro_from_uname(uname)
+			os_type = os_type_from_full_uname(uname)
+			if os_type == "mac":
+				color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+			elif os_type == "linux":
+				distro = distro_from_uname(uname)
+				parsed_kernel_v = get_kernel_version_from_uname(uname)
+				if parsed_kernel_v is None:
+					color_print("[!] could not grab a kernel version from given uname ({})".format(uname), color="red")
+					color_print("[!] aborting...", color="red")
+					exit(0)
+				# so we have the distro and the kernel version now, just need architecture
+				arch = architecture_from_uname(uname)
+				kernel_name = os_type
+				new_kernel = Kernel(os_type,
+									distro,
+									kernel_name,
+									parsed_kernel_v["major"],
+									parsed_kernel_v["minor"],
+									parsed_kernel_v["release"],
+									None,  # patch level, we'll set after
+									arch,
+									uname=True
+									)
+				if "patch_level" in parsed_kernel_v.keys():
+					new_kernel.patch_level = parsed_kernel_v["patch_level"]
+
+				return new_kernel
+			else:
+				color_print("[!] could not determine operating system type...sorry", color="red")
+				exit(0)
 
 	else:
 		"""
