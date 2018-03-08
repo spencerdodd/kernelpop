@@ -87,7 +87,7 @@ BUG_REPORT_URL = "https://bugs.debian.org/"
 	def test_distro_from_uname(self):
 		test_uname_1 = "Linux atlantic 4.9.0-4-amd64 #1 SMP Debian 4.9.65-3+deb9u1 (2017-12-23) x86_64 GNU/Linux"
 		actual_distro_1 = distro_from_uname(test_uname_1)
-		expected_distro_1 = DEBIAN_9
+		expected_distro_1 = DEBIAN_GENERIC
 		self.assertEqual(expected_distro_1, actual_distro_1)
 
 	def test_distro_from_uname_tricky(self):

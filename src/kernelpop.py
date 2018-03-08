@@ -176,7 +176,27 @@ def distro_from_uname(uname):
 	:param uname:
 	:return:
 	"""
-	return None
+	distro_re = re.compile("\~\d+\.\d+\.\d+\-\w+")
+	potential_distros = distro_re.findall(uname) 			# should only be one, if it's more, you need a new regex
+	if len(potential_distros) == 0:
+		# we don't have a nice version string...so let's just spoof a number so we don't match overzealously
+		potential_distros = ["~FAKEMAJOR.FAKEMINOR.FAKERELEASE-FAKEPATCH"]
+
+	potential_version = potential_distros[0].split("~")[1].split(".")[0]
+
+	for os_type in os_decision_tree.keys():
+		if os_type in uname.lower():
+			# try to find the version number in the version string
+			for os_version in os_decision_tree[os_type].keys():
+				if os_version == potential_version:
+					return os_decision_tree[os_type][os_version]
+
+			# we know the distro, but not the version, so return the generic version
+			# of the distro
+			return os_decision_tree[os_type][OS_DEFAULT_VAL_KEY]
+
+	# we didn't find anything
+	return GENERIC_LINUX
 
 
 def distro_from_os_info(os_info):
