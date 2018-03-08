@@ -1,6 +1,7 @@
 import unittest
-from constants import DEBIAN_9
-from src.kernelpop import os_type_from_full_uname, get_kernel_version_from_uname, distro_from_os_info
+from constants import *
+from src.kernelpop import os_type_from_full_uname, get_kernel_version_from_uname, distro_from_os_info, \
+	architecture_from_uname
 
 
 class TestGetKernelVersion(unittest.TestCase):
@@ -63,3 +64,9 @@ BUG_REPORT_URL = "https://bugs.debian.org/"
 		actual_distro = DEBIAN_9
 		parsed_distro = distro_from_os_info(os_type)
 		self.assertEqual(actual_distro, parsed_distro)
+
+	def test_architecture_from_uname(self):
+		test_uname = "Linux atlantic 4.9.0-4-amd64 #1 SMP Debian 4.9.65-3+deb9u1 (2017-12-23) x86_64 GNU/Linux"
+		actual_arch = architecture_from_uname(test_uname)
+		expected_arch = ARCHITECTURE_amd64
+		self.assertEqual(expected_arch, actual_arch)

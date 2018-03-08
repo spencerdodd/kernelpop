@@ -53,10 +53,31 @@ NETBSD = "linuxnetbsd"
 GENERIC_MAC = "mac"
 DARWIN_16 = "macdarwin16"
 
+ARCHITECTURE_DEFAULT = "ARCHITECTURE_DEFAULT"
 ARCHITECTURE_GENERIC =  "generic"
 ARCHITECTURE_x86_64 =   "x86_64"
 ARCHITECTURE_amd64 =    "amd64"
 ARCHITECTURE_i686 =     "i686"
+
+# these are self referential, but they don't have to be
+# the key val is the string we search for, but the identifier
+# that we set above can be whatever. it's internal. It does
+# need to reference the above structs because we use it
+# for exploit matching that reference the same values set
+# above
+
+# we have priority and secondary because amd64 may be over-
+# ridden by x86_64 even though amd64 is more descriptive
+architecture_needles = {
+	"primary": {
+		"amd64": 				ARCHITECTURE_amd64
+	},
+	"secondary": {
+		"x86_64": 				ARCHITECTURE_x86_64,
+		"i686": 				ARCHITECTURE_i686,
+	},
+	ARCHITECTURE_DEFAULT: 	ARCHITECTURE_GENERIC,
+}
 
 OS_DEFAULT_VAL_KEY = "OS_DEFAULT_VAL_KEY"
 

@@ -10,13 +10,14 @@ from constants import *
 
 
 class Kernel:
-	def __init__(self, type, distro, name, major_version, minor_version, release, architecture, uname=False):
+	def __init__(self, type, distro, name, major_version, minor_version, release, patch_level, architecture, uname=False):
 		self.type = type,
 		self.distro = distro,
 		self.name = name,
 		self.major_version = major_version,
 		self.minor_version = minor_version,
 		self.release = release,
+		self.patch_level = patch_level,
 		self.architecture = architecture,
 		self.uname = uname
 
@@ -80,7 +81,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 
 	else:
 		"""
-		otherwise, if we have to parse from the system itself
+		otherwise, we have to parse from the system itself
 		----------------------------------------------------------------------
 		so our OS version info is coming from release, our kernel version should come from 'v' if available.
 		if we don't have any data from 'v', we will fall back to 'r', but it will give us false positives so
@@ -94,6 +95,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 		os_type = os_type_from_full_uname(full_uname)
 		if os_type == "mac":
 			color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+
 		elif os_type == "linux":
 			distro = distro_from_os_info(os_info)
 			print("[*] parsing kernel version from underlying OS ({})".format(distro))
@@ -116,9 +118,32 @@ def get_kernel_version(uname=None, osx_ver=None):
 				color_print("[!] kernel version could not be parsed from underlying OS", color="red")
 				color_print("[!] aborting...", color="red")
 				exit(0)
+
+			# so we have the distro and the kernel version now, just need architecture
+			arch = architecture_from_uname(full_uname)
+
+
+
 		else:
 			color_print("[!] could not determine operating system type...sorry", color="red")
 			exit(0)
+
+
+def architecture_from_uname(uname_value):
+	"""
+	Parses out the architecture from the uname value. Fails to GENERIC
+
+	:param uname_value: output of a uname command
+	:return: ARCHITECTURE constant value (x86, x64, etc)
+	"""
+	for arch in architecture_needles["primary"].keys():
+		if arch in uname_value:
+			return architecture_needles["primary"][arch]
+	for arch in architecture_needles["secondary"].keys():
+		if arch in uname_value:
+			return architecture_needles["secondary"][arch]
+
+	return architecture_needles[ARCHITECTURE_DEFAULT]
 
 
 def distro_from_os_info(os_info):

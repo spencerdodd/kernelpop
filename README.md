@@ -15,6 +15,8 @@ on the following operating systems:
 
 - [ ] add way to override detected settings in case of incorrect parsing or adversarial settings
 
+- [ ] re-add LTS support in distro version selection
+
 ### example of enumeration to root (Linux)
 
 ![got-root](https://i.imgur.com/ApazcB1.gif)
