@@ -244,7 +244,7 @@ def get_kernel_version_from_uname(uname_value):
 	# Ubuntu16.04.1 from actual kernel values.
 	possible_kernels = []
 	for kernel in parsed_kernels:
-		if not kernel["major"] > KERNEL_MAJOR_VERSION_CAP:
+		if not int(kernel["major"]) > int(KERNEL_MAJOR_VERSION_CAP):
 			possible_kernels.append(kernel)
 
 	# now we find the highest remaining kernel value. The kernel version will always be higher than the release
