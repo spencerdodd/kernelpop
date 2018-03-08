@@ -10,31 +10,32 @@ from functools import singledispatch
 from constants import *
 from distutils.version import StrictVersion
 
+
 class Kernel:
-	def __init__(self, type, distro, name, major_version, minor_version, release, patch_level, architecture, uname=False):
-		self.type = type,
-		self.distro = distro,
-		self.name = name,
-		self.major_version = major_version,
-		self.minor_version = minor_version,
-		self.release = release,
-		self.patch_level = patch_level,
-		self.architecture = architecture,
+	def __init__(self, k_type, distro, name, major_version, minor_version, release, patch_level, architecture, uname=False):
+		self.k_type = k_type
+		self.distro = distro
+		self.name = name
+		self.major_version = major_version
+		self.minor_version = minor_version
+		self.release = release
+		self.patch_level = patch_level
+		self.architecture = architecture
 		self.uname = uname
 
 		self.alert_kernel_discovery()
 
 	def alert_kernel_discovery(self):
-		if self.type == "linux":
+		if self.k_type == "linux":
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 						"\n\tarchitecture:\t\t{}".format(
-				self.uname, self.type, self.distro, ".".join([str(self.major_version), str(self.minor_version)]), self.release,
+				self.uname, self.k_type, self.distro, ".".join([str(self.major_version), str(self.minor_version)]), self.release,
 				self.architecture), bold=True)
-		elif self.type == "mac":
+		elif self.k_type == "mac":
 			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
-				self.uname, self.type, ".".join([str(self.major_version), str(self.minor_version), str(self.release)]),
+				self.uname, self.k_type, ".".join([str(self.major_version), str(self.minor_version), str(self.release)]),
 				self.architecture), bold=True)
-		elif self.type == "windows":
+		elif self.k_type == "windows":
 			pass
 		else:
 			exit(1)
@@ -93,16 +94,17 @@ def get_kernel_version(uname=None, osx_ver=None):
 				# so we have the distro and the kernel version now, just need architecture
 				arch = architecture_from_uname(uname)
 				kernel_name = os_type
-				new_kernel = Kernel(os_type,
-									distro,
-									kernel_name,
-									parsed_kernel_v["major"],
-									parsed_kernel_v["minor"],
-									parsed_kernel_v["release"],
-									None,  # patch level, we'll set after
-									arch,
-									uname=True
-									)
+				new_kernel = Kernel(
+					os_type,
+					distro,
+					kernel_name,
+					parsed_kernel_v["major"],
+					parsed_kernel_v["minor"],
+					parsed_kernel_v["release"],
+					None,  # patch level, we'll set after
+					arch,
+					uname=True
+				)
 				if "patch_level" in parsed_kernel_v.keys():
 					new_kernel.patch_level = parsed_kernel_v["patch_level"]
 
@@ -435,7 +437,7 @@ def find_exploit_locally(kernel_version):
 
 	color_print("[*] matching kernel to known exploits")
 	for idx,k_ex_path in enumerate(kernel_exploits_and_paths):
-		if kernel_version.type == kernel_exploits_and_paths[idx][0]:
+		if kernel_version.k_type == kernel_exploits_and_paths[idx][0]:
 			all_exploits = os.listdir(kernel_exploits_and_paths[idx][1])
 			for exploit_file in all_exploits:
 				if exploit_file[-3:] == ".py" and "__init__" not in exploit_file:
@@ -621,7 +623,7 @@ def ts_linux_exploit(val):
 
 	json_exploit = {
 		"name": val.name,
-		"type": val.type,
+		"type": val.e_type,
 		"brief_desc": val.brief_desc,
 		"reliability": val.reliability,
 		"vulnerable_kernels": json.dumps(val.vulnerable_kernels, default=ts_kw_exploit),

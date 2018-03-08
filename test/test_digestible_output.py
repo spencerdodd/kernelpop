@@ -9,7 +9,7 @@ from constants import ROOT_DIR
 class TestGetKernelVersion(unittest.TestCase):
 	def test_digestible_json(self):
 		test_uname = "Linux-3.10.0-1-generic-x86_64-with-Ubuntu-14.04-xenial"
-		test_kernel = Kernel(test_uname)
+		test_kernel = get_kernel_version(uname=test_uname)
 		local_finds = find_exploit_locally(test_kernel)
 		json_finds = convert_to_digestible(local_finds, digest="json")
 		unjson_finds = json.loads(json_finds)
@@ -17,7 +17,7 @@ class TestGetKernelVersion(unittest.TestCase):
 
 	def test_dump_to_file(self):
 		test_uname = "Linux-3.10.0-1-generic-x86_64-with-Ubuntu-14.04-xenial"
-		test_kernel = Kernel(test_uname)
+		test_kernel = get_kernel_version(uname=test_uname)
 		local_finds = find_exploit_locally(test_kernel)
 		json_finds = convert_to_digestible(local_finds, digest="json")
 		test_outfile = os.path.join(ROOT_DIR, "output.json")
@@ -32,7 +32,7 @@ class TestGetKernelVersion(unittest.TestCase):
 
 	def test_digestible_xml(self):
 		test_uname = "Linux-3.10.0-1-generic-x86_64-with-Ubuntu-14.04-xenial"
-		test_kernel = Kernel(test_uname)
+		test_kernel = get_kernel_version(uname=test_uname)
 		local_finds = find_exploit_locally(test_kernel)
 		#xml_finds = convert_to_digestible(local_finds, digest="xml")
 
