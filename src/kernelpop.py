@@ -40,7 +40,7 @@ class Kernel:
 		if self.k_type == "windows":
 			pass
 		elif self.k_type == "mac" or self.k_type == "linux":
-			color_print("[+] kernel {} identified as:".format(self.uname), bold=True)
+			color_print("[+] kernel ({}) identified as:".format(self.uname), bold=True)
 			color_print("[base]\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 						"\n\tarchitecture:\t\t{}".format(
 				self.k_type,
@@ -130,7 +130,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 					parsed_kernel_base,
 					None, 					# our specific kernel, set if exists
 					arch,
-					uname=True
+					uname=uname
 				)
 
 				if parsed_kernel_specific:
@@ -183,7 +183,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 				parsed_kernel_base,
 				None,  # our specific kernel, set if exists
 				arch,
-				uname=True
+				uname=full_uname
 			)
 
 			if parsed_kernel_specific:

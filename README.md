@@ -9,10 +9,19 @@ on the following operating systems:
 
 # TODO:
 
-- [ ] KernelWindow should look at both linux kernel and distro kernel version. Linux should be the first check,
-the distro should be the second check. (self.vulnerable_base)
+- [ ] change CONFIRMED, POTENTIAL, NOT to EXPLOIT AVAILABLE, VERSION VULNERABLE, BASE VULNERABLE, and NOT and make
+system reflect those changes. i.e.
 
-- [ ] KernelWindow needs to include patch level
+    * EXPLOIT AVAILABLE:    PoC exploit supports the specific OS version
+    * VERSION VULNERABLE:   specific OS version is vulnerable (vendor confirmed)
+    * BASE VULNERABLE:      the base linux kernel is in the vulnerable base range
+    * NOT VULNERABLE:       the base kernel is outside the vulnerable range
+
+- [ ] address the to do in CVE20132094_32
+
+- [ ] enumeration vs exploitation (show all vulnerable kernels vs. show kernels with exploits in project)
+
+- [ ] differentiate vendor confirmed vulnerability vs possible vulnerability vs. vendor non-vulnerability
 
 - [ ] vulnerable window comparison needs to include patch levels
 
