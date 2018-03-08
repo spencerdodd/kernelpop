@@ -6,7 +6,6 @@ from src.kernelpop import os_type_from_full_uname, get_kernel_version_from_uname
 
 class TestGetKernelVersion(unittest.TestCase):
 	def test_get_os_type_from_uname(self):
-		test_uname = "Linux atlantic 4.9.0-4-amd64 #1 SMP Debian 4.9.65-3+deb9u1 (2017-12-23) x86_64 GNU/Linux"
 
 		os_type = """
 PRETTY_NAME = "Debian GNU/Linux 9 (stretch)"

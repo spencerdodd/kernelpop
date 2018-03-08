@@ -9,6 +9,9 @@ on the following operating systems:
 
 # TODO:
 
+- [ ] KernelWindow should look at both linux kernel and distro kernel version. Linux should be the first check,
+the distro should be the second check. (self.vulnerable_base)
+
 - [ ] KernelWindow needs to include patch level
 
 - [ ] vulnerable window comparison needs to include patch levels

@@ -39,6 +39,8 @@ DEBIAN_10 = "linuxdebian10"
 DEBIAN_9 = "linuxdebian9"
 DEBIAN_8 = "linuxdebian8"
 DEBIAN_7 = "linuxdebian7"
+DEBIAN_6 = "linuxdebian6"
+DEBIAN_5 = "linuxdebian5"
 DEBIAN_UNSTABLE = "linuxdebian-unstable"
 
 ARCH = "linuxarch"
@@ -51,6 +53,7 @@ GENTOO = "linuxgentoo"
 SOLARIS = "linuxsolaris"
 OPENBSD = "linuxopenbsd"
 NETBSD = "linuxnetbsd"
+SUSE = "linuxsuse"
 
 GENERIC_MAC = "mac"
 DARWIN_16 = "macdarwin16"
@@ -105,6 +108,8 @@ os_decision_tree = {
 		"9": DEBIAN_9,
 		"8": DEBIAN_8,
 		"7": DEBIAN_7,
+		"6": DEBIAN_6,
+		"5": DEBIAN_5,
 		OS_DEFAULT_VAL_KEY: DEBIAN_GENERIC
 	},
 	"arch": {
@@ -131,6 +136,9 @@ os_decision_tree = {
 	"netbsd": {
 		OS_DEFAULT_VAL_KEY: NETBSD
 	},
+	"suse": {
+		OS_DEFAULT_VAL_KEY: SUSE
+	}
 }
 
 USAGE_STRING = \

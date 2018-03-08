@@ -12,31 +12,52 @@ from distutils.version import StrictVersion
 
 
 class Kernel:
-	def __init__(self, k_type, distro, name, major_version, minor_version, release, patch_level, architecture, uname=False):
+	def __init__(self, k_type, distro, name, base, specific, architecture, uname=False):
 		self.k_type = k_type
 		self.distro = distro
 		self.name = name
-		self.major_version = major_version
-		self.minor_version = minor_version
-		self.release = release
-		self.patch_level = patch_level
+		self.base = {
+			"major": 		base["major"],
+			"minor": 		base["minor"],
+			"release": 		base["release"],
+			"patch_level": 	base["patch_level"]
+		}
+		if specific:
+			self.specific = {
+				"major": 		specific["major"],
+				"minor": 		specific["minor"],
+				"release": 		specific["release"],
+				"patch_level": 	specific["patch_level"]
+			}
+		else:
+			self.specific = specific
 		self.architecture = architecture
 		self.uname = uname
 
 		self.alert_kernel_discovery()
 
 	def alert_kernel_discovery(self):
-		if self.k_type == "linux":
-			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
-						"\n\tarchitecture:\t\t{}".format(
-				self.uname, self.k_type, self.distro, ".".join([str(self.major_version), str(self.minor_version)]), self.release,
-				self.architecture), bold=True)
-		elif self.k_type == "mac":
-			color_print("[+] kernel {} identified as:\n\ttype:\t\t\t{}\n\tversion:\t\t{}\n\tarchitecture:\t\t{}".format(
-				self.uname, self.k_type, ".".join([str(self.major_version), str(self.minor_version), str(self.release)]),
-				self.architecture), bold=True)
-		elif self.k_type == "windows":
+		if self.k_type == "windows":
 			pass
+		elif self.k_type == "mac" or self.k_type == "linux":
+			color_print("[+] kernel {} identified as:".format(self.uname), bold=True)
+			color_print("[base]\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
+						"\n\tarchitecture:\t\t{}".format(
+				self.k_type,
+				self.distro,
+				".".join([str(self.base["major"]), str(self.base["minor"]), self.base["release"]]),
+				self.base["patch_level"],
+				self.architecture), bold=True)
+			if self.specific:
+				color_print("[specific]\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
+							"\n\tarchitecture:\t\t{}".format(
+					self.k_type,
+					self.distro,
+					".".join([str(self.specific["major"]), str(self.specific["minor"]), str(self.specific["release"])]),
+					self.specific["patch_level"],
+					self.architecture), bold=True)
+			else:
+				color_print("[!] no specific distro kernel discovered...likelihood of false positives is high", color="yellow")
 		else:
 			exit(1)
 
@@ -84,29 +105,36 @@ def get_kernel_version(uname=None, osx_ver=None):
 			os_type = os_type_from_full_uname(uname)
 			if os_type == "mac":
 				color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+				exit(0)
 			elif os_type == "linux":
 				distro = distro_from_uname(uname)
-				parsed_kernel_v = get_kernel_version_from_uname(uname)
-				if parsed_kernel_v is None:
-					color_print("[!] could not grab a kernel version from given uname ({})".format(uname), color="red")
-					color_print("[!] aborting...", color="red")
-					exit(0)
+				parsed_kernel_base, parsed_kernel_specific = get_kernel_version_from_uname(uname)
+				if parsed_kernel_specific is None:
+					if parsed_kernel_base is None:
+						color_print("[!] could not grab a kernel version from given uname ({})".format(uname),
+									color="red")
+						color_print("[!] aborting...", color="red")
+						exit(0)
+					else:
+						color_print("[!] could only get the kernel base...may not have accurate matches", color="yellow")
+
 				# so we have the distro and the kernel version now, just need architecture
 				arch = architecture_from_uname(uname)
 				kernel_name = os_type
+
+				# let's make our kernel
 				new_kernel = Kernel(
 					os_type,
 					distro,
 					kernel_name,
-					parsed_kernel_v["major"],
-					parsed_kernel_v["minor"],
-					parsed_kernel_v["release"],
-					None,  # patch level, we'll set after
+					parsed_kernel_base,
+					None, 					# our specific kernel, set if exists
 					arch,
 					uname=True
 				)
-				if "patch_level" in parsed_kernel_v.keys():
-					new_kernel.patch_level = parsed_kernel_v["patch_level"]
+
+				if parsed_kernel_specific:
+					new_kernel.specific = parsed_kernel_specific
 
 				return new_kernel
 			else:
@@ -123,7 +151,6 @@ def get_kernel_version(uname=None, osx_ver=None):
 		"""
 		os_info = 			shell_results("cat /etc/*release")[0].decode('utf-8')
 		full_uname = 		shell_results("uname -a")[0].decode('utf-8')
-		kernel_release = 	shell_results("uname -r")[0].decode('utf-8')
 		kernel_version = 	shell_results("uname -v")[0].decode('utf-8')
 
 		os_type = os_type_from_full_uname(full_uname)
@@ -134,47 +161,33 @@ def get_kernel_version(uname=None, osx_ver=None):
 			distro = distro_from_os_info(os_info)
 			print("[*] parsing kernel version from underlying OS ({})".format(distro))
 			print("[*[ grabbing kernel version from 'uname -v'")
-			parsed_kernel_v = get_kernel_version_from_uname(kernel_version)
-			if parsed_kernel_v is None:
-				color_print("[!] we couldn't get the legit kernel version from ({})".format(kernel_version), color="yellow")
-				color_print("[!] we're going to have to approximate with kernel release 'uname r'", color="yellow")
-				color_print("[!] this has a high chance of leading to false positives")
-				print("[*] attempting to approximate kernel version with kernel release")
-				parsed_kernel_v = get_kernel_version_from_uname(kernel_release)
-
-			if parsed_kernel_v is None:
-				color_print("[!] could not parse kernel release from ({})".format(kernel_release), color="yellow")
-				color_print("[*] attempting final kernel release/version grab from 'uname -a'")
-				parsed_kernel_v = get_kernel_version_from_uname(full_uname)
-
-			if parsed_kernel_v is None:
-				color_print("[!] could not grab a semblance of kernel version from ({})".format(full_uname), color="yellow")
-				color_print("[!] kernel version could not be parsed from underlying OS", color="red")
-				color_print("[!] aborting...", color="red")
-				exit(0)
+			parsed_kernel_base, parsed_kernel_specific = get_kernel_version_from_uname(kernel_version)
+			if parsed_kernel_specific is None:
+				if parsed_kernel_base is None:
+					color_print("[!] could not grab a kernel version from given uname ({})".format(uname),
+								color="red")
+					color_print("[!] aborting...", color="red")
+					exit(0)
+				else:
+					color_print("[!] could only get the kernel base...may not have accurate matches", color="yellow")
 
 			# so we have the distro and the kernel version now, just need architecture
-			arch = architecture_from_uname(full_uname)
-
-			# we're going to set the kernel name to the os_type, because I forgot if we even need that field
+			arch = architecture_from_uname(uname)
 			kernel_name = os_type
 
-			# now we can make and return our kernel!
-			"""
-			def __init__(self, type, distro, name, major_version, minor_version, release, patch_level, architecture,
-						uname=False):
-			"""
-			new_kernel = Kernel(os_type,
+			# let's make our kernel
+			new_kernel = Kernel(
+				os_type,
 				distro,
 				kernel_name,
-				parsed_kernel_v["major"],
-				parsed_kernel_v["minor"],
-				parsed_kernel_v["release"],
-				None, 						# patch level, we'll set after
-				arch
+				parsed_kernel_base,
+				None,  # our specific kernel, set if exists
+				arch,
+				uname=True
 			)
-			if "patch_level" in parsed_kernel_v.keys():
-				new_kernel.patch_level = parsed_kernel_v["patch_level"]
+
+			if parsed_kernel_specific:
+				new_kernel.specific = parsed_kernel_specific
 
 			return new_kernel
 
@@ -279,8 +292,13 @@ def get_kernel_version_from_uname(uname_value):
 		$ uname -v
 		#1 SMP Debian 4.9.65-3+deb9u1 (2017-12-23)
 
+	This should return two kernels, the linux base, and the distro specific. If there is only one, assign it as the
+	base. If there are two (valid) kernels i.e., not higher than the MAX POSSIBLE MAJOR, assign the lower to the
+	linux base, and the higher to specific
+
 	:param uname_v: output of 'uname -v'
 	:return: dictionary of kernel version, or None if we couldn't parse the value
+	:return: one for base, one for specific
 	"""
 	# dynamically locate possible kernel versions by searching for the member of the " " split array that has more than
 	# one '.' character in it
@@ -304,17 +322,23 @@ def get_kernel_version_from_uname(uname_value):
 	# weird hacky comparison we take from KernelWindow comparisons that works lol
 	fake_kernel = {"major": "0", "minor": "0", "release": "0"}
 	highest_kernel = fake_kernel
+	second_highest = fake_kernel
 	for kernel in possible_kernels:
 		highest_formatted_val = "{}.{}.{}".format(highest_kernel["major"], highest_kernel["minor"], highest_kernel["release"])
 		current_formatted_val = "{}.{}.{}".format(kernel["major"], kernel["minor"], kernel["release"])
 		if StrictVersion(current_formatted_val) > StrictVersion(highest_formatted_val):
+			second_highest = highest_kernel
 			highest_kernel = kernel
 
 	# if we didn't find a kernel, return None
 	if highest_kernel == fake_kernel:
 		highest_kernel = None
 
-	return highest_kernel
+	if second_highest == fake_kernel:
+		second_highest = highest_kernel
+		highest_kernel = None
+
+	return second_highest, highest_kernel
 
 
 def possible_kernels_from_strings(kernel_strings):
@@ -385,6 +409,7 @@ def clean_parsed_version(parsed_version):
 
 	return parsed_version
 
+
 def potentially_vulnerable(kernel_version, exploit_module):
 	"""
 	potentially_vulnerable(kernel_version, exploit_module)
@@ -399,13 +424,20 @@ def potentially_vulnerable(kernel_version, exploit_module):
 	if kernel_version.architecture == exploit_module.architecture or \
 					exploit_module.architecture == ARCHITECTURE_GENERIC:
 		vuln_results = []
-		for kernel_window in exploit_module.vulnerable_kernels:
-			vuln_results.append(kernel_window.kernel_in_window(kernel_version))
+		# if our kernel base is inside of the exploit module's base window, it may be vulnerable
+		if exploit_module.vulnerable_base.kernel_in_window(kernel_version.distro, kernel_version.base):
+			# check if the kernel specific is inside any of the vulnerable kernels
+			if kernel_version.specific:
+				for kernel_window in exploit_module.vulnerable_kernels:
+					vuln_results.append(kernel_window.kernel_in_window(kernel_version.distro, kernel_version.specific))
+			else:
+				vuln_results.append(POTENTIALLY_VULNERABLE)
 		for vuln_cat in [CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE]:
 			if vuln_cat in vuln_results:
 				return vuln_cat
 	else:
 		return NOT_VULNERABLE
+
 
 def find_exploit_locally(kernel_version):
 	"""
@@ -669,6 +701,11 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 				kernel_v = get_kernel_version(uname=uname)
 		else:
 			kernel_v = get_kernel_version()
+
+		# if we don't have a kernel for some reason, exit
+		if kernel_v is None:
+			print('[!] exiting')
+			exit(0)
 
 		identified_exploits = find_exploit_locally(kernel_v)
 		display_ordered_exploits(identified_exploits["confirmed"],
