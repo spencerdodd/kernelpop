@@ -17,9 +17,6 @@ on the following operating systems:
 
 - [ ] re-add LTS support in distro version selection (?)
 
-- [ ] reconcile issue where parsing out kernel version from uname only can get mixed up with both the kernel
-release and in some cases OS versions (like in `#41~16.04.1-Ubuntu`)
-
 ### example of enumeration to root (Linux)
 
 ![got-root](https://i.imgur.com/ApazcB1.gif)
