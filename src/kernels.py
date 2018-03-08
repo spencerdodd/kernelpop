@@ -3,7 +3,7 @@ Class for holding kernel windows for vulnerabilities
 """
 from distutils.version import StrictVersion
 #from src.kernelpop import Kernel
-from constants import CONFIRMED_VULNERABLE, NOT_VULNERABLE
+from constants import *
 
 class KernelWindow:
 	def __init__(self, distro, confirmation, lowest_major, lowest_minor, lowest_release, highest_major, highest_minor,

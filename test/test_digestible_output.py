@@ -3,7 +3,7 @@ import json
 import unittest
 from src.kernelpop import convert_to_digestible, find_exploit_locally, total_exploits, write_digestible_to_file
 from src.kernelpop import Kernel, get_kernel_version
-from constants import ROOT_DIR
+from constants import *
 
 
 class TestGetKernelVersion(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestGetKernelVersion(unittest.TestCase):
 		local_finds = find_exploit_locally(test_kernel)
 		json_finds = convert_to_digestible(local_finds, digest="json")
 		unjson_finds = json.loads(json_finds)
-		self.assertEqual(len(unjson_finds["confirmed"]["high"]), len(local_finds["confirmed"]["high"]))
+		self.assertEqual(len(unjson_finds[EXPLOIT_AVAILABLE]), len(local_finds[EXPLOIT_AVAILABLE]))
 
 	def test_dump_to_file(self):
 		test_uname = "Linux-3.10.0-1-generic-x86_64-with-Ubuntu-14.04-xenial"

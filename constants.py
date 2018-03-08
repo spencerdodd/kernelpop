@@ -11,9 +11,18 @@ HIGH_RELIABILITY = "high"
 MEDIUM_RELIABILITY = "medium"
 LOW_RELIABILITY = "low"
 
-CONFIRMED_VULNERABLE = "confirmed_vulnerable"
-POTENTIALLY_VULNERABLE = "potentially_vulnerable"
-NOT_VULNERABLE = "not_vulnerable"
+"""
+
+    * EXPLOIT AVAILABLE:    PoC exploit supports the specific OS version
+    * VERSION VULNERABLE:   specific OS version is vulnerable (vendor confirmed)
+    * BASE VULNERABLE:      the base linux kernel is in the vulnerable base range
+    * NOT VULNERABLE:       the base kernel is outside the vulnerable range
+"""
+
+EXPLOIT_AVAILABLE = 	"exploit_available"
+VERSION_VULNERABLE = 	"version_vulnerable"
+BASE_VULNERABLE = 		"base_vulnerable"
+NOT_VULNERABLE = 		"not_vulnerable"
 
 GENERIC_LINUX = "linux"
 

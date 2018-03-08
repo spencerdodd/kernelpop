@@ -128,13 +128,10 @@ def get_kernel_version(uname=None, osx_ver=None):
 					distro,
 					kernel_name,
 					parsed_kernel_base,
-					None, 					# our specific kernel, set if exists
+					parsed_kernel_specific,
 					arch,
 					uname=uname
 				)
-
-				if parsed_kernel_specific:
-					new_kernel.specific = parsed_kernel_specific
 
 				return new_kernel
 			else:
@@ -151,7 +148,6 @@ def get_kernel_version(uname=None, osx_ver=None):
 		"""
 		os_info = 			shell_results("cat /etc/*release")[0].decode('utf-8')
 		full_uname = 		shell_results("uname -a")[0].decode('utf-8')
-		kernel_version = 	shell_results("uname -v")[0].decode('utf-8')
 
 		os_type = os_type_from_full_uname(full_uname)
 		if os_type == "mac":
@@ -159,12 +155,12 @@ def get_kernel_version(uname=None, osx_ver=None):
 
 		elif os_type == "linux":
 			distro = distro_from_os_info(os_info)
-			print("[*] parsing kernel version from underlying OS ({})".format(distro))
-			print("[*[ grabbing kernel version from 'uname -v'")
-			parsed_kernel_base, parsed_kernel_specific = get_kernel_version_from_uname(kernel_version)
+			print("[*] grabbing distro version and release from underlying OS ({})".format(distro))
+			print("[*] grabbing kernel version from 'uname -a'")
+			parsed_kernel_base, parsed_kernel_specific = get_kernel_version_from_uname(full_uname)
 			if parsed_kernel_specific is None:
 				if parsed_kernel_base is None:
-					color_print("[!] could not grab a kernel version from given uname ({})".format(uname),
+					color_print("[!] could not grab a kernel version from given uname ({})".format(full_uname),
 								color="red")
 					color_print("[!] aborting...", color="red")
 					exit(0)
@@ -172,7 +168,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 					color_print("[!] could only get the kernel base...may not have accurate matches", color="yellow")
 
 			# so we have the distro and the kernel version now, just need architecture
-			arch = architecture_from_uname(uname)
+			arch = architecture_from_uname(full_uname)
 			kernel_name = os_type
 
 			# let's make our kernel
@@ -181,13 +177,10 @@ def get_kernel_version(uname=None, osx_ver=None):
 				distro,
 				kernel_name,
 				parsed_kernel_base,
-				None,  # our specific kernel, set if exists
+				parsed_kernel_specific,  # our specific kernel, set if exists
 				arch,
 				uname=full_uname
 			)
-
-			if parsed_kernel_specific:
-				new_kernel.specific = parsed_kernel_specific
 
 			return new_kernel
 
@@ -305,7 +298,7 @@ def get_kernel_version_from_uname(uname_value):
 
 	# this regex: \d+.\d+.\d+-\w+
 	# NOTE: will cut off patch level details like '+deb9u1' from a full patch value (3+deb9u1)
-	with_patch = re.compile("\d+\.\d+\.\d+\-\w+")
+	with_patch = re.compile("\d+\.\d+\.\d+.\w+")
 	possible_kernel_strings = with_patch.findall(uname_value)
 	parsed_kernels = possible_kernels_from_strings(possible_kernel_strings)
 
@@ -429,10 +422,17 @@ def potentially_vulnerable(kernel_version, exploit_module):
 			# check if the kernel specific is inside any of the vulnerable kernels
 			if kernel_version.specific:
 				for kernel_window in exploit_module.vulnerable_kernels:
-					vuln_results.append(kernel_window.kernel_in_window(kernel_version.distro, kernel_version.specific))
+					# if specific kernel is vulnerable, check for exploit code for the specific kernel
+					if kernel_window.kernel_in_window(kernel_version.distro, kernel_version.specific):
+						for exploit_window in exploit_module.exploit_kernels:
+							if exploit_window.kernel_in_window(kernel_version.distro, kernel_version.specific):
+								vuln_results.append(exploit_window.kernel_in_window(kernel_version.distro, kernel_version.specific))
+
+						# kernel is vuln, but no exploit
+						vuln_results.append(kernel_window.kernel_in_window(kernel_version.distro, kernel_version.specific))
 			else:
-				vuln_results.append(POTENTIALLY_VULNERABLE)
-		for vuln_cat in [CONFIRMED_VULNERABLE, POTENTIALLY_VULNERABLE, NOT_VULNERABLE]:
+				vuln_results.append(BASE_VULNERABLE)
+		for vuln_cat in [EXPLOIT_AVAILABLE, VERSION_VULNERABLE, BASE_VULNERABLE, NOT_VULNERABLE]:
 			if vuln_cat in vuln_results:
 				return vuln_cat
 	else:
@@ -450,17 +450,12 @@ def find_exploit_locally(kernel_version):
 	:returns: array of arrays of exploit modules sorted in order of likelihood of success
 		i.e. [ [high] [medium] [low] ]
 	"""
-	confirmed = {
-		HIGH_RELIABILITY: [],
-		MEDIUM_RELIABILITY: [],
-		LOW_RELIABILITY: []
+	found_exploits = {
+		EXPLOIT_AVAILABLE: [],
+		VERSION_VULNERABLE: [],
+		BASE_VULNERABLE: [],
+		NOT_VULNERABLE: []
 	}
-	potential = {
-		HIGH_RELIABILITY: [],
-		MEDIUM_RELIABILITY: [],
-		LOW_RELIABILITY: []
-	}
-	found_exploits = {"confirmed": confirmed, "potential": potential}
 
 	kernel_exploits_and_paths = [
 		["linux", LINUX_EXPLOIT_PATH],
@@ -476,14 +471,18 @@ def find_exploit_locally(kernel_version):
 					exploit_name = exploit_file.replace(".py", "")
 					exploit_module = locate("exploits.{}.{}.{}".format(kernel_exploits_and_paths[idx][0],exploit_name, exploit_name))
 					exploit_instance = exploit_module()
-					if potentially_vulnerable(kernel_version, exploit_instance) == CONFIRMED_VULNERABLE:
-						color_print("\t[+] found `confirmed` kernel exploit: {}".format(exploit_instance.name),
+					if potentially_vulnerable(kernel_version, exploit_instance) == EXPLOIT_AVAILABLE:
+						color_print("\t[+] specific kernel version matched usable exploit: {}".format(exploit_instance.name),
 									color="green")
-						found_exploits["confirmed"][exploit_instance.reliability].append(exploit_instance)
-					elif potentially_vulnerable(kernel_version, exploit_instance) == POTENTIALLY_VULNERABLE:
-						color_print("\t[+] found `potential` kernel exploit: {}".format(exploit_instance.name),
+						found_exploits[EXPLOIT_AVAILABLE].append(exploit_instance)
+					elif potentially_vulnerable(kernel_version, exploit_instance) == VERSION_VULNERABLE:
+						color_print("\t[+] specific kernel version is vulnerable (exploit source may not target version): {}".format(exploit_instance.name),
 									color="yellow")
-						found_exploits["potential"][exploit_instance.reliability].append(exploit_instance)
+						found_exploits[VERSION_VULNERABLE].append(exploit_instance)
+					elif potentially_vulnerable(kernel_version, exploit_instance) == BASE_VULNERABLE:
+						color_print("\t[+] base kernel version is vulnerable window (specific version unknown): {}".format(exploit_instance.name),
+									color="red")
+						found_exploits[BASE_VULNERABLE].append(exploit_instance)
 					else:
 						del exploit_module
 
@@ -618,10 +617,11 @@ def exploit_individually(exploit_name):
 
 def total_exploits(exploits):
 	total = 0
-	levels = [HIGH_RELIABILITY, MEDIUM_RELIABILITY, LOW_RELIABILITY]
+	levels = [EXPLOIT_AVAILABLE, VERSION_VULNERABLE, BASE_VULNERABLE]
 	for level in levels:
-		if len(exploits[level]) > 0:
-			total += len(exploits[level])
+		if level in exploits.keys():
+			if len(exploits[level]) > 0:
+				total += len(exploits[level])
 
 	return total
 
@@ -708,14 +708,16 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 			exit(0)
 
 		identified_exploits = find_exploit_locally(kernel_v)
+		"""
 		display_ordered_exploits(identified_exploits["confirmed"],
 			begin_message="[*] matched kernel to the following confirmed exploits",
 			fail_message="[-] no confirmed exploits were discovered for this kernel")
 		display_ordered_exploits(identified_exploits["potential"],
 			begin_message="[*] matched kernel to the following potential exploits:",
 			fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
-
 		merged_exploits = {}
+		"""
+		"""
 		for key_val in identified_exploits["confirmed"]:
 			merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]
 
@@ -726,11 +728,12 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 										 fail_message="[-] no exploits were confirmed for this kernel")
 				if "exploit" in mode:
 					brute_force_exploit(confirmed_vulnerable)
+		"""
 
 		if digest:
 			digest_filepath = os.path.join(ROOT_DIR, "output.{}".format(digest))
 			print("[*] dumping results to {} file ({}".format(digest, digest_filepath))
-			digestible_results = convert_to_digestible(merged_exploits) 	# do we want 'confirmed vulnerable' instead?
+			digestible_results = convert_to_digestible(identified_exploits)
 			write_digestible_to_file(digest_filepath, digestible_results)
 
 
