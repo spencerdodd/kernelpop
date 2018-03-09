@@ -7,7 +7,7 @@ from constants import *
 
 class KernelWindow:
 	def __init__(self, distro, confirmation, lowest_major, lowest_minor, lowest_release, highest_major, highest_minor,
-		highest_release):
+		highest_release, highest_patch_level=None):
 		self.distro = 			distro
 		self.confirmation = 	confirmation 	# string, either 'confirmed' or 'potential'
 		self.lowest_major = 	lowest_major
@@ -16,6 +16,7 @@ class KernelWindow:
 		self.highest_major = 	highest_major
 		self.highest_minor = 	highest_minor
 		self.highest_release = 	highest_release
+		self.patch_level = 		highest_patch_level
 
 	def kernel_in_window(self, distro, kernel):
 		"""
