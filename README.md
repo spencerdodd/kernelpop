@@ -11,6 +11,8 @@ on the following operating systems:
 
 ![got-root](img/final.gif)
 
+### enumeration output
+
 ```
 user@debian:~/Desktop/kernelpop$ python3 kernelpop.py
 
@@ -35,9 +37,9 @@ user@debian:~/Desktop/kernelpop$ python3 kernelpop.py
 	architecture:		i686
 [*] matching kernel to known exploits
 [+] discovered 11 possible exploits !
-	[[ exploit available ]]
+	[[ distro kernel matched exploit available ]]
 		CVE20165195_32	Dirty COW race condition root priv esc for 32 bit
-	[[ OS version vulnerable ]]
+	[[ distro kernel version vulnerable ]]
 		CVE20144699	Exploitable race condition in linux before 3.15.4
 		CVE20143153	`futex_requeue` vulnerability before 3.14.6 allows for priv esc
 		CVE20162384	Double free vulnerability in the `snd_usbmidi_create` (requires physical proximity)
@@ -45,11 +47,30 @@ user@debian:~/Desktop/kernelpop$ python3 kernelpop.py
 		CVE20132094_semtex	perf_swevent_init Local root exploit (32 bit)
 		CVE20176074	`dccp_rcv_state_process` in net/dccp/input.c mishandles structs and can lead to local root
 		CVE20132094_32	perf_swevent_init Local root exploit (32 bit)
-	[[ base kernel vulnerable ]]
+	[[ base linux kernel vulnerable ]]
 		CVE20144014	`chmod` restriction bypass allows users to get root before 3.14.8
 		CVE20177308	`packet_set_ring` in net/packet/af_packet.c can gain privileges via crafted system calls.
 		CVE20171000112	ip_ufo_append_data() memory corruption flaw can be exploited to gain root privileges.
 ```
+
+In the output, there are a few categories. This is what each means
+
+**[[ distro kernel matched exploit available]]**
+
+* there is a specific distro specific matched kernel exploit in the project that you can use to exploit the kernel.
+High likelihood of successful exploitation.
+
+**[[ distro kernel version vulnerable ]]**
+
+* the distro kernel is vulnerable to the vulnerability listed, but was not explicitly stated as tested in the PoC
+exploit in the project. Exploitation without modification of the exploit may work, but has a lower likelihood of
+success.
+
+**[[ base linux kernel vulnerable ]]**
+
+* it is unknown if the distro kernel is vulnerable to the vulnerability, but the base linux kernel is in the
+vulnerable range for the exploit. Exploitation without modification of the exploit is either unlikely or unknown,
+but may still work.
 
 ### requirements
 

@@ -544,15 +544,15 @@ def display_exploits(exploits):
 
 		# for confirmed vulnerabilities
 		if len(exploits[EXPLOIT_AVAILABLE]) > 0:
-			color_print("\t[[ exploit available ]]", color="green")
+			color_print("\t[[ distro kernel matched exploit available ]]", color="green")
 			for high_exploit in exploits[EXPLOIT_AVAILABLE]:
 				color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
 		if len(exploits[VERSION_VULNERABLE]) > 0:
-			color_print("\t[[ OS version vulnerable ]]", color="blue")
+			color_print("\t[[ distro kernel version vulnerable ]]", color="blue")
 			for medium_exploit in exploits[VERSION_VULNERABLE]:
 				color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
 		if len(exploits[BASE_VULNERABLE]) > 0:
-			color_print("\t[[ base kernel vulnerable ]]", color="yellow")
+			color_print("\t[[ base linux kernel vulnerable ]]", color="yellow")
 			for low_exploit in exploits[BASE_VULNERABLE]:
 				color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
 	else:
