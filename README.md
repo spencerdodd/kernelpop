@@ -9,7 +9,7 @@ on the following operating systems:
 
 ### To Do
 
-- [ ] vulnerable window comparison needs to include patch levels
+- [ ] include patch levels in vulnerable window comparisons
 
 - [ ] add way to override detected settings in case of incorrect parsing or adversarial settings
 
