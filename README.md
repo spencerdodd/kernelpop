@@ -69,13 +69,19 @@ far, I have just implemented the `json` dump, but I will work on an XML version 
 
     * click the canonical link (https://people.canonical.com/~ubuntu-security/cve/2016/CVE-XXXX-XXXX.html)
 
-    * click all linked advisories at usn.ubuntu.com and parse info
+        * click all linked advisories at usn.ubuntu.com and parse info
+
+        * grab patch versions for filling in vulnerability windows per version
 
 * google: CVE-XXXX-XXXX "debian"
 
     * security-tracker.debian.org link (https://security-tracker.debian.org/tracker/CVE-XXXX-XXXX)
 
         * pull information from the bottom of the page that relates to the patched versions for the specific cve
+
+* google: CVE-XXXX-XXXX "mitre"
+
+    * links to other distros to pull info from
 
 ---
 
