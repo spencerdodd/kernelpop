@@ -7,6 +7,8 @@ on the following operating systems:
 
 - [x] Mac
 
+---
+
 ### example of enumeration to root (Linux)
 
 ![got-root](img/final.gif)
@@ -57,20 +59,22 @@ In the output, there are a few categories. This is what each means
 
 **[[ distro kernel matched exploit available ]]**
 
-* there is a specific distro specific matched kernel exploit in the project that you can use to exploit the kernel.
+* there is a distro version specific matched kernel exploit in the project that you can use to exploit the kernel.
 High likelihood of successful exploitation.
 
 **[[ distro kernel version vulnerable ]]**
 
-* the distro kernel is vulnerable to the vulnerability listed, but was not explicitly stated as tested in the PoC
-exploit in the project. Exploitation without modification of the exploit may work, but has a lower likelihood of
+* the distro kernel version is vulnerable to the vulnerability listed, but was not explicitly stated as tested in the
+PoC exploit in the project. Exploitation without modification of the exploit may work, but has a lower likelihood of
 success.
 
 **[[ base linux kernel vulnerable ]]**
 
-* it is unknown if the distro kernel is vulnerable to the vulnerability, but the base linux kernel is in the
+* it is unknown if the distro kernel version is vulnerable to the vulnerability, but the base linux kernel is in the
 vulnerable range for the exploit. Exploitation without modification of the exploit is either unlikely or unknown,
 but may still work.
+
+---
 
 ### requirements
 
