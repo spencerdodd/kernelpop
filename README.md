@@ -7,21 +7,7 @@ on the following operating systems:
 
 - [x] Mac
 
-### TODO
-
-Process for adding kernel vulnerability windows: [ should write a scraper ]
-
-* google: CVE-XXXX-XXXX "ubuntu"
-
-    * click the canonical link (https://people.canonical.com/~ubuntu-security/cve/2016/CVE-XXXX-XXXX.html)
-
-    * click all linked advisories at usn.ubuntu.com and parse info
-
-* google: CVE-XXXX-XXXX "debian"
-
-    * security-tracker.debian.org link (https://security-tracker.debian.org/tracker/CVE-XXXX-XXXX)
-
-        * pull information from the bottom of the page that relates to the specific cve
+### To Do
 
 - [ ] vulnerable window comparison needs to include patch levels
 
@@ -76,6 +62,20 @@ which makes it useful as a host-side only enumeration tool.
 
 This option allows you to dump the results of a kernelpop run to a digestible json file for later processing. So
 far, I have just implemented the `json` dump, but I will work on an XML version if it is requested.
+
+### Process for adding kernel vulnerability windows: [ should write a scraper ]
+
+* google: CVE-XXXX-XXXX "ubuntu"
+
+    * click the canonical link (https://people.canonical.com/~ubuntu-security/cve/2016/CVE-XXXX-XXXX.html)
+
+    * click all linked advisories at usn.ubuntu.com and parse info
+
+* google: CVE-XXXX-XXXX "debian"
+
+    * security-tracker.debian.org link (https://security-tracker.debian.org/tracker/CVE-XXXX-XXXX)
+
+        * pull information from the bottom of the page that relates to the patched versions for the specific cve
 
 ---
 
