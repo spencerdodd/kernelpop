@@ -435,7 +435,7 @@ def potentially_vulnerable(kernel_version, exploit_module):
 						return vulnerable_window_status
 
 				# if we make it through all those without a match, return base
-				return base_window_status
+				return NOT_VULNERABLE
 			else:
 				return base_window_status
 
@@ -485,7 +485,7 @@ def find_exploit_locally(kernel_version):
 	return found_exploits
 
 
-def display_exploits(exploits, begin_message=None, fail_message=None):
+def display_exploits(exploits):
 	"""
 
 	:param ordered_exploits:
@@ -494,26 +494,24 @@ def display_exploits(exploits, begin_message=None, fail_message=None):
 	:param color:
 	:return:
 	"""
-	color_print(begin_message)
+	if total_exploits(exploits) > 0:
+		color_print("[+] discovered {} possible exploits !".format(total_exploits(exploits)))
 
-	# for confirmed vulnerabilities
-	if len(exploits[EXPLOIT_AVAILABLE]) > 0:
-		color_print("\t[[ exploit available ]]", color="green")
-		for high_exploit in exploits[EXPLOIT_AVAILABLE]:
-			color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
-	if len(exploits[VERSION_VULNERABLE]) > 0:
-		color_print("\t[[ OS version vulnerable ]]", color="blue")
-		for medium_exploit in exploits[VERSION_VULNERABLE]:
-			color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
-	if len(exploits[BASE_VULNERABLE]) > 0:
-		color_print("\t[[ base kernel vulnerable ]]", color="yellow")
-		for low_exploit in exploits[BASE_VULNERABLE]:
-			color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
-	if len(exploits[EXPLOIT_AVAILABLE]) == 0 and \
-					len(exploits[VERSION_VULNERABLE]) == 0 and \
-					len(exploits[BASE_VULNERABLE]) == 0:
-		if fail_message:
-			color_print(fail_message, color="red")
+		# for confirmed vulnerabilities
+		if len(exploits[EXPLOIT_AVAILABLE]) > 0:
+			color_print("\t[[ exploit available ]]", color="green")
+			for high_exploit in exploits[EXPLOIT_AVAILABLE]:
+				color_print("\t\t{}\t{}".format(high_exploit.name, high_exploit.brief_desc))
+		if len(exploits[VERSION_VULNERABLE]) > 0:
+			color_print("\t[[ OS version vulnerable ]]", color="blue")
+			for medium_exploit in exploits[VERSION_VULNERABLE]:
+				color_print("\t\t{}\t{}".format(medium_exploit.name, medium_exploit.brief_desc))
+		if len(exploits[BASE_VULNERABLE]) > 0:
+			color_print("\t[[ base kernel vulnerable ]]", color="yellow")
+			for low_exploit in exploits[BASE_VULNERABLE]:
+				color_print("\t\t{}\t{}".format(low_exploit.name, low_exploit.brief_desc))
+	else:
+		color_print("[-] no exploits found for this kernel", color="red")
 
 
 def exploit_individually(exploit_name):
@@ -624,8 +622,7 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 
 		identified_exploits = find_exploit_locally(kernel_v)
 
-		display_exploits(identified_exploits, begin_message="[+] discovered exploits",
-								 fail_message="[-] no exploits were discovered for this kernel")
+		display_exploits(identified_exploits)
 
 		if digest:
 			digest_filepath = os.path.join(ROOT_DIR, "output.{}".format(digest))

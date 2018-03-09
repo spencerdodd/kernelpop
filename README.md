@@ -9,11 +9,7 @@ on the following operating systems:
 
 ### TODO
 
-- [x] set patches for distros by placing in vulnerable_kernels of exploits with a minimum version that matches
-the patch level. this will make the patch supersede the base kernel match and get rid of any matches where the
-distro level is not vulnerable but the base is.
-
-- [ ] implement above mechanism for all exploits in the project
+- [ ] add all vulnerable windows for kernels, otherwise exploits will not appear vulnerable
 
 - [ ] vulnerable window comparison needs to include patch levels
 
