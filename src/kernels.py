@@ -38,3 +38,16 @@ class KernelWindow:
 				return self.confirmation
 			else:
 				return None
+
+	def jsonify(self):
+		return {
+			"distro": 				self.distro,
+			"confirmation": 		self.confirmation,
+			"lowest_major": 		self.lowest_major,
+			"lowest_minor": 		self.lowest_minor,
+			"lowest_release": 		self.lowest_release,
+			"highest_major": 		self.highest_major,
+			"highest_minor": 		self.highest_minor,
+			"highest_release": 		self.highest_release,
+			"patch_level": 			self.patch_level
+		}

@@ -6,7 +6,6 @@ import platform
 from pydoc import locate
 from exploits.exploit import LinuxExploit, MacExploit
 from src.kernels import KernelWindow
-from functools import singledispatch
 from constants import *
 from distutils.version import StrictVersion
 
@@ -584,51 +583,19 @@ def total_exploits(exploits):
 	return total
 
 
-@singledispatch
-def to_serializable(val):
-	"""Used by default."""
-	return str(val)
-
-
-@to_serializable.register(KernelWindow)
-def ts_kw_exploit(val):
-	"""Used if *val* is an instance of KernelWindow."""
-	json_kw = {
-		"distro": val.distro,
-		"confirmation": val.confirmation,
-		"lowest_major": val.lowest_major,
-		"lowest_minor": val.lowest_minor,
-		"lowest_release": val.lowest_release,
-		"highest_major": val.highest_major,
-		"highest_minor": val.highest_minor,
-		"highest_release": val.highest_release
-	}
-
-	return json_kw
-
-
-@to_serializable.register(LinuxExploit)
-def ts_linux_exploit(val):
-	"""Used if *val* is an instance of LinuxExploit."""
-
-	json_exploit = {
-		"name": val.name,
-		"type": val.e_type,
-		"brief_desc": val.brief_desc,
-		"reliability": val.reliability,
-		"vulnerable_kernels": json.dumps(val.vulnerable_kernels, default=ts_kw_exploit),
-		"architecture": val.architecture,
-		"source_c_path": val.source_c_path,
-		"compilation_path": val.compilation_path,
-		"compilation_command": val.compilation_command,
-		"exploit_command": val.exploit_command
-	}
-	return json_exploit
-
-
 def convert_to_digestible(exploit_list, digest="json"):
 	if digest == "json":
-		return json.dumps(exploit_list, default=ts_linux_exploit)
+		jsonified = {
+			EXPLOIT_AVAILABLE: [],
+			VERSION_VULNERABLE: [],
+			BASE_VULNERABLE: []
+		}
+
+		for keytype in jsonified.keys():
+			subset = exploit_list[keytype]
+			for exploit in subset:
+				jsonified[keytype].append(exploit.jsonify())
+		return json.dumps(jsonified)
 
 
 def write_digestible_to_file(file_to_write, contents):

@@ -209,3 +209,10 @@ def shell_results(shell_command):
 	)
 	result = p.communicate()
 	return result
+
+
+def jsonify_kernel_window_list(kernel_window_list):
+	jsonified = []
+	for kernel_window in kernel_window_list:
+		jsonified.append(kernel_window.jsonify())
+	return jsonified
