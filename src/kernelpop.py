@@ -69,10 +69,11 @@ def get_mac_version():
 	"""
 	v_command = "sw_vers"
 	mac_v = shell_results(v_command)[0].decode("utf-8")
-	v_major = int(mac_v.split("\n")[1].split(":")[1].split(".")[0])
-	v_minor = int(mac_v.split("\n")[1].split(":")[1].split(".")[1])
+	version_string = mac_v.split("\n")[1].split(":")[1]
+	v_major = int(version_string.split(".")[0])
+	v_minor = int(version_string.split(".")[1])
 	try:
-		v_release = int(mac_v.split("\n")[1].split(":")[1].split(".")[2])
+		v_release = int(version_string.split(".")[2])
 	except:
 		v_release = 0
 
@@ -90,14 +91,32 @@ def get_kernel_version(uname=None, osx_ver=None):
 	"""
 	if uname:
 		if osx_ver:
-			"""
-			uname_pre = " ".join(uname.split(" ")[:2])
-			uname_post = " ".join(uname.split(" ")[3:])
-			uname_os_version = "{} {} {}".format(uname_pre, osx_ver, uname_post)
-			return Kernel(uname_os_version, uname=True)
-			"""
-			color_print("[!] I broke the mac stuff...sorry", color="red")
-			exit(0)
+			os_type = "mac"
+			split_ver = osx_ver.split(".")
+			arch = architecture_from_uname(uname)
+			kernel_base = {
+				"major": split_ver[0],
+				"minor": split_ver[1],
+				"release": split_ver[2],
+				"patch_level": "0"
+			}
+			kernel_specific = {
+				"major": split_ver[0],
+				"minor": split_ver[1],
+				"release": split_ver[2],
+				"patch_level": "0"
+			}
+			new_kernel = Kernel(
+					os_type,
+					"mac",
+					"Darwin",
+					kernel_base,
+					kernel_specific,
+					arch,
+					uname=uname
+			)
+			return new_kernel
+
 		else:
 			# so we can do everything except use OS commands. no worries, we'll just use the same methodology as
 			# below, but just with the full uname. If we can't parse something that we have to have, we can decide
@@ -105,6 +124,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 			os_type = os_type_from_full_uname(uname)
 			if os_type == "mac":
 				color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+
 				exit(0)
 			elif os_type == "linux":
 				distro = distro_from_uname(uname)
@@ -151,7 +171,31 @@ def get_kernel_version(uname=None, osx_ver=None):
 
 		os_type = os_type_from_full_uname(full_uname)
 		if os_type == "mac":
-			color_print("[!] sorry, I broke the mac stuff for now...gonna fix", color="red")
+			os_type = "mac"
+			major, minor, release = get_mac_version()
+			arch = architecture_from_uname(full_uname)
+			kernel_base = {
+				"major": str(major),
+				"minor": str(minor),
+				"release": str(release),
+				"patch_level": "0"
+			}
+			kernel_specific = {
+				"major": str(major),
+				"minor": str(minor),
+				"release": str(release),
+				"patch_level": "0"
+			}
+			new_kernel = Kernel(
+					os_type,
+					"mac",
+					"Darwin",
+					kernel_base,
+					kernel_specific,
+					arch,
+					uname=uname
+			)
+			return new_kernel
 
 		elif os_type == "linux":
 			distro = distro_from_os_info(os_info)
