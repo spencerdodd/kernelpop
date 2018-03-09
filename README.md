@@ -9,8 +9,6 @@ on the following operating systems:
 
 ### TODO
 
-- [ ] differentiate vendor confirmed vulnerability vs possible vulnerability vs. vendor non-vulnerability
-
 - [ ] vulnerable window comparison needs to include patch levels
 
 - [ ] add way to override detected settings in case of incorrect parsing or adversarial settings
