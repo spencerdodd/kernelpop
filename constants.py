@@ -26,7 +26,7 @@ NOT_VULNERABLE = 		"not_vulnerable"
 
 GENERIC_LINUX = "linux"
 
-KERNEL_MAJOR_VERSION_CAP = "4"
+KERNEL_MAJOR_VERSION_CAP = 4
 
 UBUNTU_GENERIC = "linuxubuntu"
 UBUNTU_18 = "linuxubuntu18"
