@@ -9,13 +9,16 @@ on the following operating systems:
 
 ### To Do
 
+- [ ] carry exploit vulnerability all the way down the versions of the distros (i.e. ubuntu 12 -> ubuntu 6 or whatever)
+so that when we run earlier kernels, they still register those vulns
+
 - [ ] include patch levels in vulnerable window comparisons
 
 - [ ] add way to override detected settings in case of incorrect parsing or adversarial settings
 
 ### example of enumeration to root (Linux)
 
-![got-root](https://i.imgur.com/ApazcB1.gif)
+![got-root](img/final.gif)
 
 ### requirements
 
