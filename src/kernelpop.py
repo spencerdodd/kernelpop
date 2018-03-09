@@ -431,7 +431,7 @@ def potentially_vulnerable(kernel_version, exploit_module):
 						# kernel is vuln, but no exploit
 						vuln_results.append(kernel_window.kernel_in_window(kernel_version.distro, kernel_version.specific))
 			else:
-				vuln_results.append(BASE_VULNERABLE)
+				vuln_results.append(exploit_module.vulnerable_base.kernel_in_window(kernel_version.distro, kernel_version.base))
 		for vuln_cat in [EXPLOIT_AVAILABLE, VERSION_VULNERABLE, BASE_VULNERABLE, NOT_VULNERABLE]:
 			if vuln_cat in vuln_results:
 				return vuln_cat
@@ -472,80 +472,21 @@ def find_exploit_locally(kernel_version):
 					exploit_module = locate("exploits.{}.{}.{}".format(kernel_exploits_and_paths[idx][0],exploit_name, exploit_name))
 					exploit_instance = exploit_module()
 					if potentially_vulnerable(kernel_version, exploit_instance) == EXPLOIT_AVAILABLE:
-						color_print("\t[+] specific kernel version matched usable exploit: {}".format(exploit_instance.name),
+						color_print("\t[+] exact exploit match!: {}".format(exploit_instance.name),
 									color="green")
 						found_exploits[EXPLOIT_AVAILABLE].append(exploit_instance)
 					elif potentially_vulnerable(kernel_version, exploit_instance) == VERSION_VULNERABLE:
-						color_print("\t[+] specific kernel version is vulnerable (exploit source may not target version): {}".format(exploit_instance.name),
+						color_print("\t[+] distro kernel confirmed vulnerable (exploit may not target distro properly): {}".format(exploit_instance.name),
 									color="yellow")
 						found_exploits[VERSION_VULNERABLE].append(exploit_instance)
 					elif potentially_vulnerable(kernel_version, exploit_instance) == BASE_VULNERABLE:
-						color_print("\t[+] base kernel version is vulnerable window (specific version unknown): {}".format(exploit_instance.name),
+						color_print("\t[+] base kernel is vulnerable (exploit may not target distro properly): {}".format(exploit_instance.name),
 									color="red")
 						found_exploits[BASE_VULNERABLE].append(exploit_instance)
 					else:
 						del exploit_module
 
 	return found_exploits
-
-
-def find_exploit_remotely(kernel_version):
-	"""
-
-	:param kernel_version: dictionary of the kernel version returned from `get_kernel_version()`
-	:return: array of unique exploit identifiers possible for this kernel
-	"""
-	pass
-
-
-def brute_force_enumerate(identified_exploits):
-	"""
-	change enumeration to only cover potentials and move them to confirmed if they come back confirmed, otherwise
-	drop them
-
-	:param identified_exploits:
-	:return:
-	"""
-	# TODO: read function description
-	confirmed_vulnerable = {"high":[], "medium":[], "low":[]}
-	color_print("[*] attempting to confirm all discovered exploits from most to least probable")
-	if len(identified_exploits[HIGH_RELIABILITY]) > 0:
-		color_print("\t[[ high reliability ]]", color="green")
-		for high_exploit in identified_exploits[HIGH_RELIABILITY]:
-			if high_exploit.determine_vulnerability():
-				confirmed_vulnerable["high"].append(high_exploit)
-	if len(identified_exploits[MEDIUM_RELIABILITY]) > 0:
-		color_print("\t[[ medium reliability ]]", color="yellow")
-		for medium_exploit in identified_exploits[MEDIUM_RELIABILITY]:
-			if medium_exploit.determine_vulnerability():
-				confirmed_vulnerable["medium"].append(medium_exploit)
-	if len(identified_exploits[LOW_RELIABILITY]) > 0:
-		color_print("\t[[ low reliability ]]", color="red")
-		for low_exploit in identified_exploits[LOW_RELIABILITY]:
-			if low_exploit.determine_vulnerability():
-				confirmed_vulnerable["low"].append(low_exploit)
-	if len(identified_exploits[HIGH_RELIABILITY]) == 0 and \
-					len(identified_exploits[MEDIUM_RELIABILITY]) == 0 and \
-					len(identified_exploits[LOW_RELIABILITY]) == 0:
-		color_print("[-] no exploits to verify for this kernel", color="red")
-
-	return confirmed_vulnerable
-
-
-def brute_force_exploit(confirmed_exploits):
-	color_print("\t[*] attempting to exploit confirmed exploits", color="blue")
-	if len(confirmed_exploits[HIGH_RELIABILITY]) > 0:
-		color_print("\t[[ high reliability ]]", color="green")
-		for high_exploit in confirmed_exploits[HIGH_RELIABILITY]:
-			high_exploit.exploit()
-	if len(confirmed_exploits[MEDIUM_RELIABILITY]) > 0:
-		color_print("\t[[ medium reliability ]]", color="yellow")
-		for medium_exploit in confirmed_exploits[MEDIUM_RELIABILITY]:
-			medium_exploit.exploit()
-	if len(confirmed_exploits[LOW_RELIABILITY]) > 0:
-		color_print("\t[[ low reliability ]]", color="red")
-		for low_exploit in confirmed_exploits[LOW_RELIABILITY]:
-			low_exploit.exploit()
 
 
 def display_ordered_exploits(ordered_exploits, begin_message=None, fail_message=None, color=None):
@@ -708,15 +649,6 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 			exit(0)
 
 		identified_exploits = find_exploit_locally(kernel_v)
-		"""
-		display_ordered_exploits(identified_exploits["confirmed"],
-			begin_message="[*] matched kernel to the following confirmed exploits",
-			fail_message="[-] no confirmed exploits were discovered for this kernel")
-		display_ordered_exploits(identified_exploits["potential"],
-			begin_message="[*] matched kernel to the following potential exploits:",
-			fail_message="[-] no potential exploits were discovered for this kernel", color="yellow")
-		merged_exploits = {}
-		"""
 		"""
 		for key_val in identified_exploits["confirmed"]:
 			merged_exploits[key_val] = identified_exploits["confirmed"][key_val] + identified_exploits["potential"][key_val]

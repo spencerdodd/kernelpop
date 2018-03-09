@@ -17,9 +17,6 @@ def main():
 
 	if len(sys.argv) < 2:
 		kernelpop()
-	# brute force all discovered exploits
-	elif "-b" in sys.argv[1:3]:
-		kernelpop(mode="brute-enumerate", digest=digest_type)
 	elif "-e" in sys.argv[1:3] and len(sys.argv) > 2:
 		kernelpop(mode="exploit", exploit=sys.argv[2], digest=digest_type)
 	elif "-i" in sys.argv[1:3]:
