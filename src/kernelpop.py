@@ -11,7 +11,7 @@ from distutils.version import StrictVersion
 
 
 class Kernel:
-	def __init__(self, k_type, distro, name, base, specific, architecture, uname=False):
+	def __init__(self, k_type, distro, name, base, specific, architecture, uname):
 		self.k_type = k_type
 		self.distro = distro
 		self.name = name
@@ -39,7 +39,10 @@ class Kernel:
 		if self.k_type == "windows":
 			pass
 		elif self.k_type == "mac" or self.k_type == "linux":
-			color_print("[+] kernel ({}) identified as:".format(self.uname), bold=True)
+			if self.uname:
+				color_print("[+] kernel ({}) identified as:".format(self.uname.replace("\n", "")), bold=True)
+			else:
+				color_print("[+] kernel identified as:".format(self.uname), bold=True)
 			color_print("[base]\n\ttype:\t\t\t{}\n\tdistro:\t\t\t{}\n\tversion:\t\t{}-{}" \
 						"\n\tarchitecture:\t\t{}".format(
 				self.k_type,
@@ -112,7 +115,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 					kernel_base,
 					kernel_specific,
 					arch,
-					uname=uname
+					uname
 			)
 			return new_kernel
 
@@ -149,7 +152,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 					parsed_kernel_base,
 					parsed_kernel_specific,
 					arch,
-					uname=uname
+					uname
 				)
 
 				return new_kernel
@@ -192,7 +195,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 					kernel_base,
 					kernel_specific,
 					arch,
-					uname=uname
+					uname
 			)
 			return new_kernel
 
@@ -222,7 +225,7 @@ def get_kernel_version(uname=None, osx_ver=None):
 				parsed_kernel_base,
 				parsed_kernel_specific,  # our specific kernel, set if exists
 				arch,
-				uname=full_uname
+				full_uname
 			)
 
 			return new_kernel
