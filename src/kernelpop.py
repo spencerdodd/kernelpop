@@ -468,15 +468,13 @@ def potentially_vulnerable(kernel_version, exploit_module):
 			if kernel_version.specific:
 				for vulnerable_window in exploit_module.vulnerable_kernels:
 					vulnerable_window_status = vulnerable_window.kernel_in_window(kernel_version.distro, kernel_version.specific)
-					if vulnerable_window_status is None:
-						# return not vulnerable, because our specific version failed the exploit reqs
-						return NOT_VULNERABLE
-					else:
+					if vulnerable_window_status is not None:
 						for exploit_window in exploit_module.exploit_kernels:
 							exploit_window_status = exploit_window.kernel_in_window(kernel_version.distro, kernel_version.specific)
 							if exploit_window_status is not None:
 								return exploit_window_status
 						return vulnerable_window_status
+
 
 				# return not vulnerable, because our specific version failed the exploit reqs
 				return NOT_VULNERABLE

@@ -26,8 +26,8 @@ class TestGetKernelVersion(unittest.TestCase):
 		write_digestible_to_file(test_outfile, json_finds)
 		self.assertTrue(os.path.exists(test_outfile))
 		# remove it so it's not in the project
-		#if os.path.exists(test_outfile):
-		#	os.remove(test_outfile)
+		if os.path.exists(test_outfile):
+			os.remove(test_outfile)
 
 
 	def test_digestible_xml(self):
