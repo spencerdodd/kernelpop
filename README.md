@@ -55,7 +55,7 @@ user@debian:~/Desktop/kernelpop$ python3 kernelpop.py
 
 In the output, there are a few categories. This is what each means
 
-**[[ distro kernel matched exploit available]]**
+**[[ distro kernel matched exploit available ]]**
 
 * there is a specific distro specific matched kernel exploit in the project that you can use to exploit the kernel.
 High likelihood of successful exploitation.
