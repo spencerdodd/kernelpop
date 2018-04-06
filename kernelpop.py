@@ -19,18 +19,24 @@ def main():
 		kernelpop()
 	elif "-e" in sys.argv[1:3] and len(sys.argv) > 2:
 		kernelpop(mode="exploit", exploit=sys.argv[2], digest=digest_type)
-	elif "-i" in sys.argv[1:3]:
+	elif "-i" in sys.argv[1:3] or "-u" in sys.argv[1:3]:
 		color_print("[*] please note, vulnerability detection is not as accurate by uname alone", color="yellow")
 		color_print("\tconsider running locally on the machine to be tested to get a more accurate reading", color="yellow")
-		uname = input("Please enter uname: ")
-		if "darwin" in str(uname).lower():
-			color_print("[!] macs require additional input", color="yellow")
-			osx_ver = input("[*] Please enter the OSX `ProductVersion`. It is found in 2nd line of output of `sw_vers` command: ")
-			if len(str(osx_ver).split(".")) != 3:
-				color_print("[-] OSX version input is not correct (Major.Minor.Release i.e 10.9.5)", color="red")
-				exit(1)
-			kernelpop(mode="input", uname=uname, osx_ver=osx_ver, digest=digest_type)
+		if "-i" in sys.argv[1:3]:
+			uname = input("Please enter uname: ")
+			if "darwin" in str(uname).lower():
+				color_print("[!] macs require additional input", color="yellow")
+				osx_ver = input("[*] Please enter the OSX `ProductVersion`. It is found in 2nd line of output of `sw_vers` command: ")
+				if len(str(osx_ver).split(".")) != 3:
+					color_print("[-] OSX version input is not correct (Major.Minor.Release i.e 10.9.5)", color="red")
+					exit(1)
+				kernelpop(mode="input", uname=uname, osx_ver=osx_ver, digest=digest_type)
+			else:
+				kernelpop(mode="input", uname=uname, digest=digest_type)
 		else:
+			# support for command line input of uname with '-u' flag
+			uname = " ".join(sys.argv[2:])
+			color_print("[*] processing uname: {}".format(uname), color="yellow")
 			kernelpop(mode="input", uname=uname, digest=digest_type)
 	# if only --digest <option> is passed
 	elif "--digest" in sys.argv[1:3]:

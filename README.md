@@ -86,12 +86,12 @@ but may still work.
 
 ```
 run modes:
-	(default)	python3 kernelpop.py
-	(exploit-mode)	python3 kernelpop.py -e {exploit name}
-	(input-mode)	python3 kernelpop.py -i
+	(default)	    python3 kernelpop.py
+	(exploit-mode)	    python3 kernelpop.py -e {exploit name}
+	(interactive-mode)	python3 kernelpop.py -i
+	(uname-mode)        python3 kernelpop.py -u {uname -a output}
 other:
-	(json output file) --dump json
-	(xml output file) --dump xml
+	(json output file) --digest json
 ```
 
 ### default mode (passive)
@@ -104,14 +104,25 @@ to the program. It then outputs a list of potentially useful vulnerabilities and
 The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
 It can catch interrupts from short-stopped attempts as well
 
-### input mode (passive)
+### uname mode (passive)
+
+```
+-u <uname -a output>
+```
+
+This option allows you to pass the output of a `uname -a` command to the program inline, which makes it use-able for
+integration into automated scripts or for any other forseeable reason. Replacement for `interactive mode`.
+
+### interactive mode (passive) [LEGACY]
 
 ```
 -i <uname -a output>
 ```
 
-The `input` mode allows you to perform enumeration with just the output of a `uname -a` command, 
-which makes it useful as a host-side only enumeration tool.
+The `interactive` mode allows you to perform enumeration with just the output of a `uname -a` command,
+which makes it useful as a host-side only enumeration tool. This run by starting `kernelpop` and with the `-i` flag
+and then passing the output of `uname -a` when requested. This is a legacy feature and replaced by `uname mode`, but
+supported in case anyone is using this.
 
 ### digestible ouput
 
@@ -123,6 +134,8 @@ This option allows you to dump the results of a kernelpop run to a digestible js
 far, I have just implemented the `json` dump, but I will work on an XML version if it is requested.
 
 ### To Do
+
+- [ ] add more exploits! (src/to_add if anyone wants to get cracking on a few of these, be my guest!)
 
 - [ ] include patch levels in vulnerable window comparisons
 
