@@ -88,7 +88,7 @@ but may still work.
 run modes:
 	(default)	        python3 kernelpop.py
 	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
-	(interactive-mode)  python3 kernelpop.py -i
+	(interactive-mode)      python3 kernelpop.py -i
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
 other:
 	(json output file) --digest json
