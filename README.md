@@ -91,7 +91,7 @@ run modes:
 	(interactive-mode)      python3 kernelpop.py -i
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
 other:
-	(json output file) --digest json
+	(json output file)      --digest json
 ```
 
 ### default mode (passive)
