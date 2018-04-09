@@ -2,6 +2,12 @@ import sys
 from src.kernelpop import kernelpop
 from constants import color_print, USAGE_STRING
 
+# hacky rebind of input so we can use existing input() code for python2 and python3
+try:
+	input = raw_input
+except NameError:
+	pass
+
 
 def main():
 
