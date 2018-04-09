@@ -7,6 +7,9 @@ on the following operating systems:
 
 - [x] Mac
 
+It is designed to be `python` version-agnostic, meaning that it should work with both `python2` and `python3` (please let me know if
+you find that it doesn't!)
+
 ---
 
 ### example of enumeration to root (Linux)
