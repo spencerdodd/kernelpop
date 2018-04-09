@@ -81,7 +81,7 @@ but may still work.
 
 ### requirements
 
-`python3`
+`python2` or `python3`
 
 ---
 
