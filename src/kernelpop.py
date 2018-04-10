@@ -9,6 +9,44 @@ from src.kernels import KernelWindow
 from constants import *
 from distutils.version import StrictVersion
 
+# gross...but lets us build a single file without dynamic module loads from filepath..maybe rework this
+
+from exploits.linux.CVE20177308 import CVE20177308
+from exploits.linux.CVE20171000379 import CVE20171000379
+from exploits.linux.CVE20030961 import CVE20030961
+from exploits.linux.CVE20091185 import CVE20091185
+from exploits.linux.CVE20102959 import CVE20102959
+from exploits.linux.CVE20104347 import CVE20104347
+from exploits.linux.CVE20132094_32 import CVE20132094_32
+from exploits.linux.CVE20132094_64 import CVE20132094_64
+from exploits.linux.CVE20132094_semtex import CVE20132094_semtex
+from exploits.linux.CVE20140038 import CVE20140038
+from exploits.linux.CVE20140038_2 import CVE20140038_2
+from exploits.linux.CVE20140196 import CVE20140196
+from exploits.linux.CVE20143153 import CVE20143153
+from exploits.linux.CVE20144014 import CVE20144014
+from exploits.linux.CVE20144699 import CVE20144699
+from exploits.linux.CVE20151328_32 import CVE20151328_32
+from exploits.linux.CVE20151328_64 import CVE20151328_64
+from exploits.linux.CVE20160728 import CVE20160728
+from exploits.linux.CVE20162384 import CVE20162384
+from exploits.linux.CVE20165195_32 import CVE20165195_32
+from exploits.linux.CVE20165195_32_poke import CVE20165195_32_poke
+from exploits.linux.CVE20165195_64 import CVE20165195_64
+from exploits.linux.CVE20165195_64_poke import CVE20165195_64_poke
+from exploits.linux.CVE20173630 import CVE20173630
+from exploits.linux.CVE20175123 import CVE20175123
+from exploits.linux.CVE20176074 import CVE20176074
+from exploits.linux.CVE20171000112 import CVE20171000112
+from exploits.linux.CVE20171000367 import CVE20171000367
+from exploits.linux.CVE20171000370 import CVE20171000370
+from exploits.linux.CVE20171000371 import CVE20171000371
+from exploits.linux.CVE20171000372 import CVE20171000372
+from exploits.linux.CVE20171000373 import CVE20171000373
+from exploits.mac.CVE20164656 import CVE20164656
+from exploits.mac.CVE20155889 import CVE20155889
+from exploits.mac.NULLROOT import NULLROOT
+
 
 class Kernel:
 	def __init__(self, k_type, distro, name, base, specific, architecture, uname):
@@ -514,18 +552,50 @@ def find_exploit_locally(kernel_version):
 	color_print("[*] matching kernel to known exploits")
 	for idx,k_ex_path in enumerate(kernel_exploits_and_paths):
 		if kernel_version.k_type == kernel_exploits_and_paths[idx][0]:
-			all_exploits = os.listdir(kernel_exploits_and_paths[idx][1])
-			for exploit_file in all_exploits:
-				if exploit_file[-3:] == ".py" and "__init__" not in exploit_file:
-					exploit_name = exploit_file.replace(".py", "")
-					exploit_module = locate("exploits.{}.{}.{}".format(kernel_exploits_and_paths[idx][0],exploit_name, exploit_name))
-					exploit_instance = exploit_module()
-
-					vuln_result = potentially_vulnerable(kernel_version, exploit_instance)
-					if vuln_result == NOT_VULNERABLE:
-						del exploit_module
-					else:
-						found_exploits[vuln_result].append(exploit_instance)
+			all_exploits = [
+				CVE20177308(),
+				CVE20171000379(),
+				CVE20030961(),
+				CVE20091185(),
+				CVE20102959(),
+				CVE20104347(),
+				CVE20132094_32(),
+				CVE20132094_64(),
+				CVE20132094_semtex(),
+				CVE20140038(),
+				CVE20140038_2(),
+				CVE20140196(),
+				CVE20143153(),
+				CVE20144014(),
+				CVE20144699(),
+				CVE20151328_32(),
+				CVE20151328_64(),
+				CVE20160728(),
+				CVE20162384(),
+				CVE20165195_32(),
+				CVE20165195_32_poke(),
+				CVE20165195_64(),
+				CVE20165195_64_poke(),
+				CVE20173630(),
+				CVE20175123(),
+				CVE20176074(),
+				CVE20171000112(),
+				CVE20171000367(),
+				CVE20171000370(),
+				CVE20171000371(),
+				CVE20171000372(),
+				CVE20171000373(),
+				CVE20164656(),
+				CVE20155889(),
+				NULLROOT(),
+			]
+			for exploit_instance in all_exploits:
+				vuln_result = potentially_vulnerable(kernel_version, exploit_instance)
+				if vuln_result == NOT_VULNERABLE:
+					# bummer
+					pass
+				else:
+					found_exploits[vuln_result].append(exploit_instance)
 
 	return found_exploits
 
