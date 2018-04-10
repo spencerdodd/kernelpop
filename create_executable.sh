@@ -6,15 +6,15 @@ echo "[*] identifying build environment"
 if [[ $(uname -a) = *"Darwin"* ]]; then
 	echo "	[+] running on mac"
 	echo "[*] installing pip"
-	sudo easy_install pip
+	sudo easy_install pip || echo "[!] could not install pip..exiting" && exit 1
 else
 	echo "	[+] running on linux"
 	echo "[*] installing pip"
-	sudo apt-get install pip
+	sudo apt-get install pip || echo "[!] could not install pip..exiting" && exit 1
 fi
 
 echo "[*] installing pyinstaller"
-pip install pyinstaller
+pip install pyinstaller || echo "[!] could not install pyinstaller..exiting" && exit 1
 
 
 single_file="$(pwd)/singlefile.py"
