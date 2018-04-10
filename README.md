@@ -31,12 +31,13 @@ build binary
 ```
 $ git clone https://github.com/spencerdodd/kernelpop
 $ cd kernelpop
-# apt-get install python-pip
-... or ...
-$ sudo easy_install pip
-$ pip install pyinstaller
 $ ./create_executable.sh
 ```
+
+steps to build binary without script
+
+1. install `pyinstaller` (steps vary per build system)
+2. `$ pyinstaller kernelpop.py --onefile`
 
 ### enumeration output
 
