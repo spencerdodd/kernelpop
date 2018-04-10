@@ -6,15 +6,15 @@ echo "[*] identifying build environment"
 if [[ $(uname -a) = *"Darwin"* ]]; then
 	echo "	[+] running on mac"
 	echo "[*] installing pip"
-	sudo easy_install pip || echo "[!] could not install pip..exiting"; exit 1
+	sudo easy_install pip || echo "[!] could not install pip"
 else
 	echo "	[+] running on linux"
 	echo "[*] installing pip"
-	sudo apt-get install python-pip || echo "[!] could not install pip..exiting"; exit 1
+	sudo apt-get install python-pip || echo "[!] could not install pip"
 fi
 
 echo "[*] installing pyinstaller"
-pip install pyinstaller || echo "[!] could not install pyinstaller..exiting"; exit 1
+pip install pyinstaller || echo "[!] could not install pyinstaller"
 
 
 single_file="$(pwd)/singlefile.py"
@@ -37,7 +37,7 @@ echo "[*] copying to project directory"
 cp dist/singlefile kernelpop
 
 echo "[*] cleaning up build"
-rm -r $(pwd)/build $(pwd)/dist $(pwd)/singlefile.spec
+rm -r $(pwd)/build $(pwd)/dist $(pwd)/singlefile.spec $(pwd)/singlefile.py
 
 executable_location="$(pwd)/kernelpop"
 echo "[+] executable at $executable_location"
