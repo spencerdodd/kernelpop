@@ -16,6 +16,28 @@ you find that it doesn't!)
 
 ![got-root](img/final.gif)
 
+### how to install
+
+run from project source
+
+```
+$ git clone https://github.com/spencerdodd/kernelpop
+$ cd kernelpop
+$ python kernelpop.py
+```
+
+build binary
+
+```
+$ git clone https://github.com/spencerdodd/kernelpop
+$ cd kernelpop
+# apt-get install python-pip
+... or ...
+$ sudo easy_install pip
+$ pip install pyinstaller
+$ ./create_executable.sh
+```
+
 ### enumeration output
 
 ```

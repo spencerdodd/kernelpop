@@ -2,6 +2,21 @@
 
 echo "[*] creating an executable of the project"
 
+echo "[*] identifying build environment"
+if [[ $(uname -a) = *"Darwin"* ]]; then
+	echo "	[+] running on mac"
+	echo "[*] installing pip"
+	sudo easy_install pip
+else
+	echo "	[+] running on linux"
+	echo "[*] installing pip"
+	sudo apt-get install pip
+fi
+
+echo "[*] installing pyinstaller"
+pip install pyinstaller
+
+
 single_file="$(pwd)/singlefile.py"
 echo "[*] compiling project into single file at $single_file"
 dirs=('exploits' 'exploits/linux' 'exploits/mac' 'exploits/windows' 'src' 'constants.py' 'kernelpop.py')
