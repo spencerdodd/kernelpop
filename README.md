@@ -39,6 +39,8 @@ steps to build binary without script
 1. install `pyinstaller` (steps vary per build system)
 2. `$ pyinstaller kernelpop.py --onefile`
 
+both of the binary build steps should create a binary `kernelpop` in the project root.
+
 ### enumeration output
 
 ```
