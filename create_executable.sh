@@ -10,7 +10,7 @@ if [[ $(uname -a) = *"Darwin"* ]]; then
 else
 	echo "	[+] running on linux"
 	echo "[*] installing pip"
-	sudo apt-get install pip || echo "[!] could not install pip..exiting" && exit 1
+	sudo apt-get install python-pip || echo "[!] could not install pip..exiting" && exit 1
 fi
 
 echo "[*] installing pyinstaller"
