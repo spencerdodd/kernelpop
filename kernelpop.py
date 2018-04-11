@@ -24,7 +24,11 @@ def main():
 	if len(sys.argv) < 2:
 		kernelpop()
 	elif "-e" in sys.argv[1:3] and len(sys.argv) > 2:
-		kernelpop(mode="exploit", exploit=sys.argv[2], digest=digest_type)
+		# dump the exploit source to disk
+		if "-d" in sys.argv:
+			kernelpop(mode="dump", exploit=sys.argv[2], digest=digest_type)
+		else:
+			kernelpop(mode="exploit", exploit=sys.argv[2], digest=digest_type)
 	elif "-i" in sys.argv[1:3] or "-u" in sys.argv[1:3]:
 		color_print("[*] please note, vulnerability detection is not as accurate by uname alone", color="yellow")
 		color_print("\tconsider running locally on the machine to be tested to get a more accurate reading", color="yellow")
@@ -41,10 +45,10 @@ def main():
 				kernelpop(mode="input", uname=uname, digest=digest_type)
 		else:
 			# support for command line input of uname with '-u' flag
+			uname = " ".join(sys.argv[2:])
 			if "darwin" in str(uname).lower():
 				color_print("[!] cannot enumerate mac from uname alone...please use interactive-mode (-i)", color="red")
 				exit(1)
-			uname = " ".join(sys.argv[2:])
 			color_print("[*] processing uname: {}".format(uname), color="yellow")
 			kernelpop(mode="input", uname=uname, digest=digest_type)
 	# if only --digest <option> is passed
