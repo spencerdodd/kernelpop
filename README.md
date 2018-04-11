@@ -42,7 +42,7 @@ $ ./kernelpop
 
 1. install `pyinstaller` (steps vary per build system)
 2. `$ pyinstaller kernelpop.py --onefile`
-3. `$ cp dist/kernelpop .
+3. `$ cp dist/kernelpop .`
 
 both of the binary build steps should create a binary `kernelpop` in the project root.
 
