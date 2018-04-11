@@ -142,9 +142,12 @@ to the program. It then outputs a list of potentially useful vulnerabilities and
 The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
 It can catch interrupts from short-stopped attempts as well
 
-* **dump-source (active)**
+* **dump-source (option)**
 
-    * This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective files in `PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working with exploits that require manual interaction or hard-coding of values. It is especially useful when running from a binary, because you won't have access to the project source code (i.e. exploit source).
+    * This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective
+    files in `PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working
+    with exploits that require manual interaction or hard-coding of values. It is especially useful when running
+    from a binary, because you won't have access to the project source code (i.e. exploit source).
 
 ### uname mode (passive)
 
