@@ -124,7 +124,7 @@ but may still work.
 run modes:
 	(default)	        python3 kernelpop.py
 	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
-		(dump-source)       python3 kernelpop.py -e {exploit name} -d
+		(dump-source)   python3 kernelpop.py -e {exploit name} -d
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
 	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
@@ -149,10 +149,10 @@ initial `kernelpop` enumeration run in `default` mode.
 
 * **dump-source (option) `-d`**
 
-    * This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective
-    files in `PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working
-    with exploits that require manual interaction or hard-coding of values. It is especially useful when running
-    from a binary, because you won't have access to the project source code (i.e. exploit source).
+	* This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective
+	files in `PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working
+	with exploits that require manual interaction or hard-coding of values. It is especially useful when running
+	from a binary, because you won't have access to the project source code (i.e. exploit source).
 
 ### uname mode (passive)
 
@@ -205,21 +205,21 @@ far, I have just implemented the `json` dump, but I will work on an XML version 
 
 * google: CVE-XXXX-XXXX "ubuntu"
 
-    * click the canonical link (https://people.canonical.com/~ubuntu-security/cve/2016/CVE-XXXX-XXXX.html)
+	* click the canonical link (https://people.canonical.com/~ubuntu-security/cve/2016/CVE-XXXX-XXXX.html)
 
-        * click all linked advisories at usn.ubuntu.com and parse info
+		* click all linked advisories at usn.ubuntu.com and parse info
 
-        * grab patch versions for filling in vulnerability windows per version
+		* grab patch versions for filling in vulnerability windows per version
 
 * google: CVE-XXXX-XXXX "debian"
 
-    * security-tracker.debian.org link (https://security-tracker.debian.org/tracker/CVE-XXXX-XXXX)
+	* security-tracker.debian.org link (https://security-tracker.debian.org/tracker/CVE-XXXX-XXXX)
 
-        * pull information from the bottom of the page that relates to the patched versions for the specific cve
+		* pull information from the bottom of the page that relates to the patched versions for the specific cve
 
 * google: CVE-XXXX-XXXX "mitre"
 
-    * links to other distros to pull info from
+	* links to other distros to pull info from
 
 ---
 
