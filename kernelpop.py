@@ -27,6 +27,7 @@ def main():
 		# dump the exploit source to disk
 		if "-d" in sys.argv:
 			#kernelpop(mode="dump", exploit=sys.argv[2], digest=digest_type)
+			pass
 		else:
 			kernelpop(mode="exploit", exploit=sys.argv[2], digest=digest_type)
 	elif "-i" in sys.argv[1:3] or "-u" in sys.argv[1:3]:
