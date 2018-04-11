@@ -149,7 +149,7 @@ It can catch interrupts from short-stopped attempts as well
 This option allows you to pass the output of a `uname -a` command to the program inline, which makes it use-able for
 integration into automated scripts or for any other forseeable reason. Replacement for `interactive mode`.
 
-### interactive mode (passive) [LEGACY]
+### interactive mode (passive) [LEGACY - required for Mac by `uname` output]
 
 ```
 -i <uname -a output>
@@ -157,8 +157,8 @@ integration into automated scripts or for any other forseeable reason. Replaceme
 
 The `interactive` mode allows you to perform enumeration with just the output of a `uname -a` command,
 which makes it useful as a host-side only enumeration tool. This run by starting `kernelpop` and with the `-i` flag
-and then passing the output of `uname -a` when requested. This is a legacy feature and replaced by `uname mode`, but
-supported in case anyone is using this.
+and then passing the output of `uname -a` when requested. This is a legacy feature and replaced by `uname mode`, but remains
+supported as `-u` does not support Mac enumeration.
 
 ### digestible ouput
 
