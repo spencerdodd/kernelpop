@@ -43,9 +43,17 @@ from exploits.linux.CVE20171000370 import CVE20171000370
 from exploits.linux.CVE20171000371 import CVE20171000371
 from exploits.linux.CVE20171000372 import CVE20171000372
 from exploits.linux.CVE20171000373 import CVE20171000373
+from exploits.linux.CVE20040077 import CVE20040077
+from exploits.linux.CVE20041235 import CVE20041235
+from exploits.linux.CVE20050736 import CVE20050736
+from exploits.linux.CVE20062451 import CVE20062451
+from exploits.linux.CVE20063626 import CVE20063626
+from exploits.linux.CVE20080600 import CVE20080600
+
 from exploits.mac.CVE20164656 import CVE20164656
 from exploits.mac.CVE20155889 import CVE20155889
 from exploits.mac.NULLROOT import NULLROOT
+
 
 
 class Kernel:
@@ -553,6 +561,12 @@ def find_exploit_locally(kernel_version):
 	for idx,k_ex_path in enumerate(kernel_exploits_and_paths):
 		if kernel_version.k_type == kernel_exploits_and_paths[idx][0]:
 			all_exploits = [
+				CVE20040077(),
+				CVE20041235(),
+				CVE20050736(),
+				CVE20062451(),
+				CVE20063626(),
+				CVE20080600(),
 				CVE20177308(),
 				CVE20171000379(),
 				CVE20030961(),

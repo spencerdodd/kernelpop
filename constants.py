@@ -42,6 +42,31 @@ UBUNTU_9 = "linuxubuntu9"
 UBUNTU_8 = "linuxubuntu8"
 UBUNTU_7 = "linuxubuntu7"
 UBUNTU_6 = "linuxubuntu6"
+UBUNTU_5 = "linuxubuntu5"
+UBUNTU_4 = "linuxubuntu4"
+UBUNTU_3 = "linuxubuntu3"
+UBUNTU_2 = "linuxubuntu2"
+UBUNTU_1 = "linuxubuntu1"
+
+"""
+1.1 	Buzz 	1996-06-17 	Buzz Lightyear
+1.2 	Rex 	1996-12-12 	Rex (the T-Rex)
+1.3 	Bo 	1997-06-05 	Bo Peep
+2.0 	Hamm 	1998-07-24 	Hamm (the pig)
+2.1 	Slink 	1999-03-09 	Slinky Dog
+2.2 	Potato 	2000-08-15 	Mr Potato Head
+3.0 	Woody 	2002-07-19 	Woody the cowboy
+3.1 	Sarge 	2005-06-06 	Sarge from the Bucket O' Soldiers
+4.0 	Etch 	2007-04-08 	Etch, the Etch-A-Sketch
+5.0 	Lenny 	2009-02-14 	Lenny, the binoculars
+6.0 	Squeeze 	2011-02-06 	Squeeze toy aliens
+7 	Wheezy 	2013-05-04 	Wheezy the penguin
+8 	Jessie 	2015-04-26 	Jessie the cowgirl
+9 	Stretch 	2017-06-17 	Rubber octopus from Toy Story 3
+10 	Buster 	not yet released 	Andy's pet dog
+11 	Bullseye 	Not yet released 	Woody's horse
+	Sid		"unstable"	The next doorneighbour
+"""
 
 DEBIAN_GENERIC = "linuxdebian"
 DEBIAN_10 = "linuxdebian10"
@@ -50,6 +75,10 @@ DEBIAN_8 = "linuxdebian8"
 DEBIAN_7 = "linuxdebian7"
 DEBIAN_6 = "linuxdebian6"
 DEBIAN_5 = "linuxdebian5"
+DEBIAN_4 = "linuxdebian4"
+DEBIAN_3 = "linuxdebian3"
+DEBIAN_2 = "linuxdebian2"
+DEBIAN_1 = "linuxdebian1"
 DEBIAN_UNSTABLE = "linuxdebian-unstable"
 
 ARCH = "linuxarch"
