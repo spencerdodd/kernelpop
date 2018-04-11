@@ -122,14 +122,14 @@ but may still work.
 
 ```
 run modes:
-    (default)	        python3 kernelpop.py
-    (exploit-mode)	        python3 kernelpop.py -e {exploit name}
-        (dump-source)       python3 kernelpop.py -e {exploit name} -d
-    (uname-mode)            python3 kernelpop.py -u {uname -a output}
-    (interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
+	(default)	        python3 kernelpop.py
+	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
+		(dump-source)       python3 kernelpop.py -e {exploit name} -d
+	(uname-mode)            python3 kernelpop.py -u {uname -a output}
+	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
-    (playground path)       -p {new path}
-    (json output file)      --digest json
+	(playground path)       -p {new path}
+	(json output file)      --digest json
 ```
 
 ### default mode (passive)
