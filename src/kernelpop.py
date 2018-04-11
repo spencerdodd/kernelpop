@@ -719,7 +719,7 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 		display_exploits(identified_exploits)
 
 		if digest:
-			digest_filepath = os.path.join(ROOT_DIR, "output.{}".format(digest))
+			digest_filepath = os.path.join(PLAYGROUND_PATH, "output.{}".format(digest))
 			print("[*] dumping results to {} file ({}".format(digest, digest_filepath))
 			digestible_results = convert_to_digestible(identified_exploits)
 			write_digestible_to_file(digest_filepath, digestible_results)
