@@ -49,6 +49,8 @@ from exploits.linux.CVE20050736 import CVE20050736
 from exploits.linux.CVE20062451 import CVE20062451
 from exploits.linux.CVE20063626 import CVE20063626
 from exploits.linux.CVE20080600 import CVE20080600
+from exploits.linux.CVE20080900 import CVE20080900
+from exploits.linux.CVE20084210 import CVE20084210
 
 from exploits.mac.CVE20164656 import CVE20164656
 from exploits.mac.CVE20155889 import CVE20155889
@@ -567,6 +569,8 @@ def find_exploit_locally(kernel_version):
 				CVE20062451(),
 				CVE20063626(),
 				CVE20080600(),
+				CVE20080900(),
+				CVE20084210(),
 				CVE20177308(),
 				CVE20171000379(),
 				CVE20030961(),
