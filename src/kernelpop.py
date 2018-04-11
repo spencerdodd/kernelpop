@@ -488,7 +488,7 @@ def potentially_vulnerable(kernel_version, exploit_module):
 		return NOT_VULNERABLE
 
 
-def find_exploit_locally(kernel_version):
+def find_exploit_locally(kernel_version, all_exploit_objects):
 	"""
 	find_exploit_locally(Kernel kernel_version)
 
@@ -507,7 +507,7 @@ def find_exploit_locally(kernel_version):
 	}
 
 	color_print("[*] matching kernel to known exploits")
-	for exploit_instance in all_exploits:
+	for exploit_instance in all_exploit_objects:
 		vuln_result = potentially_vulnerable(kernel_version, exploit_instance)
 		if vuln_result == NOT_VULNERABLE:
 			# bummer
@@ -547,16 +547,13 @@ def display_exploits(exploits):
 		color_print("[-] no exploits found for this kernel", color="red")
 
 
-def exploit_individually(exploit_name):
+def exploit_individually(exploit_name, all_exploit_objects):
 	color_print("[*] attempting to perform exploitation with exploit {}".format(exploit_name))
-	exploit_os = ["linux", "windows", "mac"]
 	found_exploit = False
-	for os_type in exploit_os:
-		exploit_path_string = "exploits.{}.{}.{}".format(os_type, exploit_name, exploit_name)
-		exploit_module = locate(exploit_path_string)
-		if exploit_module:
+	for exploit in all_exploit_objects:
+		if exploit.name == exploit_name:
 			found_exploit = True
-			exploit_module().exploit()
+			exploit.exploit()
 	if not found_exploit:
 		color_print("[-] exploit {} was not found".format(exploit_name), color="red")
 
@@ -596,15 +593,24 @@ def write_digestible_to_file(file_to_write, contents):
 		color_print("\t{}".format(e), color="red")
 
 
-def dump_exploit_source(exploit_name):
+def dump_exploit_source(exploit_name, all_exploit_objects):
 	color_print("[*] attempting to locate exploit {}".format(exploit_name), color="blue")
-	for exploit in all_exploits:
+	for exploit in all_exploit_objects:
 		if exploit.name == exploit_name:
 			color_print("\t[+] exploit found!", color="green")
 			exploit.write_exploit_source()
+	color_print("[+] successfully written to disk", color="green")
 
 
-def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=None):
+def initialize_all_exploits(playground):
+	initialized_exploits = []
+	for exploit in all_exploits:
+		initialized_exploit = exploit(playground_path=playground)
+		initialized_exploits.append(initialized_exploit)
+	return initialized_exploits
+
+
+def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, playground=PLAYGROUND_PATH, digest=None):
 	"""
 	kernelpop()
 
@@ -612,12 +618,13 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 	:return:
 	"""
 
-	color_print(HEADER, color="blue", bold=True)
+	all_exploit_objects = initialize_all_exploits(playground)
+
 	if exploit:
 		if mode == "dump":
-			dump_exploit_source(str(exploit))
+			dump_exploit_source(str(exploit), all_exploit_objects)
 		else:
-			exploit_individually(str(exploit))
+			exploit_individually(str(exploit), all_exploit_objects)
 	else:
 		if uname:
 			if osx_ver:
@@ -632,12 +639,12 @@ def kernelpop(mode="enumerate", uname=None, exploit=None, osx_ver=None, digest=N
 			print('[!] exiting')
 			exit(0)
 
-		identified_exploits = find_exploit_locally(kernel_v)
+		identified_exploits = find_exploit_locally(kernel_v, all_exploit_objects)
 
 		display_exploits(identified_exploits)
 
 		if digest:
-			digest_filepath = os.path.join(PLAYGROUND_PATH, "output.{}".format(digest))
+			digest_filepath = os.path.join(playground, "output.{}".format(digest))
 			print("[*] dumping results to {} file ({}".format(digest, digest_filepath))
 			digestible_results = convert_to_digestible(identified_exploits)
 			write_digestible_to_file(digest_filepath, digestible_results)

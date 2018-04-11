@@ -1,5 +1,5 @@
 import os
-import subprocess# gross...but lets us build a single file without dynamic module loads from filepath..maybe rework this
+import subprocess
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLAYGROUND_PATH = "/tmp"
@@ -176,14 +176,19 @@ os_decision_tree = {
 }
 
 USAGE_STRING = \
-"""usage:
-\t(default)\t\tpython3 kernelpop.py
-\t(brute-mode)\tpython3 kernelpop.py -b
-\t(exploit-mode)\tpython3 kernelpop.py -e {exploit name}
-\t(input-mode)\tpython3 kernelpop.py -i
+"""
+-------------
+usage:
+-------------
+run modes:
+	(default)	        python3 kernelpop.py
+	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
+		(dump-source)       python3 kernelpop.py -e {exploit name} -d
+	(uname-mode)            python3 kernelpop.py -u {uname -a output}
+	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
-\t(json output file) --dump json
-\t(xml output file) --dump xml"""
+	(playground path)       -p {new path}
+	(json output file)      --digest json"""
 
 HEADER = """
 ##########################
