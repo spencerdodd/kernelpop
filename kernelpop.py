@@ -21,9 +21,6 @@ def main():
 			print("[*] sorry, only json digestible output is supported at the moment (--digest json)")
 			exit(0)
 
-	if len(sys.argv) < 2:
-		kernelpop()
-
 	if "-p" in sys.argv:
 		playground_index = sys.argv.index("-p") + 1
 		new_playground = str(sys.argv[playground_index])
@@ -33,6 +30,13 @@ def main():
 			color_print("\t[+] PLAYGROUND_PATH={}".format(PLAYGROUND_PATH), color="blue")
 		else:
 			color_print("\t[!] could not set PLAYGROUND_PATH", color="red")
+
+		# first delete deletes -p, second delete deletes the path
+		del sys.argv[playground_index - 1]
+		del sys.argv[playground_index - 1]
+
+	if len(sys.argv) < 2:
+		kernelpop()
 
 	elif "-e" in sys.argv[1:3] and len(sys.argv) > 2:
 		# dump the exploit source to disk
