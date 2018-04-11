@@ -124,6 +124,7 @@ but may still work.
 run modes:
 	(default)	        python3 kernelpop.py
 	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
+	    (dump-source)       python3 kernelpop.py -e {exploit name} -d
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
 	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
@@ -140,6 +141,12 @@ to the program. It then outputs a list of potentially useful vulnerabilities and
 
 The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
 It can catch interrupts from short-stopped attempts as well
+
+### dump-source (active)
+
+This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective files in
+`PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working with exploits that
+require manual interaction or hard-coding of values.
 
 ### uname mode (passive)
 

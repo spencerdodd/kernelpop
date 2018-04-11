@@ -1,5 +1,6 @@
 import os
-import subprocess
+import subprocess# gross...but lets us build a single file without dynamic module loads from filepath..maybe rework this
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLAYGROUND_PATH = "/tmp"
 HIGH_RELIABILITY = "high"
