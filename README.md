@@ -139,10 +139,15 @@ to the program. It then outputs a list of potentially useful vulnerabilities and
 
 ### exploit mode (active)
 
-The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
-It can catch interrupts from short-stopped attempts as well
+```
+-e {exploit name}
+```
 
-* **dump-source (option)**
+The `exploit` mode dynamically compiles and runs the exploit source code with stdio interactions inside the program.
+It can catch interrupts from short-stopped attempts as well. Use the name of the exploit that comes up in the
+initial `kernelpop` enumeration run in `default` mode.
+
+* **dump-source (option) `-d`**
 
     * This is a modifier for `exploit` mode. It dumps the source-files for the given exploit to their respective
     files in `PLAYGROUND_PATH` (default `/tmp`). This is useful for modifying exploit source on a box or working
@@ -152,7 +157,7 @@ It can catch interrupts from short-stopped attempts as well
 ### uname mode (passive)
 
 ```
--u <uname -a output>
+-u {uname -a output}
 ```
 
 This option allows you to pass the output of a `uname -a` command to the program inline, which makes it use-able for
@@ -161,7 +166,7 @@ integration into automated scripts or for any other forseeable reason. Replaceme
 ### interactive mode (passive) [LEGACY - required for Mac by `uname` output]
 
 ```
--i <uname -a output>
+-i {uname -a output}
 ```
 
 The `interactive` mode allows you to perform enumeration with just the output of a `uname -a` command,
@@ -170,6 +175,10 @@ and then passing the output of `uname -a` when requested. This is a legacy featu
 supported as `-u` does not support Mac enumeration.
 
 ### `PLAYGROUND` path
+
+```
+-p {new PLAYGROUND_PATH dir}
+```
 
 The `-p` option sets the value of the global variable `PLAYGROUND_PATH`. This is the location where all exploit source
 files are written to, and exploits compiled to. This is set, by default, to `/tmp`. However, you can set it to any
