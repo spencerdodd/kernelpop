@@ -41,6 +41,9 @@ def main():
 				kernelpop(mode="input", uname=uname, digest=digest_type)
 		else:
 			# support for command line input of uname with '-u' flag
+			if "darwin" in str(uname).lower():
+				color_print("[!] cannot enumerate mac from uname alone...please use interactive-mode (-i)", color="red")
+				exit(1)
 			uname = " ".join(sys.argv[2:])
 			color_print("[*] processing uname: {}".format(uname), color="yellow")
 			kernelpop(mode="input", uname=uname, digest=digest_type)

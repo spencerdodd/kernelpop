@@ -7,8 +7,9 @@ on the following operating systems:
 
 - [x] Mac
 
-It is designed to be `python` version-agnostic, meaning that it should work with both `python2` and `python3` (please let me know if
-you find that it doesn't!)
+It is designed to be `python` version-agnostic, meaning that it should work with both `python2` and `python3` 
+
+* please let me know if you find that it doesn't
 
 ---
 
@@ -16,30 +17,35 @@ you find that it doesn't!)
 
 ![got-root](img/final.gif)
 
-### how to install
+---
 
-run from project source
+### ways to use
+
+* run from project source
 
 ```
 $ git clone https://github.com/spencerdodd/kernelpop
 $ cd kernelpop
-$ python kernelpop.py
+$ python kernelpop.py || python3 kernelpop.py
 ```
 
-build binary
+* build binary
 
 ```
 $ git clone https://github.com/spencerdodd/kernelpop
 $ cd kernelpop
 $ ./create_executable.sh
+$ ./kernelpop
 ```
 
-steps to build binary without script
+* steps to build binary without script
 
 1. install `pyinstaller` (steps vary per build system)
 2. `$ pyinstaller kernelpop.py --onefile`
 
 both of the binary build steps should create a binary `kernelpop` in the project root.
+
+---
 
 ### enumeration output
 
@@ -106,7 +112,9 @@ but may still work.
 
 ### requirements
 
-`python2` or `python3`
+* `python2` or `python3`
+
+* `pyinstaller` (if you want to build a binary)
 
 ---
 
@@ -116,8 +124,8 @@ but may still work.
 run modes:
 	(default)	        python3 kernelpop.py
 	(exploit-mode)	        python3 kernelpop.py -e {exploit name}
-	(interactive-mode)      python3 kernelpop.py -i
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
+	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
 	(json output file)      --digest json
 ```
