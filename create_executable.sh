@@ -21,11 +21,12 @@ echo "[*] building the executable"
 pyinstaller kernelpop.py --onefile
 
 echo "[*] copying executable to project root"
-cp dist/kernelpop .
+executable_location="$(pwd)/kernelpop"
+cp dist/kernelpop $executable_location
 
 echo "[*] cleaning up build"
 rm -r $(pwd)/build $(pwd)/dist $(pwd)/kernelpop.spec
 
-executable_location="$(pwd)/kernelpop"
+
 echo "[+] executable at $executable_location"
 echo "[+] complete"
