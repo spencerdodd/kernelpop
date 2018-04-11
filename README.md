@@ -127,6 +127,7 @@ run modes:
 	(uname-mode)            python3 kernelpop.py -u {uname -a output}
 	(interactive-mode)      python3 kernelpop.py -i # LEGACY option (same as uname-mode)
 other:
+    (playground path)        -p {new path}
 	(json output file)      --digest json
 ```
 
@@ -159,6 +160,12 @@ The `interactive` mode allows you to perform enumeration with just the output of
 which makes it useful as a host-side only enumeration tool. This run by starting `kernelpop` and with the `-i` flag
 and then passing the output of `uname -a` when requested. This is a legacy feature and replaced by `uname mode`, but remains
 supported as `-u` does not support Mac enumeration.
+
+### `PLAYGROUND` path
+
+The `-p` option sets the value of the global variable `PLAYGROUND_PATH`. This is the location where all exploit source
+files are written to, and exploits compiled to. This is set, by default, to `/tmp`. However, you can set it to any
+directory with this modifier in case you do not have write access in `/tmp`.
 
 ### digestible ouput
 

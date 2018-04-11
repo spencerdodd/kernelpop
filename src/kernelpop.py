@@ -554,66 +554,59 @@ def find_exploit_locally(kernel_version):
 		NOT_VULNERABLE: []
 	}
 
-	kernel_exploits_and_paths = [
-		["linux", LINUX_EXPLOIT_PATH],
-		["mac", MAC_EXPLOIT_PATH]
-	]
-
 	color_print("[*] matching kernel to known exploits")
-	for idx,k_ex_path in enumerate(kernel_exploits_and_paths):
-		if kernel_version.k_type == kernel_exploits_and_paths[idx][0]:
-			all_exploits = [
-				CVE20040077(),
-				CVE20041235(),
-				CVE20050736(),
-				CVE20062451(),
-				CVE20063626(),
-				CVE20080600(),
-				CVE20080900(),
-				CVE20084210(),
-				CVE20177308(),
-				CVE20171000379(),
-				CVE20030961(),
-				CVE20091185(),
-				CVE20102959(),
-				CVE20104347(),
-				CVE20132094_32(),
-				CVE20132094_64(),
-				CVE20132094_semtex(),
-				CVE20140038(),
-				CVE20140038_2(),
-				CVE20140196(),
-				CVE20143153(),
-				CVE20144014(),
-				CVE20144699(),
-				CVE20151328_32(),
-				CVE20151328_64(),
-				CVE20160728(),
-				CVE20162384(),
-				CVE20165195_32(),
-				CVE20165195_32_poke(),
-				CVE20165195_64(),
-				CVE20165195_64_poke(),
-				CVE20173630(),
-				CVE20175123(),
-				CVE20176074(),
-				CVE20171000112(),
-				CVE20171000367(),
-				CVE20171000370(),
-				CVE20171000371(),
-				CVE20171000372(),
-				CVE20171000373(),
-				CVE20164656(),
-				CVE20155889(),
-				NULLROOT(),
-			]
-			for exploit_instance in all_exploits:
-				vuln_result = potentially_vulnerable(kernel_version, exploit_instance)
-				if vuln_result == NOT_VULNERABLE:
-					# bummer
-					pass
-				else:
-					found_exploits[vuln_result].append(exploit_instance)
+	all_exploits = [
+		CVE20040077(),
+		CVE20041235(),
+		CVE20050736(),
+		CVE20062451(),
+		CVE20063626(),
+		CVE20080600(),
+		CVE20080900(),
+		CVE20084210(),
+		CVE20177308(),
+		CVE20171000379(),
+		CVE20030961(),
+		CVE20091185(),
+		CVE20102959(),
+		CVE20104347(),
+		CVE20132094_32(),
+		CVE20132094_64(),
+		CVE20132094_semtex(),
+		CVE20140038(),
+		CVE20140038_2(),
+		CVE20140196(),
+		CVE20143153(),
+		CVE20144014(),
+		CVE20144699(),
+		CVE20151328_32(),
+		CVE20151328_64(),
+		CVE20160728(),
+		CVE20162384(),
+		CVE20165195_32(),
+		CVE20165195_32_poke(),
+		CVE20165195_64(),
+		CVE20165195_64_poke(),
+		CVE20173630(),
+		CVE20175123(),
+		CVE20176074(),
+		CVE20171000112(),
+		CVE20171000367(),
+		CVE20171000370(),
+		CVE20171000371(),
+		CVE20171000372(),
+		CVE20171000373(),
+		CVE20164656(),
+		CVE20155889(),
+		NULLROOT(),
+	]
+	for exploit_instance in all_exploits:
+		vuln_result = potentially_vulnerable(kernel_version, exploit_instance)
+		if vuln_result == NOT_VULNERABLE:
+			# bummer
+			pass
+		else:
+			found_exploits[vuln_result].append(exploit_instance)
 
 	return found_exploits
 

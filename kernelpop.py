@@ -1,6 +1,6 @@
 import sys
 from src.kernelpop import kernelpop
-from constants import color_print, USAGE_STRING
+from constants import *
 
 # hacky rebind of input so we can use existing input() code for python2 and python3
 try:
@@ -23,6 +23,17 @@ def main():
 
 	if len(sys.argv) < 2:
 		kernelpop()
+
+	if "-p" in sys.argv:
+		playground_index = sys.argv.index("-p") + 1
+		new_playground = str(sys.argv[playground_index])
+		color_print("[*] setting PLAYGROUND_PATH to ({})".format(new_playground), color="blue")
+		PLAYGROUND_PATH = new_playground
+		if PLAYGROUND_PATH == new_playground:
+			color_print("\t[+] PLAYGROUND_PATH={}".format(PLAYGROUND_PATH), color="blue")
+		else:
+			color_print("\t[!] could not set PLAYGROUND_PATH", color="red")
+
 	elif "-e" in sys.argv[1:3] and len(sys.argv) > 2:
 		# dump the exploit source to disk
 		if "-d" in sys.argv:
